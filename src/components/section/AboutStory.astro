@@ -214,13 +214,16 @@ const START = 275;
         });
 
         /* Then the scroll carries it (scrubbed, a little smoothing on top of Lenis): from the page's top, past the
-           Figma's rest, out by the left edge along the lower stem, gone when that stem is 35 % down the screen */
+           Figma's rest, out by the left edge along the lower stem, gone when that stem is 35 % down the screen; on a
+           tablet or a phone, where the drawing is smaller and the stem in the first screen, 10 %: the ball then runs
+           about one and a half times the scroll's pace instead of three, gone in a swipe, not a flick */
         const trigger = ScrollTrigger.create({
           trigger: svg,
           start: 0,
           end: () => {
             const box = svg.getBoundingClientRect();
-            return box.top + window.scrollY + (track[(count - 1) * 3 + 1] / height) * box.height - innerHeight * 0.35 + 1;
+            const leave = wide ? 0.35 : 0.1;
+            return box.top + window.scrollY + (track[(count - 1) * 3 + 1] / height) * box.height - innerHeight * leave + 1;
           },
           scrub: 0.5,
           invalidateOnRefresh: true,

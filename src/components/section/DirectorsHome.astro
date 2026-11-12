@@ -135,8 +135,14 @@ const filters = [
       const layer = wrap.querySelector<HTMLElement>(".directors-home_balls");
       const reduce = matchMedia("(prefers-reduced-motion: reduce)");
       const root = document.documentElement;
-      const pageThemes = [...root.classList].filter((c) => c.startsWith("theme-"));
-      const ownTheme = [...wrap.classList].filter((c) => c.startsWith("theme-"));
+      const themesOf = (el: Element) => [...el.classList].filter((c) => c.startsWith("theme-"));
+      const pageThemes = themesOf(root);
+      // the section itself when it paints its own dark, and any other part of the page that asks to follow it
+      // (`data-paint`: the reel's stage on a director's page, whose last strip is still on screen)
+      const painted = [wrap, ...document.querySelectorAll<HTMLElement>("[data-paint]")]
+        .filter((el, i, all) => all.indexOf(el) === i)
+        .map((el) => ({ el, own: themesOf(el) }))
+        .filter((p) => p.own.length > 0);
 
       const balls = [...(layer?.querySelectorAll<HTMLElement>(".directors-home_ball") ?? [])].map((el, i) => ({
         el,
@@ -234,16 +240,16 @@ const filters = [
       };
 
       /* The whole page takes the active director's colour (Sam, Nov 12: « sur toute la page »): the page's theme turns
-         to theirs (and a section that paints its own dark, on a director's page, with it), back to its own when no
+         to theirs (and the parts that paint their own dark, on a director's page, with it), back to its own when no
          name is in the middle. Colours and text change over the fast duration (CSS). */
       const paint = (colour: string | null) => {
         const theme = colour ? (THEMES[colour] ?? "theme-brand") : null;
         root.classList.remove(...Object.values(THEMES), ...pageThemes);
         root.classList.add(...(theme ? [theme] : pageThemes));
-        if (ownTheme.length) {
-          wrap.classList.remove(...Object.values(THEMES), ...ownTheme);
-          wrap.classList.add(...(theme ? [theme] : ownTheme));
-        }
+        painted.forEach(({ el, own }) => {
+          el.classList.remove(...Object.values(THEMES), ...own);
+          el.classList.add(...(theme ? [theme] : own));
+        });
       };
 
       /* The active name: the one under the middle of the screen (job: show whose colour and films these are) */

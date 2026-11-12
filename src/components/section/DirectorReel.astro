@@ -26,6 +26,7 @@ const { render = true, projects, colour = "red" } = Astro.props;
     <section
       class="director-reel_wrap theme-dark"
       style={`--_colour: var(--${colour})`}
+      data-paint
       data-op-section="DirectorReel"
       data-op-list="projects"
       data-op-source="astro:projects"
@@ -145,10 +146,11 @@ const { render = true, projects, colour = "red" } = Astro.props;
 
       /* The ball (job: carry the reader from the page's colour into the film, and out to the dark): a circle as wide
          as the screen's diagonal, scaled, the film inside counter-scaled so it stays still while the ball reveals it.
-         It grows from a tenth, low in the screen, to the whole screen while the reel's top travels from 60 % down the
-         screen to 85 % of a screen past its top; holds; after the last project shrinks to nothing on its way up. The
-         stage turns dark once the film covers it. Transform only, from the scroll; with reduced motion the film simply
-         fills the stage. */
+         It rises into view with the stage's top edge, just under it, so the colour under the opening is never empty;
+         grows from a tenth, low in the screen, to the whole screen while the reel's top travels from 75 % down the
+         screen to 85 % of a screen past its top; holds; after the last project has held the screen a little, shrinks
+         to nothing on its way up, gone as the other directors come up. The stage turns dark once the film covers it.
+         Transform only, from the scroll; with reduced motion the film simply fills the stage. */
       let top = 0;
       let height = innerHeight;
       const measure = () => {
@@ -157,33 +159,42 @@ const { render = true, projects, colour = "red" } = Astro.props;
         ball.style.setProperty("--_d", `${Math.hypot(innerWidth, height)}px`);
       };
       const place = () => {
-        const y = window.scrollY - top;
-        const n = slots.length;
-        let scale = 1;
-        let centre = 0.5;
-        if (!reduce.matches) {
-          if (y < height * 0.85) {
-            const t = ease(clamp((y + height * 0.6) / (height * 1.45)));
-            scale = 0.1 + 0.9 * t;
-            centre = 0.78 - 0.28 * t;
-          } else if (y > height * n) {
-            // done as the stage lets go (the last space is 70 % of a screen)
-            const t = ease(clamp((y - height * n) / (height * 0.7)));
-            scale = 1 - t;
-            centre = 0.5 - 0.3 * t;
-          }
-        }
-        const lift = (centre - 0.5) * height;
-        const s = Math.max(scale, 0.001);
-        ball.style.transform = `translate3d(0, ${lift.toFixed(1)}px, 0) scale(${s.toFixed(4)})`;
-        film.style.transform = `scale(${(1 / s).toFixed(4)}) translate3d(0, ${(-lift).toFixed(1)}px, 0)`;
-        ball.style.visibility = scale < 0.01 ? "hidden" : "";
-        stage.classList.toggle("is-dark", y > height * 0.85);
+        // reads first (the lines' places), then the writes, so a frame never lays the page out twice
         let found = 0;
         slots.forEach((slot, i) => {
           const bar = slot.querySelector<HTMLElement>(".director-reel_line");
           if (bar && bar.getBoundingClientRect().bottom <= innerHeight) found = i;
         });
+        const y = window.scrollY - top;
+        const n = slots.length;
+        const d = Math.hypot(innerWidth, height);
+        let scale = 1;
+        // the ball's centre, from the stage's top
+        let centre = height / 2;
+        if (!reduce.matches) {
+          if (y < height * 0.85) {
+            const t = ease(clamp((y + height * 0.75) / (height * 1.6)));
+            scale = 0.1 + 0.9 * t;
+            // low in the screen first, then to its middle; the stage's top may still be on screen (not stuck yet)
+            const edge = Math.max(0, -y);
+            centre = height * (0.82 - 0.32 * t) - edge;
+            // while that edge shows, the ball keeps under it, a little room between (it fades out as the stage sticks)
+            const room = clamp((edge - height * 0.1) / (height * 0.2));
+            centre = Math.max(centre, ((scale * d) / 2 + 24) * room);
+          } else if (y > height * (n + 0.3)) {
+            // the last film holds a third of a screen, then the ball shrinks away up; the stage lets go (its last
+            // space is 80 % of a screen) once the ball is down to a fifth of its size, high in the screen
+            const t = ease(clamp((y - height * (n + 0.3)) / (height * 0.7)));
+            scale = 1 - t;
+            centre = height * (0.5 - 0.3 * t);
+          }
+        }
+        const lift = centre - height / 2;
+        const s = Math.max(scale, 0.001);
+        ball.style.transform = `translate3d(0, ${lift.toFixed(1)}px, 0) scale(${s.toFixed(4)})`;
+        film.style.transform = `scale(${(1 / s).toFixed(4)}) translate3d(0, ${(-lift).toFixed(1)}px, 0)`;
+        ball.style.visibility = scale < 0.01 ? "hidden" : "";
+        stage.classList.toggle("is-dark", y > height * 0.85);
         if (found !== active) {
           active = found;
           play(active);
@@ -285,7 +296,8 @@ const { render = true, projects, colour = "red" } = Astro.props;
       overflow: hidden;
       background-color: var(--_colour);
       &.is-dark {
-        background-color: var(--black);
+        background-color: var(--background);
+        transition: background-color var(--duration-fast) var(--ease-out);
       }
     }
     /* the ball: a circle as wide as the screen's diagonal, centred; the film inside as big as the screen, centred */
@@ -298,7 +310,7 @@ const { render = true, projects, colour = "red" } = Astro.props;
       margin-left: calc(var(--_d, 150vmax) / -2);
       margin-top: calc(var(--_d, 150vmax) / -2);
       overflow: hidden;
-      border-radius: var(--radius-round);
+      border-radius: 50%;
       will-change: transform;
     }
     .director-reel_film {
@@ -350,9 +362,9 @@ const { render = true, projects, colour = "red" } = Astro.props;
       justify-content: flex-end;
       height: 100svh;
       padding-bottom: var(--space-7);
-      /* the ball's way out: it is gone as the stage lets go, and the other directors come up */
+      /* the ball's way out: the stage lets go as it nears its end, and the other directors come up */
       &.is-space:last-child {
-        height: 70svh;
+        height: 80svh;
       }
     }
     .director-reel_line {
@@ -385,10 +397,15 @@ const { render = true, projects, colour = "red" } = Astro.props;
       margin-top: -0.12em;
       fill: currentColor;
     }
+    .director-reel_title {
+      @media (48rem <= width < 64rem) {
+        grid-column: margin / span 3;
+      }
+    }
     .director-reel_client {
       grid-column: margin / span 2;
       @media (width >= 48rem) {
-        grid-column: two / span 2;
+        grid-column: 4 / span 2;
       }
       @media (width >= 64rem) {
         grid-column: half / span 3;
@@ -397,7 +414,7 @@ const { render = true, projects, colour = "red" } = Astro.props;
     .director-reel_agency {
       grid-column: three / end;
       @media (width >= 48rem) {
-        grid-column: aside / span 1;
+        grid-column: 6 / span 2;
       }
       @media (width >= 64rem) {
         grid-column: aside / span 2;

@@ -2,6 +2,27 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-12, Sam (Nov 11, 23:27: « une passe pour vérifier le site au complet ... ensuite la version tablette, la
+  version mobile »; decided by Claude): the whole-site pass, at 1728, 1440, 1024, 768 and 390.
+  - The reel's ball was a rounded square on a phone held upright (the round token is 100vw, smaller than a ball as
+    wide as the screen's diagonal): it is a circle at every size now.
+  - The reel's ball is there from the first screen: it rises into view just under the opening (never cut by the
+    stage's edge), so the colour under a short opening is never an empty field on a phone or a tablet.
+  - The last film now holds the screen for a third of a screen before the ball shrinks away; the stage lets go when
+    the ball is a fifth of its size, so the other directors come up sooner after it (the empty dark after the reel
+    was most of a screen on a phone).
+  - When a director's name lights the page on a director's page, the strip of the reel still on screen takes the
+    colour too (it stayed black, a hard edge).
+  - On a tablet the reel's line gives the agency two columns (« Wieden+Kennedy » broke in the middle).
+  - About's ball ran its whole way in about 200 px of scroll on a phone (three times the scroll's pace): on a tablet
+    and a phone it now leaves when the lower stem is 10 % down the screen, not 35 %, about one and a half times the
+    scroll's pace.
+  - The rooftop still (a placeholder from the Figma) had a carousel's dots in its foot: cropped off.
+  - Checked and kept: the page changes from a coloured directors list (Home to a director, a director to another,
+    Home to About), the colours and the opening elements; the phone profile (CPU slowed four times) scrolls About
+    with no long task, Home and a director's page with one short hitch where the page changes colour (a whole-page
+    restyle, about 15 ms at full speed).
+
 - 2026-11-12, Sam (00:33 to 00:36, from his phone: « la boule peut sortir de l'autre bord, sur les autres pages
   aussi », « le background couleur doit changer sur toute la page », « scale up apparaître, down disparaître en haut,
   plus smooth », « noms plus gros, sur 2 lignes », « transition ... vidéo full screen pas smooth: plus immersif,
