@@ -2,6 +2,10 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-12, Samuel Charpentier (setup): the site is Curveball (op.config.json id `curveball`, SITE_NAME, SITE_LOCALE `en`);
+  the Worker's name `curveball` in wrangler.jsonc is kept. Started from scratch, from the Brief. The favicon is the
+  initial C on the starter's ink until a logo is added. The description is a stand-in until the Brief says more.
+
 - 2026-10-28, Sam (20:07 and 20:15: Contenu v2, every change a draft): the staging reads what OP publishes;
   OP System's frame sends its draft proof (`x-op-draft`) with each page it asks for, the middleware renders the page
   within it (src/utils/draft.ts, AsyncLocalStorage, `nodejs_als` in wrangler.jsonc) and the loader hands it on to
