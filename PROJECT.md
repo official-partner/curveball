@@ -359,3 +359,6 @@ One line per decision: the date, who asked, what was decided and why. The newest
 - 2026-11-12, Samuel Charpentier (comment 18): About's « Start a conversation » never showed on a computer: each block
   fades in as the ball comes level with it, and the link (1607 down the band) sits below the ball's lowest point
   (1386.5). A block below that point now shows when the ball reaches it, just after « Let's swing ».
+- 2026-11-12, Samuel Charpentier (comment 19): less space between Home's last director and the curve below, from a
+  tablet up: the band now starts 65 % of a screen below the last name's colour change instead of 80 % (about 140 px
+  less on a laptop), the ball still rolling in just after the colour goes back to black.

@@ -274,13 +274,14 @@ const track = tracks[variant].points;
        the black, then the ball rolls in about a third of a screen later (Sam, Nov 12: « trop de choses en même temps
        ... séparer les 2 actions, léger overlap si nécessaire ... plus d'espace sous Yaara »). The last name gives way
        when its foot is 40 % down the screen, and the ball shows as the start of its track (67 down the drawing)
-       comes in at 95 %: 80 % of a screen between that foot and that start does it, whatever the screen's shape (less
-       the list's own space under it, --space-9). On a phone the title comes first, in the flow: half a screen above it
-       does the same. */
+       comes in at 95 %: 65 % of a screen between that foot and that start does it, whatever the screen's shape (less
+       the list's own space under it, --space-9), the ball a tenth of a screen after the colour (Sam, Nov 12, comment
+       19: « réduire un peu l'espace après le dernier nom »: it was 80 %). On a phone the title comes first, in the
+       flow: half a screen above it does the same. */
     .directors-home_wrap ~ .curve-band_wrap.is-home {
       margin-top: 50svh;
       @media (width >= 48rem) {
-        margin-top: max(calc(var(--u) * 110), calc(80svh - var(--u) * 67 - var(--space-9)));
+        margin-top: max(calc(var(--u) * 110), calc(65svh - var(--u) * 67 - var(--space-9)));
       }
     }
     /* From a tablet up, the band rises behind the section before it. Home's never rises: it starts 110 lower,
