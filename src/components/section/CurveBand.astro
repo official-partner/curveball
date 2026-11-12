@@ -1,0 +1,146 @@
+---
+/* The curve that closes a page above the footer: ES Build's « u » blown up and turned, in black, over the page's own
+   colour, with the ball caught in it. The Figma draws it differently on each page (variant): on Home a red ground
+   with the « u » opening left and the CTA inside its lower stem; on News and Contact the page's own ground with an
+   outline of the « u » opening to one side. Geometry in the Figma's units (1728 wide), measured on each page and
+   scaled with the page's width; the band's foot meets the footer's curve (28 apart on News and Contact). */
+import ArrowLink from "@/components/content/ArrowLink.astro";
+
+interface Props {
+  /** Set to `false` to omit the component. */
+  render?: boolean;
+  /** Which page's drawing. */
+  variant?: "home" | "news" | "contact";
+}
+
+const { render = true, variant = "home" } = Astro.props;
+
+/* Each drawing: its height, the black shapes (a path and its offset), the ball (centre and radius), the ground
+   (whether the band paints the page's colour itself), and how far it rises behind the section before it. */
+const art = {
+  home: {
+    height: 1709,
+    ground: true,
+    rise: 134,
+    shapes: [
+      {
+        y: -226.84,
+        d: "M1852.96 949.314C1848.7 336.304 1465.57 0 924.931 0L-194.663 0L-194.663 587.468L882.361 587.468C1163.32 587.468 1337.86 710.921 1342.12 949.314C1346.38 1208.99 1171.84 1319.67 886.618 1319.67L-194.663 1319.67L-194.663 1907.14L929.188 1907.14C1444.29 1907.14 1857.22 1511.24 1852.96 949.314Z",
+      },
+      { y: 0, d: "M1121.51 0H1728V317.88H1121.51Z" },
+    ],
+    ball: { cx: 1166.96, cy: 1341.86, r: 368.61 },
+  },
+  news: {
+    height: 1935.5,
+    ground: false,
+    rise: 0,
+    shapes: [
+      {
+        y: 0,
+        d: "M2265.01 957.828C2260.76 1570.84 1877.63 1907.14 1336.99 1907.14L-39.7122 1907.14L-39.7122 1319.67L1294.42 1319.67C1575.38 1319.67 1749.92 1196.22 1754.17 957.828C1758.43 698.15 2143.2 587.468 1857.98 587.468L1791.58 587.468L1791.58 0L1900.55 0C2415.65 0 2269.27 395.902 2265.01 957.828Z",
+      },
+    ],
+    ball: { cx: 1123.85, cy: 1610.69, r: 364.48 },
+  },
+  contact: {
+    height: 1935.5,
+    ground: false,
+    rise: 0,
+    shapes: [
+      {
+        y: 0,
+        d: "M-524.684 957.828C-520.427 1570.84 -137.295 1907.14 403.345 1907.14L1780.04 1907.14L1780.04 1319.67L445.916 1319.67C164.953 1319.67 -9.58459 1196.22 -13.8417 957.828C-18.0987 698.15 -402.872 587.468 -117.652 587.468L-51.2505 587.468L-51.2505 0L-160.223 0C-675.321 0 -528.941 395.902 -524.684 957.828Z",
+      },
+    ],
+    ball: { cx: 1556.48, cy: 1612.54, r: 364.48 },
+  },
+}[variant];
+---
+
+{
+  render && (
+    <section
+      class:list={["curve-band_wrap", `is-${variant}`]}
+      style={`--_h: ${art.height}; --_rise: ${art.rise};`}
+      data-op-section="CurveBand"
+    >
+      {variant === "home" && (
+        <div class="curve-band_content site-grid">
+          <h2 class="curve-band_title text-style-h3">Off the usual playbook? Tell us, we'll find who was made for it.</h2>
+          <ArrowLink class="curve-band_link" href="/contact" text="Start a conversation" />
+        </div>
+      )}
+      <div class="curve-band_art" aria-hidden="true">
+        <svg viewBox={`0 0 1728 ${art.height}`} focusable="false">
+          {art.ground && <rect class="curve-band_ground" width="1728" height={art.height} />}
+          {art.shapes.map((s) => (
+            <path class="curve-band_shape" d={s.d} transform={s.y ? `translate(0 ${s.y})` : undefined} />
+          ))}
+          <circle class="curve-band_ball" cx={art.ball.cx} cy={art.ball.cy} r={art.ball.r} />
+        </svg>
+      </div>
+    </section>
+  )
+}
+
+<style is:global>
+  @layer components {
+    .curve-band_wrap {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: var(--section-space-small);
+    }
+    .curve-band_art {
+      position: relative;
+      aspect-ratio: 1728 / var(--_h);
+      & svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+    }
+    .curve-band_ground {
+      fill: var(--page-accent);
+    }
+    .curve-band_shape {
+      fill: var(--black);
+    }
+    .curve-band_ball {
+      fill: var(--page-accent);
+    }
+    .curve-band_content {
+      position: relative;
+      z-index: 1;
+      row-gap: var(--space-9);
+      padding-top: var(--section-space-medium);
+      color: var(--heading-accent);
+    }
+    .curve-band_title {
+      grid-column: margin / end;
+      max-width: 24ch;
+    }
+    .curve-band_link {
+      grid-column: margin / end;
+      justify-self: start;
+    }
+    /* From a tablet up, the CTA sits inside the « u »'s lower stem, as the Figma draws it (its cap top 1283 down
+       the band, 600 wide), and the band rises behind the section before it */
+    @media (width >= 48rem) {
+      .curve-band_wrap {
+        display: block;
+        margin-top: calc(var(--u) * var(--_rise) * -1);
+      }
+      .curve-band_content {
+        position: absolute;
+        inset: 0 0 auto;
+        padding-top: calc(var(--u) * 1283);
+      }
+      .curve-band_title {
+        max-width: calc(var(--u) * 600);
+      }
+    }
+  }
+</style>

@@ -39,6 +39,8 @@
 
   /* Typography primitives */
   --es-build: "ES Build", ui-sans-serif, system-ui, sans-serif;
+  /* ES Build's cap height (682 of 1000): to centre a mark on the capitals of a trimmed text box */
+  --cap-height: 0.682em;
   --primary-family: var(--es-build);
   --mono-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
   --primary-regular: 400;
@@ -205,7 +207,7 @@
   --display-font-weight: 700;
   --display-margin-top: 0rem;
   --display-margin-bottom: 0rem;
-  --display-text-wrap: balance;
+  --display-text-wrap: pretty;
   --h1-line-height: 0.95;
   --h1-letter-spacing: -0.03em;
   --h1-text-transform: capitalize;
@@ -213,7 +215,7 @@
   --h1-font-weight: 700;
   --h1-margin-top: 0rem;
   --h1-margin-bottom: 0rem;
-  --h1-text-wrap: balance;
+  --h1-text-wrap: pretty;
   --h2-line-height: 0.91;
   --h2-letter-spacing: -0.03em;
   --h2-text-transform: none;
@@ -221,7 +223,7 @@
   --h2-font-weight: 700;
   --h2-margin-top: 0rem;
   --h2-margin-bottom: 0rem;
-  --h2-text-wrap: balance;
+  --h2-text-wrap: pretty;
   --h3-line-height: 0.91;
   --h3-letter-spacing: -0.03em;
   --h3-text-transform: none;
@@ -229,7 +231,7 @@
   --h3-font-weight: 700;
   --h3-margin-top: 0rem;
   --h3-margin-bottom: 0rem;
-  --h3-text-wrap: balance;
+  --h3-text-wrap: pretty;
   --text-label-line-height: 1.08;
   --text-label-letter-spacing: 0em;
   --text-label-text-transform: none;
@@ -262,6 +264,10 @@
   --text-small-margin-top: 0rem;
   --text-small-margin-bottom: 0rem;
   --text-small-text-wrap: pretty;
+
+  /* The design unit: one Figma pixel at 1728, scaled with the page's width (main is the container, so the scrollbar is
+     left out). Only for the art-directed parts that scale as one piece: the curves, the ball, the footer's symbol. */
+  --u: calc(100cqw / 1728);
 
   /* Site layout */
   --site-width: calc(100% - var(--site-margin) * 2);

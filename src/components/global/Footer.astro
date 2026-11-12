@@ -1,7 +1,11 @@
 ---
-import type { SvgComponent } from "astro/types";
-import Icon from "@/components/media/Icon.astro";
+/* The footer: the curve that closes every page (ES Build's « u », the Figma's own outline) drawn in the page's colour
+   above the black, the symbol in that colour, the menu, the line and the small print. Measured on News and Contact,
+   identical on both (Home's curve sat 61 px to the right: one curve for all). Geometry in the Figma's units, scaled
+   with the footer's width (cqw): 1728 wide, the symbol 290 below the top, 531 wide. */
+import LogoSymbol from "@/assets/logo/symbol.svg";
 import { SITE_NAME } from "@/consts.ts";
+import { social, legal } from "@/data/site.ts";
 
 interface Props {
   /** Set to `false` to omit the component. */
@@ -9,119 +13,181 @@ interface Props {
 }
 
 const { render = true } = Astro.props;
-
-/* The client's logo once it is in src/assets/logo/logo.svg; the site's name in the copyright line until then. */
-const [logo] = Object.values(
-  import.meta.glob<SvgComponent>("/src/assets/logo/logo.svg", {
-    eager: true,
-    import: "default",
-  }),
-);
+const menu = [
+  { href: "/directors", label: "directors" },
+  { href: "/about", label: "about" },
+  { href: "/news", label: "news" },
+];
+/* The bottom curve: the « u » turned a quarter, its top stem running off the right edge (Figma 9:452 on News) */
+const curve =
+  "M-281.952 957.828C-277.695 1570.84 105.436 1907.14 646.077 1907.14L1765.67 1907.14L1765.67 1319.67L688.647 1319.67C407.684 1319.67 233.146 1196.22 228.889 957.828C224.632 698.15 399.17 587.468 684.39 587.468L1765.67 587.468L1765.67 0L641.82 0C126.721 0 -286.209 395.902 -281.952 957.828Z";
 ---
 
 {
   render && (
-    <footer class="footer_wrap">
-      <div class="footer_inner">
-        <div class="footer_start">
-          {logo && (
-            <a class="footer_logo" href="/" aria-label={SITE_NAME}>
-              <Icon src={logo} variant="full-width" />
-            </a>
-          )}
-          <p class="footer_copyright">
-            &copy; <span id="year">{new Date().getFullYear()}</span>&#160;
-            {SITE_NAME}
-          </p>
-        </div>
-        <nav aria-label="Pied de page">
-          <ul class="footer_links">
-            <li>
-              <a class="footer_link" href="/">
-                Accueil
-              </a>
-            </li>
-            <li>
-              <a class="footer_link" href="/composantes">
-                Composantes
-              </a>
-            </li>
+    <footer class="footer_wrap theme-dark" data-op-section="Footer">
+      <svg class="footer_curve" viewBox="0 0 1728 300" aria-hidden="true" focusable="false">
+        <rect class="footer_curve-ground" width="1728" height="300" />
+        <path class="footer_curve-shape" d={curve} />
+      </svg>
+      <div class="footer_layout site-grid">
+        <a class="footer_symbol" href="/" aria-label={`${SITE_NAME}, home`}>
+          <LogoSymbol aria-hidden="true" />
+        </a>
+        <nav class="footer_menu" aria-label="Footer">
+          <ul class="text-style-large">
+            {menu.map((l) => (
+              <li>
+                <a class="footer_link" href={l.href}>
+                  {l.label}
+                </a>
+              </li>
+            ))}
           </ul>
         </nav>
+        <a class="footer_contact footer_link text-style-large" href="/contact">
+          contact us
+        </a>
+        <p class="footer_social text-style-large" data-op-list="social" data-op-source="src/data/site.ts">
+          {social.map((s, i) => (
+            <>
+              {s.href ? (
+                <a class="footer_link" href={s.href} data-op-item={s.label} aria-label={s.name}>
+                  {s.label}
+                </a>
+              ) : (
+                <span data-op-item={s.label} title={s.name}>
+                  {s.label}
+                </span>
+              )}
+              {i < social.length - 1 && ", "}
+            </>
+          ))}
+        </p>
+        <p class="footer_line text-style-h2">
+          We're in cahoots with filmmakers who live between the expected and the unexpected.
+        </p>
+        <p class="footer_legal text-style-small">
+          © 2026 Curveball Films. Part of the Five to Sixty family, with Clockwork Post and FatHappy Media.
+        </p>
+        <p class="footer_policies text-style-small">
+          {legal.map((l, i) => (
+            <>
+              <a class="footer_link" href={l.href}>
+                {l.label}
+              </a>
+              {i < legal.length - 1 && ", "}
+            </>
+          ))}
+        </p>
       </div>
     </footer>
   )
 }
 
-<script>
-  import { onPage } from "@/utils/page.ts";
-
-  onPage(() => {
-    const year = document.querySelector<HTMLSpanElement>("#year");
-
-    if (year) {
-      year.textContent = new Date().getFullYear().toString();
-    }
-  });
-</script>
-
 <style is:global>
   @layer components {
     .footer_wrap {
-      display: flex;
-      justify-content: center;
-      padding-block: var(--space-5);
-      padding-inline: var(--site-margin);
-      background-color: var(--background);
-      color: var(--text);
-      border-top: var(--border-width) solid var(--border);
-      font-size: var(--text-small);
-      line-height: var(--line-height-large);
+      position: relative;
+      container-type: inline-size;
+      overflow: clip;
+      --_u: calc(100cqw / 1728);
     }
-
-    .footer_inner {
+    .footer_curve {
+      position: absolute;
+      inset: 0 0 auto;
       width: 100%;
-      max-width: var(--max-width-main);
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--space-3) var(--space-6);
+      height: auto;
+      pointer-events: none;
     }
-
-    .footer_start {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: var(--space-3) var(--space-5);
+    .footer_curve-ground {
+      fill: var(--page-accent);
     }
-
-    .footer_logo {
+    .footer_curve-shape {
+      fill: var(--background);
+    }
+    .footer_layout {
+      position: relative;
+      padding-top: calc(var(--_u) * 290);
+      padding-bottom: var(--site-margin);
+      row-gap: var(--space-9);
+      align-items: start;
+    }
+    .footer_symbol {
+      grid-column: margin / span 2;
+      grid-row: 1;
       display: block;
-      width: 6.5rem;
-      max-width: 100%;
-      transition: opacity var(--hover-duration) var(--hover-ease);
-      @media (hover: hover) {
-        &:hover {
-          opacity: 0.6;
-        }
+      color: var(--page-accent);
+      @media (width >= 48rem) {
+        grid-column: margin / span 3;
+      }
+      @media (width >= 64rem) {
+        grid-column: margin / span 4;
+        width: calc(var(--_u) * 531);
+      }
+      & svg {
+        display: block;
+        width: 100%;
+        height: auto;
       }
     }
-
-    .footer_copyright {
-      color: var(--text-2);
+    .footer_menu,
+    .footer_contact,
+    .footer_social {
+      grid-row: 1;
+      color: var(--heading-accent);
     }
-
-    .footer_links {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: var(--space-4);
+    .footer_menu {
+      grid-column: two;
+      @media (width >= 48rem) {
+        grid-column: half;
+      }
     }
-
+    .footer_contact {
+      grid-column: last;
+      justify-self: start;
+      @media (width >= 48rem) {
+        grid-column: aside;
+      }
+    }
+    .footer_social {
+      grid-column: last;
+      align-self: start;
+      margin-top: calc(var(--text-large) * 2);
+      @media (width >= 48rem) {
+        margin-top: 0;
+      }
+    }
+    .footer_line {
+      grid-column: margin / end;
+      color: var(--heading-accent);
+      @media (width >= 64rem) {
+        grid-column: margin / last;
+      }
+    }
+    .footer_legal,
+    .footer_policies {
+      color: var(--text-3);
+    }
+    .footer_legal {
+      grid-column: margin / end;
+      margin-top: calc(var(--space-8) - var(--space-9));
+      @media (width >= 48rem) {
+        grid-column: margin / aside;
+      }
+    }
+    .footer_policies {
+      grid-column: margin / end;
+      margin-top: calc(var(--space-3) - var(--space-9));
+      @media (width >= 48rem) {
+        grid-column: aside / end;
+        grid-row: 3;
+        justify-self: end;
+        margin-top: calc(var(--space-8) - var(--space-9));
+      }
+    }
     .footer_link {
-      color: var(--text-2);
-      text-decoration: none;
+      color: inherit;
       transition: color var(--hover-duration) var(--hover-ease);
       @media (hover: hover) {
         &:hover {

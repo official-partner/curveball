@@ -1,14 +1,19 @@
 ---
 import Layout from "@/layouts/BaseLayout.astro";
-import Section from "@/components/wrapper/Section.astro";
-import StarterHome from "@/components/system/StarterHome.astro";
+import HeroHome from "@/components/section/HeroHome.astro";
+import DirectorsHome from "@/components/section/DirectorsHome.astro";
+import CurveBand from "@/components/section/CurveBand.astro";
+import still from "@/assets/content/home/hero-still.jpg";
 ---
 
-<Layout>
-  {
-    /* A new site's first page: what it is and where things are, until the site's own home page replaces it */
-  }
-  <Section paddingTop="small" paddingBottom="large">
-    <StarterHome />
-  </Section>
+<Layout
+  title="Curveball"
+  seoTitle="Curveball Films"
+  description="Curveball Films, a commercial production company with its home base in New Orleans."
+  theme="dark"
+  accent="red"
+>
+  <HeroHome still={still} />
+  <DirectorsHome />
+  <CurveBand variant="home" />
 </Layout>

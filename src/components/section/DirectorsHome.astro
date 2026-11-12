@@ -1,0 +1,182 @@
+---
+/* Home's directors: the row « Directors » with its two filters (Industry at column 7, Location at column 10, as the
+   Figma), then every director's name in the big type, taupe, one per line, each a link to their page. A filter
+   keeps the names that match it; « All » shows everyone. The directors come from the collection « Directors ». */
+import { getItems } from "@/utils/content.ts";
+
+interface Props {
+  /** Set to `false` to omit the component. */
+  render?: boolean;
+}
+
+const { render = true } = Astro.props;
+const directors = await getItems("directors");
+const industries = ["Docustyle", "Comedy", "Story", "Spectacle", "Fashion"];
+const locations = ["Chicago", "Los Angeles", "New Orleans", "New York"];
+const filters = [
+  { key: "industry", label: "Industry", options: industries, class: "is-industry" },
+  { key: "location", label: "Location", options: locations, class: "is-location" },
+];
+---
+
+{
+  render && (
+    <section class="directors-home_wrap theme-dark" data-op-section="DirectorsHome">
+      <div class="directors-home_layout site-grid">
+        <div class="directors-home_row rule-top">
+          <h2 class="directors-home_label dot-label text-style-large">Directors</h2>
+          {filters.map((f) => (
+            <div class:list={["directors-home_filter", f.class]} role="group" aria-label={`Filter by ${f.label.toLowerCase()}`}>
+              <p class="text-style-main">{f.label}</p>
+              <ul class="directors-home_options text-style-main">
+                {["All", ...f.options].map((o) => (
+                  <li>
+                    <button
+                      class="directors-home_option"
+                      type="button"
+                      data-filter={f.key}
+                      data-value={o === "All" ? "" : o}
+                      aria-pressed={o === "All" ? "true" : "false"}
+                    >
+                      {o}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <ul class="directors-home_list text-style-h1" data-op-list="directors" data-op-source="astro:directors">
+          {directors.map((d) => (
+            <li
+              class="directors-home_item"
+              data-op-item={d.id}
+              data-industry={(d.data.industries ?? []).join("|")}
+              data-location={d.data.location ?? ""}
+            >
+              <a class="directors-home_name" href={`/directors/${d.id}`} data-op-field="name">
+                {d.data.name}
+              </a>
+            </li>
+          ))}
+        </ul>
+        <p class="directors-home_empty text-style-main" hidden>
+          No director here yet.
+        </p>
+      </div>
+    </section>
+  )
+}
+
+<script>
+  import { onPage } from "@/utils/page.ts";
+
+  onPage((signal) => {
+    document.querySelectorAll<HTMLElement>(".directors-home_wrap").forEach((wrap) => {
+      const items = [...wrap.querySelectorAll<HTMLElement>(".directors-home_item")];
+      const empty = wrap.querySelector<HTMLElement>(".directors-home_empty");
+      const chosen: Record<string, string> = { industry: "", location: "" };
+      const apply = () => {
+        let shown = 0;
+        items.forEach((item) => {
+          const industries = (item.dataset.industry ?? "").split("|").filter(Boolean);
+          const ok =
+            (!chosen.industry || industries.includes(chosen.industry)) &&
+            (!chosen.location || item.dataset.location === chosen.location);
+          item.hidden = !ok;
+          if (ok) shown++;
+        });
+        if (empty) empty.hidden = shown > 0;
+      };
+      wrap.addEventListener(
+        "click",
+        (event) => {
+          const button = (event.target as HTMLElement).closest<HTMLButtonElement>(".directors-home_option");
+          if (!button) return;
+          const key = button.dataset.filter ?? "";
+          chosen[key] = button.dataset.value ?? "";
+          wrap.querySelectorAll<HTMLButtonElement>(`.directors-home_option[data-filter="${key}"]`).forEach((b) => {
+            b.setAttribute("aria-pressed", String(b === button));
+          });
+          apply();
+        },
+        { signal },
+      );
+    });
+  });
+</script>
+
+<style is:global>
+  @layer components {
+    /* Above the curve that rises behind its last names (CurveBand on Home) */
+    .directors-home_wrap {
+      position: relative;
+      z-index: 1;
+      padding-top: var(--space-6);
+    }
+    .directors-home_layout {
+      row-gap: var(--section-space-large);
+    }
+    .directors-home_row {
+      grid-column: margin / end;
+      display: grid;
+      grid-template-columns: subgrid;
+      row-gap: var(--space-7);
+      align-items: start;
+    }
+    .directors-home_label {
+      grid-column: margin / end;
+      @media (width >= 48rem) {
+        grid-column: margin / half;
+      }
+    }
+    .directors-home_filter {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+      &.is-industry {
+        grid-column: margin / span 2;
+        @media (width >= 48rem) {
+          grid-column: half / span 2;
+        }
+      }
+      &.is-location {
+        grid-column: three / end;
+        @media (width >= 48rem) {
+          grid-column: aside / end;
+        }
+      }
+    }
+    .directors-home_option {
+      color: var(--text-2);
+      transition: color var(--hover-duration) var(--hover-ease);
+      &[aria-pressed="true"] {
+        color: var(--text);
+      }
+      @media (hover: hover) {
+        &:hover {
+          color: var(--text);
+        }
+      }
+    }
+    .directors-home_list,
+    .directors-home_empty {
+      grid-column: margin / end;
+    }
+    .directors-home_list {
+      color: var(--heading-accent);
+    }
+    .directors-home_name {
+      color: inherit;
+      transition: color var(--hover-duration) var(--hover-ease);
+      @media (hover: hover) {
+        &:hover {
+          color: var(--text);
+        }
+      }
+    }
+    .directors-home_empty {
+      color: var(--text-2);
+    }
+  }
+</style>

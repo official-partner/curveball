@@ -24,4 +24,25 @@ const team = defineCollection({
       .describe("Équipe"),
 });
 
-export const collections = { team };
+/* The directors: each one will have a page of their own (their reel), and Home lists them all with the filters
+   Industry and Location (the Figma's own lists). Their industries and city are to fill in. */
+const directors = defineCollection({
+  loader: glob({ pattern: "*.json", base: "./src/content/directors" }),
+  schema: z
+    .object({
+      name: z.string().describe("Name"),
+      industries: z
+        .array(z.enum(["Docustyle", "Comedy", "Story", "Spectacle", "Fashion"]))
+        .default([])
+        .describe("Industries"),
+      location: z
+        .enum(["Chicago", "Los Angeles", "New Orleans", "New York"])
+        .optional()
+        .describe("Location"),
+      visible: z.boolean().default(true).describe("Visible on the site"),
+      order: z.number().optional().describe("Order"),
+    })
+    .describe("Directors"),
+});
+
+export const collections = { team, directors };

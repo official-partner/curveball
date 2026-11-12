@@ -13,8 +13,11 @@ import { finishes } from "@/utils/finishes.ts";
 import config from "../../op.config.json";
 
 type Props = SeoProps & {
-  /** Theme for the whole page. `inherit` leaves the root defaults in place. */
-  theme?: "inherit" | "light" | "dark" | "brand";
+  /** Theme for the whole page. `inherit` leaves the root defaults in place (dark). */
+  theme?: "inherit" | "light" | "dark" | "mustard" | "teal" | "brand";
+  /** The page's own colour: the footer's symbol, the ball and the curve (red on Home, mustard on News, teal on
+   * Contact). */
+  accent?: "red" | "mustard" | "teal";
   /**
    * Fix the nav over the page rather than letting it stick in flow, so the
    * first section starts underneath it. Give that section
@@ -23,7 +26,7 @@ type Props = SeoProps & {
   overlap?: boolean;
 };
 
-const { theme = "inherit", overlap = false, ...seo } = Astro.props;
+const { theme = "inherit", accent = "red", overlap = false, ...seo } = Astro.props;
 
 /* The finishing touches, each off until op.config.json turns it on (src/utils/finishes.ts): the loading screen, the
    transition between pages, the smooth scroll. A "custom" one without its file stands in as its first preset. */
@@ -63,7 +66,7 @@ const { smoothScroll } = finish;
     }
     <slot name="head" />
   </head>
-  <body>
+  <body class={`accent-${accent}`}>
     {loader && <Loader part="cover" preset={loader} />}
     {transition && <PageTransitions part="body" preset={transition} />}
     <SkipLink />

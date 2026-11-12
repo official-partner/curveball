@@ -5,6 +5,11 @@ import ComponentSample from "@/components/system/ComponentSample.astro";
 import Grid from "@/components/wrapper/Grid.astro";
 import CardTeam from "@/components/content/CardTeam.astro";
 import photo from "@/assets/content/team/lea-photo.webp";
+import ArrowLink from "@/components/content/ArrowLink.astro";
+import HeroHome from "@/components/section/HeroHome.astro";
+import DirectorsHome from "@/components/section/DirectorsHome.astro";
+import CurveBand from "@/components/section/CurveBand.astro";
+import still from "@/assets/content/home/hero-still.jpg";
 ---
 
 <Layout
@@ -15,6 +20,20 @@ import photo from "@/assets/content/team/lea-photo.webp";
     {
       /* One sample per component made for this site, with sample props: <ComponentSample file="content/HeroBlog.astro"><HeroBlog … /></ComponentSample> (CLAUDE.md, The components page) */
     }
+    <ComponentSample file="content/ArrowLink.astro" note="A link with its arrow: Home's CTA, the news cards' « Read ».">
+      <div class="container">
+        <ArrowLink href="/contact" text="Start a conversation" />
+      </div>
+    </ComponentSample>
+    <ComponentSample file="section/HeroHome.astro" note="Home's opening: the featured film's still, the wordmark, Play and the featured work's row.">
+      <HeroHome still={still} />
+    </ComponentSample>
+    <ComponentSample file="section/DirectorsHome.astro" note="Every director in the big type, with the filters Industry and Location.">
+      <DirectorsHome />
+    </ComponentSample>
+    <ComponentSample file="section/CurveBand.astro" note="The curve above the footer, Home's drawing with its CTA (News and Contact have their own).">
+      <CurveBand variant="home" />
+    </ComponentSample>
     <ComponentSample
       file="content/CardTeam.astro"
       note="Une personne de l’équipe : complète, puis avec son nom seulement."

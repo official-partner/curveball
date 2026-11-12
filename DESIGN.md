@@ -27,3 +27,12 @@ Sep 30). The values live in system/curveball.json; base.css is generated from it
 
 ## Global classes (src/styles/project.css)
 - .site-grid: the 12 columns with named lines (margin, nav, two, split, half, three, aside, last, end).
+- .rule-top: the rule that opens a row or a section, and --space-rule to the text under it (Home's two rows, the
+  inner pages' sections).
+- .dot-label: the dot before a label, centred on its capitals (« Featured work », « Directors »).
+- The pixel hand over every link and button; main is the container of the design unit --u.
+
+## Components
+- Nav, Footer (global): the menu at columns 7 and 10 on every page; the footer opens with the curve in the page's
+  colour, the symbol in that colour, the menu, the line and the small print.
+- HeroHome, DirectorsHome, CurveBand (sections), ArrowLink (a link with its drawn arrow).

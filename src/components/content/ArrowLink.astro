@@ -1,0 +1,53 @@
+---
+/* A link that reads as a sentence with an arrow after it: « Start a conversation », « Read ». The arrow is drawn
+   (the trial ES Build has none), at the text's size, and slides a little on hover. */
+interface Props {
+  /** Set to `false` to omit the component. */
+  render?: boolean;
+  /** Where it goes. */
+  href: string;
+  /** The words before the arrow. */
+  text: string;
+  /** More classes, for where a section places it. */
+  class?: string;
+  /** The text field this link's words come from, for OP System's Modifier. */
+  field?: string;
+}
+
+const { render = true, href, text, class: extra, field } = Astro.props;
+---
+
+{
+  render && (
+    <a class:list={["arrow-link", "text-style-large", extra]} href={href}>
+      <span data-op-field={field}>{text}</span>
+      <svg class="arrow-link_icon" viewBox="0 0 17.8 14" aria-hidden="true" focusable="false">
+        <path d="M0 5.8h13.6L9.3 1.5 10.8 0l7 7-7 7-1.5-1.5 4.3-4.3H0z" />
+      </svg>
+    </a>
+  )
+}
+
+<style is:global>
+  @layer components {
+    .arrow-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3em;
+      color: inherit;
+      text-decoration: none;
+    }
+    .arrow-link_icon {
+      flex: none;
+      width: 0.85em;
+      height: auto;
+      fill: currentColor;
+      transition: translate var(--hover-duration) var(--hover-ease);
+    }
+    @media (hover: hover) {
+      .arrow-link:hover .arrow-link_icon {
+        translate: 0.25em 0;
+      }
+    }
+  }
+</style>

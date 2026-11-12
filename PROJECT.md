@@ -2,6 +2,32 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-11, Sam (« menu : même endroit partout », 22:40; the three pages as PDF from Figma, 22:41: « placeholder
+  images but if you can improve resolution it would be cool »): Home built, with the menu and the footer every page
+  shares.
+  - The menu sits at columns 7 and 10 on every page (Home's place, as the footer's menu); the Figma had 3 and 6 on News
+    and Contact. Its cap tops line up with the symbol's top, one margin down (the footer's sat 22 lower: aligned too).
+  - Pictures: figma.com is out of this session's reach, so they come from the PDFs: the hero still (a 793 px
+    screenshot) cut to the part the Figma shows (its box overflowed the frame; the cut also hides the player arrows at
+    its edges) and enlarged twice (Lanczos, a light sharpening); the six round portraits rendered at their own
+    resolution (about 1040 px) from News.pdf. The team on Contact uses the same people. The pixel hand (the Figma's
+    cursor) rebuilt on its 25 x 25 grid: public/cursor/hand-38.png and hand-75.png (Retina), the pointer over every
+    link and button (project.css).
+  - The opening: the still under 30 % black and a fade to the page's black, the wordmark margin to margin at the top
+    (under the menu below 1024, where it is too short to hold the links between its letters), « Play » at column 10
+    as drawn (static until the films are in), the featured work's row at the foot. Featured work counts six: six
+    copies of the Figma's one (Factor, Wieden+Kennedy) in src/data/featured.ts until the real six are in.
+  - The directors: a collection (« Directors »), since each will have a page and Home lists them; the Figma's eight
+    names (its list repeated three to fill the frame). The filters work on each director's Industries and Location,
+    empty for now: a filter other than All shows « No director here yet. » until they are filled in Contenu.
+  - The curve above the footer (CurveBand): the Figma's own outlines of ES Build's « u » (exported from the file, not
+    redrawn), the ball and, on Home, the CTA inside the « u »'s lower stem (its cap top 1283 down the band), all in the
+    Figma's units scaled with the page (--u, one Figma pixel at 1728, main being the container). On a phone the CTA
+    comes before the curve, which is too short there to hold it. The band rises 134 behind the last names, as drawn.
+    The footer opens with the bottom curve (one for all pages: News and Contact's; Home's sat 61 to the right).
+  - Headings wrap as the Figma does (text-wrap: pretty), not balanced: balance broke « filmmakers » off the footer's
+    first line.
+
 - 2026-11-11, Sam (« on teste de faire un nouveau site ensemble », from the Figma b3sFmBDWNYeXOydmTL79JU, page
   « curveball »: Home 9:517, News 9:436, Contact 9:355, the type specimen beside them): the Web System first, measured
   from the Figma by script (every text's cap top and baseline from ES Build's metrics, every shape's box), written in

@@ -6,15 +6,17 @@
 
 /* The site grid: the Figma's 12 columns (margin 32, gutter 12 at 1728), a named line at every column a component starts at.
    margin c1 · nav c3 · two c5 · split c6 · half c7 · three c9 · aside c10 · last c12 · end. A tablet keeps the names on
-   8 columns and a phone on 4: a component placed on a name needs no media query to follow. */
+   8 columns (nav c3, two split half three c5, aside c7, last c8) and a phone on 4 (nav half c2, two split three aside
+   c3, last c4): a component placed on a name follows without a media query of its own. */
 .site-grid {
   display: grid;
   width: var(--site-width);
   max-width: var(--max-width-main);
   margin-inline: auto;
   grid-template-columns:
-    [margin nav two split three] repeat(2, minmax(0, 1fr))
-    [half aside] minmax(0, 1fr)
+    [margin] minmax(0, 1fr)
+    [nav half] minmax(0, 1fr)
+    [two split three aside] minmax(0, 1fr)
     [last] minmax(0, 1fr) [end];
   column-gap: var(--site-gutter);
   @media (width >= 48rem) {
@@ -36,4 +38,36 @@
       [aside] repeat(2, minmax(0, 1fr))
       [last] minmax(0, 1fr) [end];
   }
+}
+
+/* The rule that opens a row or a section, and the space down to the cap top of the text under it */
+.rule-top {
+  padding-top: var(--space-rule);
+  border-top: var(--border-width) solid var(--border);
+}
+
+/* The dot that marks a label: a circle at the start of the line, centred on its capitals, the text after it */
+.dot-label {
+  position: relative;
+  padding-inline-start: calc(max(var(--dot-floor), var(--dot)) + var(--space-dot));
+  &::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: 0;
+    top: calc((var(--cap-height) - max(var(--dot-floor), var(--dot))) / 2);
+    width: max(var(--dot-floor), var(--dot));
+    aspect-ratio: 1;
+    border-radius: var(--radius-round);
+    background-color: var(--dot-color);
+  }
+}
+
+/* The page's main area is the container of the design unit (--u, one Figma pixel at 1728): 1cqw is 1 % of its width */
+main {
+  container-type: inline-size;
+}
+
+/* The pixel hand from the Figma: the pointer over everything that can be clicked (the client's play, Sep 21) */
+:where(a[href], button:not(:disabled), summary, label[for], [data-cursor="hand"]) {
+  cursor: image-set(url("/cursor/hand-38.png") 1x, url("/cursor/hand-75.png") 2x) 14 2, pointer;
 }

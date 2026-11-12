@@ -36,6 +36,7 @@ w("  /* The page's own colour (red on Home, mustard on News, teal on Contact): t
 w("  --page-accent: var(--red);")
 w("\n  /* Typography primitives */")
 w(f"  --es-build: {S['fonts']['family']};")
+w("  /* ES Build's cap height (682 of 1000): to centre a mark on the capitals of a trimmed text box */\n  --cap-height: 0.682em;")
 w("  --primary-family: var(--es-build);\n  --mono-family: ui-monospace, \"SF Mono\", SFMono-Regular, Menlo, Consolas, monospace;")
 w("  --primary-regular: 400;\n  --primary-medium: 500;\n  --primary-bold: 700;")
 w("  --letter-spacing-tight: -0.03em;\n  --letter-spacing-normal: 0em;")
@@ -72,10 +73,12 @@ for n, f in S['floors'].items():
     w(f"  --{n}-floor: {num(f / 16)}rem;")
 w("\n  /* Text style properties */")
 for n, t in S['text'].items():
-    wrap = 'nowrap' if n in NOWRAP else ('balance' if n in ('display', 'h1', 'h2', 'h3') else 'pretty')
+    wrap = 'nowrap' if n in NOWRAP else 'pretty'
     w(f"  --{n}-line-height: {t['lh']};\n  --{n}-letter-spacing: {t['ls']};\n  --{n}-text-transform: {t['tt']};\n"
       f"  --{n}-font-family: var(--es-build);\n  --{n}-font-weight: {t['weight']};\n  --{n}-margin-top: 0rem;\n"
       f"  --{n}-margin-bottom: 0rem;\n  --{n}-text-wrap: {wrap};")
+w("\n  /* The design unit: one Figma pixel at 1728, scaled with the page's width (main is the container, so the scrollbar is\n     left out). Only for the art-directed parts that scale as one piece: the curves, the ball, the footer's symbol. */")
+w("  --u: calc(100cqw / 1728);")
 w("\n  /* Site layout */\n  --site-width: calc(100% - var(--site-margin) * 2);\n"
   "  /* The layout grid's columns: phone here, tablet and computer in the media blocks */\n  --site-columns: 4;")
 w("}")
