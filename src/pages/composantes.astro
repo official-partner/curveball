@@ -10,6 +10,16 @@ import HeroHome from "@/components/section/HeroHome.astro";
 import DirectorsHome from "@/components/section/DirectorsHome.astro";
 import CurveBand from "@/components/section/CurveBand.astro";
 import still from "@/assets/content/home/hero-still.jpg";
+import SectionHead from "@/components/content/SectionHead.astro";
+import CardNews from "@/components/content/CardNews.astro";
+import ContactBlock from "@/components/content/ContactBlock.astro";
+import CardPerson from "@/components/content/CardPerson.astro";
+import NewsList from "@/components/section/NewsList.astro";
+import ContactIntro from "@/components/section/ContactIntro.astro";
+import TeamList from "@/components/section/TeamList.astro";
+import Statement from "@/components/section/Statement.astro";
+import { news } from "@/data/news.ts";
+import { blocks, people } from "@/data/contact.ts";
 ---
 
 <Layout
@@ -33,6 +43,40 @@ import still from "@/assets/content/home/hero-still.jpg";
     </ComponentSample>
     <ComponentSample file="section/CurveBand.astro" note="The curve above the footer, Home's drawing with its CTA (News and Contact have their own).">
       <CurveBand variant="home" />
+    </ComponentSample>
+    <ComponentSample file="content/SectionHead.astro" note="An inner page's section head: the rule, the label, the heading.">
+      <div class="site-grid">
+        <SectionHead label="Get in touch." heading="Tell us which one you are and we'll skip you to the right person." />
+      </div>
+    </ComponentSample>
+    <ComponentSample file="content/CardNews.astro" note="A news card: the round photo, the source and the date, the title, the text, Read.">
+      <div class="site-grid theme-mustard">
+        <div style="grid-column: margin / span 3"><CardNews item={news[0]} /></div>
+      </div>
+    </ComponentSample>
+    <ComponentSample file="content/ContactBlock.astro" note="One way in on Contact; hover it for the dot.">
+      <div class="site-grid theme-teal">
+        <div style="grid-column: margin / span 4"><ContactBlock block={blocks[0]} /></div>
+      </div>
+    </ComponentSample>
+    <ComponentSample file="content/CardPerson.astro" note="A person of the team.">
+      <div class="site-grid theme-teal">
+        <div style="grid-column: margin / span 3"><CardPerson person={people[0]} /></div>
+      </div>
+    </ComponentSample>
+    <ComponentSample file="section/NewsList.astro" note="News: the head and the cards in three staggered columns.">
+      <div class="theme-mustard"><NewsList /></div>
+    </ComponentSample>
+    <ComponentSample file="section/ContactIntro.astro" note="Contact's head and its four ways in.">
+      <div class="theme-teal"><ContactIntro /></div>
+    </ComponentSample>
+    <ComponentSample file="section/TeamList.astro" note="Contact's team, scattered as the Figma places them.">
+      <div class="theme-teal"><TeamList /></div>
+    </ComponentSample>
+    <ComponentSample file="section/Statement.astro" note="A statement over the full width, with its link.">
+      <div class="theme-teal">
+        <Statement label="Where it started" heading="New Orleans is the flagship city, not an office address." link={{ text: "Start a conversation", href: "/contact" }} />
+      </div>
     </ComponentSample>
     <ComponentSample
       file="content/CardTeam.astro"

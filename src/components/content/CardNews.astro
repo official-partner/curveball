@@ -1,0 +1,95 @@
+---
+/* A news card: the round photo over three columns, the source and the date one column apart, the title in h3, the
+   text at half strength and « Read ». Spaces from the roles: picture to text, meta to title, title to text, text to
+   its link. */
+import Img from "@/components/media/Img.astro";
+import ArrowLink from "@/components/content/ArrowLink.astro";
+import type { NewsItem } from "@/data/news.ts";
+
+interface Props {
+  /** Set to `false` to omit the component. */
+  render?: boolean;
+  /** The news. */
+  item: NewsItem;
+  /** Its place in the list, for OP System's Modifier. */
+  index?: number;
+  /** More classes, for where a list places it. */
+  class?: string;
+}
+
+const { render = true, item, index = 0, class: extra } = Astro.props;
+---
+
+{
+  render && (
+    <article class:list={["card-news", extra]} data-op-item={String(index)} style={`--_order: ${index}`}>
+      <div class="card-news_media">
+        <Img class="card-news_img" src={item.photo} alt={item.alt} variant="constrained" sizes="(min-width: 64rem) 24vw, (min-width: 48rem) 38vw, 75vw" />
+      </div>
+      <p class="card-news_meta text-style-main">
+        <span data-op-field="source">{item.source}</span>
+        <span data-op-field="date">{item.date}</span>
+      </p>
+      <h2 class="card-news_title text-style-h3" data-op-field="title">
+        {item.title}
+      </h2>
+      <p class="card-news_text text-style-main" data-op-field="text">
+        {item.text}
+      </p>
+      <ArrowLink class="card-news_link" href={item.href} text="Read" />
+    </article>
+  )
+}
+
+<style is:global>
+  @layer components {
+    .card-news {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: var(--site-gutter);
+      align-content: start;
+      @media (width >= 64rem) {
+        grid-template-columns: subgrid;
+      }
+    }
+    .card-news_media {
+      grid-column: 1 / -1;
+      position: relative;
+      aspect-ratio: 1;
+      border-radius: var(--radius-round);
+      overflow: clip;
+      background-color: var(--background-2);
+    }
+    .card-news_img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .card-news_meta {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: subgrid;
+      margin-top: var(--space-media);
+      & span:last-child {
+        grid-column: 2 / -1;
+      }
+    }
+    .card-news_title {
+      grid-column: 1 / -1;
+      margin-top: var(--space-meta);
+    }
+    .card-news_text {
+      grid-column: 1 / -1;
+      margin-top: var(--space-title);
+      color: var(--text-2);
+    }
+    .card-news_link {
+      grid-column: 1 / -1;
+      justify-self: start;
+      margin-top: var(--space-action);
+    }
+  }
+</style>

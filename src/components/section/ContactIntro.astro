@@ -1,0 +1,64 @@
+---
+/* Contact's first section: its head (the page's h1), then the four ways in, two by two at columns 1 and 6 as the
+   Figma places them. One column on a phone. Blocks from src/data/contact.ts. */
+import SectionHead from "@/components/content/SectionHead.astro";
+import ContactBlock from "@/components/content/ContactBlock.astro";
+import { blocks } from "@/data/contact.ts";
+
+interface Props {
+  /** Set to `false` to omit the component. */
+  render?: boolean;
+}
+
+const { render = true } = Astro.props;
+---
+
+{
+  render && (
+    <section class="contact-intro_wrap" data-op-section="ContactIntro">
+      <div class="contact-intro_layout site-grid">
+        <SectionHead label="Get in touch." heading="Tell us which one you are and we'll skip you to the right person." as="h1" />
+        <div class="contact-intro_blocks" data-op-list="contact-blocks" data-op-source="src/data/contact.ts">
+          {blocks.map((block, index) => (
+            <ContactBlock block={block} index={index} />
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<style is:global>
+  @layer components {
+    .contact-intro_wrap {
+      padding-top: var(--page-top);
+      padding-bottom: var(--section-space-large);
+    }
+    .contact-intro_blocks {
+      grid-column: margin / end;
+      display: grid;
+      grid-template-columns: subgrid;
+      row-gap: var(--section-space-small);
+      margin-top: var(--section-space-medium);
+      & .contact-block {
+        grid-column: margin / end;
+      }
+      @media (width >= 48rem) {
+        & .contact-block:nth-child(odd) {
+          grid-column: margin / half;
+        }
+        & .contact-block:nth-child(even) {
+          grid-column: half / end;
+        }
+      }
+      @media (width >= 64rem) {
+        & .contact-block:nth-child(odd) {
+          grid-column: margin / split;
+        }
+        & .contact-block:nth-child(even) {
+          grid-column: split / end;
+        }
+      }
+    }
+  }
+</style>

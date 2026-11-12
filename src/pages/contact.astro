@@ -1,0 +1,23 @@
+---
+import Layout from "@/layouts/BaseLayout.astro";
+import ContactIntro from "@/components/section/ContactIntro.astro";
+import TeamList from "@/components/section/TeamList.astro";
+import Statement from "@/components/section/Statement.astro";
+import CurveBand from "@/components/section/CurveBand.astro";
+---
+
+<Layout
+  title="Contact"
+  description="Tell Curveball Films which one you are and they'll skip you to the right person."
+  theme="teal"
+  accent="teal"
+>
+  <ContactIntro />
+  <TeamList />
+  <Statement
+    label="Where it started"
+    heading="New Orleans is the flagship city, not an office address. Five to Sixty started here in 2015, and Curveball still calls it home base. Everyone else on the team works remote, wherever the work is."
+    link={{ text: "Start a conversation", href: "mailto:bids@curveballfilms.com" }}
+  />
+  <CurveBand variant="contact" />
+</Layout>

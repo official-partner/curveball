@@ -1,0 +1,46 @@
+---
+/* A statement closing a page: its head with the heading over the full width (Contact's « Where it started »), then
+   « Start a conversation » 64 below. The curve that follows rises behind it. */
+import SectionHead from "@/components/content/SectionHead.astro";
+import ArrowLink from "@/components/content/ArrowLink.astro";
+
+interface Props {
+  /** Set to `false` to omit the component. */
+  render?: boolean;
+  /** The label. */
+  label: string;
+  /** The statement. */
+  heading: string;
+  /** The link under it. */
+  link?: { text: string; href: string };
+}
+
+const { render = true, label, heading, link } = Astro.props;
+---
+
+{
+  render && (
+    <section class="statement_wrap" data-op-section="Statement">
+      <div class="statement_layout site-grid">
+        <SectionHead label={label} heading={heading} wide />
+        {link && <ArrowLink class="statement_link" href={link.href} text={link.text} />}
+      </div>
+    </section>
+  )
+}
+
+<style is:global>
+  @layer components {
+    .statement_wrap {
+      position: relative;
+      z-index: 1;
+    }
+    .statement_layout {
+      row-gap: var(--space-9);
+    }
+    .statement_link {
+      grid-column: margin / end;
+      justify-self: start;
+    }
+  }
+</style>

@@ -1,0 +1,116 @@
+---
+/* News: the page's head, then the cards in three columns that start at three heights, as the Figma scatters them (the
+   right column level with the heading's last line, the left one 112 lower, the middle one 384 lower), 192 between
+   two cards of a column. Two columns on a tablet (the right one lower), one on a phone (every other card against
+   the right edge), in the news' order. Cards from src/data/news.ts. */
+import SectionHead from "@/components/content/SectionHead.astro";
+import CardNews from "@/components/content/CardNews.astro";
+import { news } from "@/data/news.ts";
+
+interface Props {
+  /** Set to `false` to omit the component. */
+  render?: boolean;
+}
+
+const { render = true } = Astro.props;
+/* The Figma's columns, in the order it numbers its cards: right, left, middle */
+const columns = ["is-right", "is-left", "is-middle"].map((place, c) => ({
+  place,
+  items: news.map((item, index) => ({ item, index })).filter(({ index }) => index % 3 === c),
+}));
+---
+
+{
+  render && (
+    <section class="news-list_wrap" data-op-section="NewsList">
+      <div class="news-list_layout site-grid">
+        <SectionHead label="News and awards" heading="Signings, launches, recognition and the occasional thing we're proud of." as="h1" />
+        <div class="news-list_cards" data-op-list="news" data-op-source="src/data/news.ts">
+          {columns.map((col) => (
+            <div class:list={["news-list_col", col.place]}>
+              {col.items.map(({ item, index }) => (
+                <CardNews item={item} index={index} class={index % 2 ? "is-alt" : undefined} />
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<style is:global>
+  @layer components {
+    .news-list_wrap {
+      position: relative;
+      z-index: 1;
+      padding-top: var(--page-top);
+    }
+    /* Below a computer's width: one card after the other in the news' order, three quarters wide on a phone and half
+       on a tablet, every other one against the right edge */
+    .news-list_cards {
+      grid-column: margin / end;
+      display: flex;
+      flex-direction: column;
+      gap: var(--section-space-medium);
+      margin-top: var(--section-space-small);
+    }
+    .news-list_col {
+      display: contents;
+    }
+    .news-list_col .card-news {
+      order: var(--_order);
+      width: 75%;
+      &.is-alt {
+        align-self: end;
+      }
+    }
+    /* A tablet: two columns, the right one set lower (a translate, so the rows stay as they are) */
+    @media (width >= 48rem) and (width < 64rem) {
+      .news-list_cards {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: var(--site-gutter);
+        row-gap: var(--section-space-medium);
+        padding-bottom: var(--section-space-large);
+      }
+      .news-list_col .card-news {
+        grid-column: auto;
+        width: auto;
+        &.is-alt {
+          translate: 0 var(--section-space-large);
+        }
+      }
+    }
+    @media (width >= 64rem) {
+      /* gap: normal, so the columns keep the grid's gutter (a subgrid's own gap would replace it) */
+      .news-list_cards {
+        display: grid;
+        grid-template-columns: subgrid;
+        gap: normal;
+        align-items: start;
+        margin-top: 0;
+      }
+      .news-list_col {
+        display: grid;
+        grid-template-columns: subgrid;
+        grid-row: 1;
+        row-gap: var(--section-space-large);
+        & .card-news {
+          width: auto;
+        }
+        &.is-right {
+          grid-column: three / span 3;
+        }
+        &.is-left {
+          grid-column: margin / span 3;
+          margin-top: var(--section-space-small);
+        }
+        &.is-middle {
+          grid-column: two / span 3;
+          margin-top: calc(var(--section-space-large) * 2);
+        }
+      }
+    }
+  }
+</style>

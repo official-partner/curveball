@@ -1,0 +1,15 @@
+---
+import Layout from "@/layouts/BaseLayout.astro";
+import NewsList from "@/components/section/NewsList.astro";
+import CurveBand from "@/components/section/CurveBand.astro";
+---
+
+<Layout
+  title="News"
+  description="Signings, launches, recognition and the occasional thing Curveball Films is proud of."
+  theme="mustard"
+  accent="mustard"
+>
+  <NewsList />
+  <CurveBand variant="news" />
+</Layout>

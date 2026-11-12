@@ -1,0 +1,56 @@
+---
+/* An inner page's section head: the rule, the label at half strength, the heading in h2's style over ten columns (the
+   Figma's 1378, which keeps its line breaks), or the full width for a statement (wide). The page's first one is its
+   h1. */
+interface Props {
+  /** Set to `false` to omit the component. */
+  render?: boolean;
+  /** The label above the heading (« Get in touch. »). */
+  label?: string;
+  /** The heading. */
+  heading: string;
+  /** Its level: `h1` for the page's first head. */
+  as?: "h1" | "h2";
+  /** The heading over the full width (a statement), rather than ten columns. */
+  wide?: boolean;
+  /** More classes, for where a section places it. */
+  class?: string;
+}
+
+const { render = true, label, heading, as: Tag = "h2", wide = false, class: extra } = Astro.props;
+---
+
+{
+  render && (
+    <header class:list={["section-head", "rule-top", wide && "is-wide", extra]}>
+      {label && <p class="section-head_label text-style-label">{label}</p>}
+      <Tag class="section-head_heading text-style-h2">{heading}</Tag>
+    </header>
+  )
+}
+
+<style is:global>
+  @layer components {
+    .section-head {
+      grid-column: margin / end;
+      display: grid;
+      grid-template-columns: subgrid;
+      align-self: start;
+      align-content: start;
+      row-gap: var(--space-label);
+    }
+    .section-head_label {
+      grid-column: margin / end;
+      color: var(--text-2);
+    }
+    .section-head_heading {
+      grid-column: margin / end;
+      @media (width >= 64rem) {
+        grid-column: margin / span 10;
+      }
+    }
+    .section-head.is-wide .section-head_heading {
+      grid-column: margin / end;
+    }
+  }
+</style>

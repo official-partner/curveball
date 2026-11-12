@@ -1,0 +1,81 @@
+---
+/* Contact's team: its head, then each person where the Figma scatters them (from the rule: at column 10, 238 down; at
+   5, 540; at 1, 898; at 9, 1047; at 5 again, 1232), in the Figma's units scaled with the page. One after the other on
+   a tablet and a phone, every other one against the right edge. People from src/data/contact.ts. */
+import SectionHead from "@/components/content/SectionHead.astro";
+import CardPerson from "@/components/content/CardPerson.astro";
+import { people } from "@/data/contact.ts";
+
+interface Props {
+  /** Set to `false` to omit the component. */
+  render?: boolean;
+}
+
+const { render = true } = Astro.props;
+/* The Figma's scatter, in its order: the column a portrait starts at and how far below the rule */
+const spots = [
+  { col: "aside", y: 238 },
+  { col: "two", y: 540 },
+  { col: "margin", y: 898 },
+  { col: "three", y: 1047 },
+  { col: "two", y: 1232 },
+];
+---
+
+{
+  render && (
+    <section class="team-list_wrap" data-op-section="TeamList">
+      <div class="team-list_layout site-grid" data-op-list="team" data-op-source="src/data/contact.ts">
+        <SectionHead label="The team" heading="One home base, and a crew spread across the map. Nobody's ever a stranger." />
+        {people.map((person, index) => {
+          const spot = spots[index % spots.length];
+          return (
+            <CardPerson
+              person={person}
+              index={index}
+              class:list={["team-list_card", index % 2 ? "is-alt" : undefined]}
+              style={`--_col: ${spot.col}; --_y: ${spot.y};`}
+            />
+          );
+        })}
+      </div>
+    </section>
+  )
+}
+
+<style is:global>
+  @layer components {
+    .team-list_wrap {
+      padding-bottom: var(--section-space-medium);
+    }
+    .team-list_layout {
+      row-gap: var(--section-space-medium);
+    }
+    .team-list_card {
+      grid-column: margin / span 3;
+      &.is-alt {
+        grid-column: span 3 / end;
+      }
+      @media (width >= 48rem) {
+        grid-column: margin / span 4;
+        &.is-alt {
+          grid-column: half / end;
+        }
+      }
+    }
+    @media (width >= 64rem) {
+      .team-list_layout {
+        row-gap: 0;
+      }
+      .team-list_layout > .section-head {
+        grid-row: 1;
+      }
+      .team-list_card,
+      .team-list_card.is-alt {
+        grid-row: 1;
+        grid-column: var(--_col) / span 3;
+        margin-top: calc(var(--u) * var(--_y));
+      }
+    }
+  }
+</style>

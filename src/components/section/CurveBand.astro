@@ -16,12 +16,14 @@ interface Props {
 const { render = true, variant = "home" } = Astro.props;
 
 /* Each drawing: its height, the black shapes (a path and its offset), the ball (centre and radius), the ground
-   (whether the band paints the page's colour itself), and how far it rises behind the section before it. */
+   (whether the band paints the page's colour itself), and how far it rises behind the section before it on a
+   computer (rise) and on a tablet (riseTablet: only Home's, where the sections above keep the Figma's layout). */
 const art = {
   home: {
     height: 1709,
     ground: true,
     rise: 134,
+    riseTablet: 134,
     shapes: [
       {
         y: -226.84,
@@ -34,7 +36,8 @@ const art = {
   news: {
     height: 1935.5,
     ground: false,
-    rise: 0,
+    rise: 1260,
+    riseTablet: 0,
     shapes: [
       {
         y: 0,
@@ -46,7 +49,8 @@ const art = {
   contact: {
     height: 1935.5,
     ground: false,
-    rise: 0,
+    rise: 991,
+    riseTablet: 0,
     shapes: [
       {
         y: 0,
@@ -62,7 +66,7 @@ const art = {
   render && (
     <section
       class:list={["curve-band_wrap", `is-${variant}`]}
-      style={`--_h: ${art.height}; --_rise: ${art.rise};`}
+      style={`--_h: ${art.height}; --_rise: ${art.rise}; --_rise-tablet: ${art.riseTablet};`}
       data-op-section="CurveBand"
     >
       {variant === "home" && (
@@ -131,7 +135,10 @@ const art = {
     @media (width >= 48rem) {
       .curve-band_wrap {
         display: block;
-        margin-top: calc(var(--u) * var(--_rise) * -1);
+        margin-top: calc(var(--u) * var(--_rise-tablet) * -1);
+        @media (width >= 64rem) {
+          margin-top: calc(var(--u) * var(--_rise) * -1);
+        }
       }
       .curve-band_content {
         position: absolute;

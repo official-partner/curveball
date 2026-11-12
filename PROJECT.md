@@ -2,6 +2,26 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-11, Sam (« on teste de faire un nouveau site ensemble »): News and Contact built from the Figma.
+  - News: the head, then the cards in three columns starting at three heights as drawn (the right one level with the
+    heading's last line, the left 112 lower, the middle 384 lower), 192 between two cards of a column; two columns on
+    a tablet (the right one lower, a translate), one on a phone (every other card against the right edge), always in
+    the news' order. The cards are a block of the page (src/data/news.ts, Modifier), not a collection: they link to
+    articles elsewhere, no page of their own. The Figma's six identical cards stay as placeholders (their title and
+    their text name different directors: to fix when the real news are in); « Read » shows without a link until then.
+  - Contact: the four ways in at columns 1 and 6, each block writing to its address; on hover the Figma's dot comes in
+    before the question (a scale and a translate, nothing around it moves). The team: five people where the Figma
+    scatters them (from the rule: column 10, 238 down; 5, 540; 1, 898; 9, 1047; 5, 1232; in the design unit), in
+    order on a tablet (two columns) and a phone (every other one to the right). « Where it started » is a statement
+    over the full width; its « Start a conversation » writes to bids@ (the Figma gives it no target; Home's goes to
+    the Contact page). Placeholders kept: every block writes to bids@curveballfilms.com, every person is Nic Weinfeld,
+    Email and LinkedIn show as text until their addresses are in. Copy fixed: the double space in « Got a job? Got a
+    curveball? ».
+  - One space per relation, applied: a block's question to its text 40 (Figma 48), a portrait to the name 32 (18 to
+    42), a rule to its label 20 (34 on « The team » and « Where it started »).
+  - The curve on News and Contact rises behind the section above it on a computer (1260 and 991, as drawn); on a
+    tablet and a phone, where the sections above are laid out otherwise, it follows them.
+
 - 2026-11-11, Sam (« menu : même endroit partout », 22:40; the three pages as PDF from Figma, 22:41: « placeholder
   images but if you can improve resolution it would be cool »): Home built, with the menu and the footer every page
   shares.

@@ -1,0 +1,119 @@
+---
+/* A person of the team: the round portrait over two columns, the name and the role (the role at 30 %), the city with
+   Email and LinkedIn a column over, then a few lines in large. */
+import Img from "@/components/media/Img.astro";
+import type { Person } from "@/data/contact.ts";
+
+interface Props {
+  /** Set to `false` to omit the component. */
+  render?: boolean;
+  /** The person. */
+  person: Person;
+  /** Its place in the list, for OP System's Modifier. */
+  index?: number;
+  /** More classes, for where a list places it. */
+  class?: string;
+  /** Custom properties a list places it with. */
+  style?: string;
+}
+
+const { render = true, person, index = 0, class: extra, style = "" } = Astro.props;
+const links = [
+  { label: "Email", href: person.email ? `mailto:${person.email}` : "" },
+  { label: "Linkedin", href: person.linkedin },
+];
+---
+
+{
+  render && (
+    <article class:list={["card-person", extra]} data-op-item={String(index)} style={`--_order: ${index}; ${style}`}>
+      <div class="card-person_media">
+        <Img class="card-person_img" src={person.photo} alt={person.alt} variant="constrained" sizes="(min-width: 64rem) 16vw, 50vw" />
+      </div>
+      <p class="card-person_name text-style-main">
+        <span data-op-field="name">{person.name}</span>
+        <br />
+        <span class="card-person_role" data-op-field="role">
+          {person.role}
+        </span>
+      </p>
+      <p class="card-person_location text-style-main" data-op-field="location">
+        {person.location}
+      </p>
+      <ul class="card-person_links text-style-main">
+        {links.map((l) => (
+          <li>{l.href ? <a href={l.href}>{l.label}</a> : <span>{l.label}</span>}</li>
+        ))}
+      </ul>
+      <p class="card-person_bio text-style-large" data-op-field="bio">
+        {person.bio}
+      </p>
+    </article>
+  )
+}
+
+<style is:global>
+  @layer components {
+    .card-person {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: var(--site-gutter);
+      align-content: start;
+      @media (width >= 64rem) {
+        grid-template-columns: subgrid;
+      }
+    }
+    .card-person_media {
+      grid-column: 1 / span 2;
+      position: relative;
+      aspect-ratio: 1;
+      border-radius: var(--radius-round);
+      overflow: clip;
+      background-color: var(--background-2);
+    }
+    .card-person_img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .card-person_name {
+      grid-column: 1 / -1;
+      margin-top: var(--space-media);
+    }
+    .card-person_role,
+    .card-person_links {
+      color: var(--text-3);
+    }
+    .card-person_location {
+      grid-column: 1 / span 2;
+      margin-top: var(--space-title);
+      @media (width >= 64rem) {
+        grid-column: 1;
+      }
+    }
+    .card-person_links {
+      grid-column: 3;
+      grid-row: 3;
+      @media (width >= 64rem) {
+        grid-column: 2 / -1;
+      }
+      margin-top: var(--space-title);
+      & a {
+        color: inherit;
+        transition: color var(--hover-duration) var(--hover-ease);
+        @media (hover: hover) {
+          &:hover {
+            color: var(--text);
+          }
+        }
+      }
+    }
+    .card-person_bio {
+      grid-column: 1 / -1;
+      max-width: 18.5em;
+      margin-top: var(--space-6);
+    }
+  }
+</style>

@@ -36,3 +36,4 @@ Sep 30). The values live in system/curveball.json; base.css is generated from it
 - Nav, Footer (global): the menu at columns 7 and 10 on every page; the footer opens with the curve in the page's
   colour, the symbol in that colour, the menu, the line and the small print.
 - HeroHome, DirectorsHome, CurveBand (sections), ArrowLink (a link with its drawn arrow).
+- NewsList, ContactIntro, TeamList, Statement (sections); SectionHead, CardNews, ContactBlock, CardPerson (content).
