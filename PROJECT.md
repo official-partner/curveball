@@ -356,3 +356,6 @@ One line per decision: the date, who asked, what was decided and why. The newest
   (h3) in the lower stem where About puts « Let's swing », its link at the stem's foot, both on the margin; below a
   computer, as About: the title, the drawing, then the call. Read « même taille de typo » as the call's own size: at
   h1's it takes four lines, more than the stem holds.
+- 2026-11-12, Samuel Charpentier (comment 18): About's « Start a conversation » never showed on a computer: each block
+  fades in as the ball comes level with it, and the link (1607 down the band) sits below the ball's lowest point
+  (1386.5). A block below that point now shows when the ball reaches it, just after « Let's swing ».

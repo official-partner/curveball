@@ -102,6 +102,7 @@ const START = 275;
     const count = track.length / 3;
     const startAt = Number(svg.dataset.start ?? 0) / (count - 1);
     const height = svg.viewBox.baseVal.height;
+    const lowest = Math.max(...track.filter((_, i) => i % 3 === 1));
     const rest = (["cx", "cy", "r"] as const).map((a) => ball.getAttribute(a) ?? "");
     const at = (p: number) => {
       const f = Math.min(Math.max(p, 0), 1) * (count - 1);
@@ -148,7 +149,8 @@ const START = 275;
         const measure = () => {
           const box = svg.getBoundingClientRect();
           const k = height / box.height;
-          tops = blocks.map((el) => (el.getBoundingClientRect().top - box.top) * k);
+          // a block below the ball's lowest point (the link, at the stem's foot) shows when the ball gets there
+          tops = blocks.map((el) => Math.min((el.getBoundingClientRect().top - box.top) * k, lowest));
         };
         const update = () => {
           const [x, y, r] = at(progress());
