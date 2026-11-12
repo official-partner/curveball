@@ -18,7 +18,7 @@ const { render = true } = Astro.props;
     <section class="contact-intro_wrap" data-op-section="ContactIntro">
       <div class="contact-intro_layout site-grid">
         <SectionHead label="Get in touch." heading="Tell us which one you are and we'll skip you to the right person." as="h1" />
-        <div class="contact-intro_blocks" data-op-list="contact-blocks" data-op-source="src/data/contact.ts">
+        <div class="contact-intro_blocks" data-op-list="contact-blocks" data-op-source="src/data/contact.ts" data-page-reveal>
           {blocks.map((block, index) => (
             <ContactBlock block={block} index={index} />
           ))}

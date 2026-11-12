@@ -74,9 +74,9 @@
   --open-ease: var(--ease-out);
   --loader-duration: 600ms;
   --loader-ease: var(--ease-arrive);
-  --page-leave-duration: 320ms;
+  --page-leave-duration: var(--duration-medium);
   --page-leave-ease: var(--ease-out);
-  --page-arrive-duration: 560ms;
+  --page-arrive-duration: var(--duration-base);
   --page-arrive-ease: var(--ease-arrive);
   --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-osmo: var(--ease-arrive);

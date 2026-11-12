@@ -10,8 +10,11 @@ Sep 30). The values live in system/curveball.json; base.css is generated from it
   red on Home, mustard on News, teal on Contact. That is the site's one signature; everything around it stays quiet
   (one dark ground, big type, thin rules, small labels).
 - The client asked for the play to come through motion and interaction rather than static graphics (Sep 21): the
-  pixel hand that points at what can be clicked (the Figma's « Play » and the contact titles), the dot that appears
-  before a hovered title, the ball. Motion follows OP's two tiers and the named durations of base.css.
+  ball travels through its curve as the page scrolls, filling its stroke as the brand guide's balls do and never cut
+  by another section; the dot appears before a hovered title. A page change stays classic (Sam, Nov 11): the page
+  dissolves into its colour, the colour turns to the next page's, its opening elements rise into place. The Figma's
+  cursors only show what can be clicked: no custom cursor (Sam, Nov 11). Motion follows OP's two tiers and the named
+  durations of base.css; smooth scroll medium (Lenis).
 - Each page has its ground: Home dark (black, stone text, taupe for the big type), News mustard, Contact teal, both
   with black text. The footer is dark everywhere and takes the page's colour for its mark.
 
@@ -30,7 +33,7 @@ Sep 30). The values live in system/curveball.json; base.css is generated from it
 - .rule-top: the rule that opens a row or a section, and --space-rule to the text under it (Home's two rows, the
   inner pages' sections).
 - .dot-label: the dot before a label, centred on its capitals (« Featured work », « Directors »).
-- The pixel hand over every link and button; main is the container of the design unit --u.
+- main is the container of the design unit --u.
 
 ## Components
 - Nav, Footer (global): the menu at columns 7 and 10 on every page; the footer opens with the curve in the page's

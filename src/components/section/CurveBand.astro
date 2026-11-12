@@ -5,6 +5,7 @@
    outline of the « u » opening to one side. Geometry in the Figma's units (1728 wide), measured on each page and
    scaled with the page's width; the band's foot meets the footer's curve (28 apart on News and Contact). */
 import ArrowLink from "@/components/content/ArrowLink.astro";
+import tracks from "@/data/curve-tracks.json";
 
 interface Props {
   /** Set to `false` to omit the component. */
@@ -15,9 +16,12 @@ interface Props {
 
 const { render = true, variant = "home" } = Astro.props;
 
-/* Each drawing: its height, the black shapes (a path and its offset), the ball (centre and radius), the ground
-   (whether the band paints the page's colour itself), and how far it rises behind the section before it on a
-   computer (rise) and on a tablet (riseTablet: only Home's, where the sections above keep the Figma's layout). */
+/* Each drawing: its height, the black shapes (a path and its offset), the ball where it rests (centre and radius, as
+   the Figma renders it: the PDF export), the ground (whether the band paints the page's colour itself), how far it
+   rises behind the section before it on a computer (rise) and on a tablet (riseTablet: only Home's, where the
+   sections above keep the Figma's layout), and when the ball travels: it leaves the start of its track when that
+   point is `startAt` down the screen and lands where the Figma rests it when the rest point is `endAt` down. The
+   tracks (the stroke's centre line, the ball's radius along it) come from system/curve-tracks.py. */
 const art = {
   home: {
     height: 1709,
@@ -31,7 +35,9 @@ const art = {
       },
       { y: 0, d: "M1121.51 0H1728V317.88H1121.51Z" },
     ],
-    ball: { cx: 1166.96, cy: 1341.86, r: 368.61 },
+    ball: { cx: 1167, cy: 1342, r: 276 },
+    startAt: 0.8,
+    endAt: 0.6,
   },
   news: {
     height: 1935.5,
@@ -44,7 +50,9 @@ const art = {
         d: "M2265.01 957.828C2260.76 1570.84 1877.63 1907.14 1336.99 1907.14L-39.7122 1907.14L-39.7122 1319.67L1294.42 1319.67C1575.38 1319.67 1749.92 1196.22 1754.17 957.828C1758.43 698.15 2143.2 587.468 1857.98 587.468L1791.58 587.468L1791.58 0L1900.55 0C2415.65 0 2269.27 395.902 2265.01 957.828Z",
       },
     ],
-    ball: { cx: 1123.85, cy: 1610.69, r: 364.48 },
+    ball: { cx: 1123.5, cy: 1610.8, r: 273 },
+    startAt: 1,
+    endAt: 0.6,
   },
   contact: {
     height: 1935.5,
@@ -57,9 +65,12 @@ const art = {
         d: "M-524.684 957.828C-520.427 1570.84 -137.295 1907.14 403.345 1907.14L1780.04 1907.14L1780.04 1319.67L445.916 1319.67C164.953 1319.67 -9.58459 1196.22 -13.8417 957.828C-18.0987 698.15 -402.872 587.468 -117.652 587.468L-51.2505 587.468L-51.2505 0L-160.223 0C-675.321 0 -528.941 395.902 -524.684 957.828Z",
       },
     ],
-    ball: { cx: 1556.48, cy: 1612.54, r: 364.48 },
+    ball: { cx: 1556.5, cy: 1612.3, r: 273 },
+    startAt: 1.1,
+    endAt: 0.6,
   },
 }[variant];
+const track = tracks[variant];
 ---
 
 {
@@ -76,7 +87,13 @@ const art = {
         </div>
       )}
       <div class="curve-band_art" aria-hidden="true">
-        <svg viewBox={`0 0 1728 ${art.height}`} focusable="false">
+        <svg
+          viewBox={`0 0 1728 ${art.height}`}
+          focusable="false"
+          data-track={JSON.stringify(track)}
+          data-start-at={art.startAt}
+          data-end-at={art.endAt}
+        >
           {art.ground && <rect class="curve-band_ground" width="1728" height={art.height} />}
           {art.shapes.map((s) => (
             <path class="curve-band_shape" d={s.d} transform={s.y ? `translate(0 ${s.y})` : undefined} />
@@ -87,6 +104,75 @@ const art = {
     </section>
   )
 }
+
+<script>
+  /* The ball travels through its curve as the page scrolls (Sam, Nov 11: « qu'au scroll down, la boule voyage à travers
+     sa shape », after the brand guide's balls rolling through their strokes): along the stroke's centre line, filling
+     it by the share the Figma gives it at rest (a little smaller round a bend), to where the Figma rests it.
+     Scrubbed: the scroll is the curve, smoothed a little on top of Lenis. The markup shows the ball at rest: without
+     JS or with reduced motion it simply sits there. */
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { onPage } from "@/utils/page.ts";
+  import { scrollTriggerWithLenis } from "@/utils/smooth-scroll.ts";
+
+  gsap.registerPlugin(ScrollTrigger);
+  scrollTriggerWithLenis(gsap, ScrollTrigger);
+
+  onPage((signal) => {
+    const mm = gsap.matchMedia();
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      const undo: (() => void)[] = [];
+      document.querySelectorAll<SVGSVGElement>(".curve-band_art svg[data-track]").forEach((svg) => {
+        const ball = svg.querySelector<SVGCircleElement>(".curve-band_ball");
+        const track = JSON.parse(svg.dataset.track ?? "[]") as number[];
+        const count = track.length / 3;
+        if (!ball || count < 2) return;
+        const startAt = Number(svg.dataset.startAt ?? 0.8);
+        const endAt = Number(svg.dataset.endAt ?? 0.6);
+        const rest = (["cx", "cy", "r"] as const).map((a) => ball.getAttribute(a) ?? "");
+        const height = svg.viewBox.baseVal.height;
+        const box = () => svg.getBoundingClientRect();
+        // a point of the track (in the drawing's units) as a scroll position: when it sits `at` down the screen
+        const scrollFor = (y: number, at: number) => {
+          const r = box();
+          return r.top + window.scrollY + (y / height) * r.height - window.innerHeight * at;
+        };
+        const place = (p: number) => {
+          const f = Math.min(Math.max(p, 0), 1) * (count - 1);
+          const i = Math.min(Math.floor(f), count - 2);
+          const t = f - i;
+          const a = i * 3;
+          const b = a + 3;
+          ball.setAttribute("cx", (track[a] + (track[b] - track[a]) * t).toFixed(1));
+          ball.setAttribute("cy", (track[a + 1] + (track[b + 1] - track[a + 1]) * t).toFixed(1));
+          ball.setAttribute("r", (track[a + 2] + (track[b + 2] - track[a + 2]) * t).toFixed(1));
+        };
+        const state = { p: 0 };
+        place(0);
+        gsap.to(state, {
+          p: 1,
+          ease: "none",
+          onUpdate: () => place(state.p),
+          scrollTrigger: {
+            trigger: svg,
+            start: () => scrollFor(track[1], startAt),
+            end: () => scrollFor(track[(count - 1) * 3 + 1], endAt),
+            scrub: 0.5,
+            invalidateOnRefresh: true,
+          },
+        });
+        undo.push(() => {
+          ball.setAttribute("cx", rest[0]);
+          ball.setAttribute("cy", rest[1]);
+          ball.setAttribute("r", rest[2]);
+        });
+      });
+      return () => undo.forEach((u) => u());
+    });
+    signal.addEventListener("abort", () => mm.revert(), { once: true });
+  });
+</script>
 
 <style is:global>
   @layer components {
@@ -104,6 +190,7 @@ const art = {
         inset: 0;
         width: 100%;
         height: 100%;
+        overflow: visible;
       }
     }
     .curve-band_ground {

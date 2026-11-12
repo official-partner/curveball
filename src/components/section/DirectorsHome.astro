@@ -21,7 +21,7 @@ const filters = [
 
 {
   render && (
-    <section class="directors-home_wrap theme-dark" data-op-section="DirectorsHome">
+    <section class="directors-home_wrap" data-op-section="DirectorsHome">
       <div class="directors-home_layout site-grid">
         <div class="directors-home_row rule-top">
           <h2 class="directors-home_label dot-label text-style-large">Directors</h2>
@@ -108,7 +108,8 @@ const filters = [
 
 <style is:global>
   @layer components {
-    /* Above the curve that rises behind its last names (CurveBand on Home) */
+    /* Above the curve that rises behind its last names (CurveBand on Home), with no ground of its own (the page's
+       dark shows through), so the curve's ball is never cut by the section's edge (Sam, Nov 11) */
     .directors-home_wrap {
       position: relative;
       z-index: 1;

@@ -1,0 +1,135 @@
+---
+/* The site's page transition (op.config.json "transition": "custom"), on Astro's router, never Barba. Sam, Nov 11:
+   « juste un gros fade avec les couleurs qui vont changer, les éléments qui apparaissent... classique, clean, smooth
+   et seamless ». Its job: carry the visitor from one page's colour to the next without a seam.
+   A link followed: a veil in the page's own ground fades in over everything (the page dissolves into its colour) on
+   the leave's timing while the next page loads; once it is in, the veil turns to the next page's ground; the page is
+   swapped under it, at its top; then the veil fades away on the arrival's timing while the next page's opening
+   elements (`data-page-reveal`, in their order) rise into place. Back and forward cut. Reduced motion: a short
+   crossfade, nothing moves.
+   `head`: its styles and script; `body`: the veil, kept across pages (transition:persist). */
+interface Props {
+  /** Set to `false` to omit the component. */
+  render?: boolean;
+  /** `head`: the styles and the script. `body`: the veil, first in the body. */
+  part?: "head" | "body";
+}
+
+const { render = true, part = "head" } = Astro.props;
+---
+
+{render && part === "body" && <div class="page-veil" transition:persist="page-veil" aria-hidden="true" />}
+
+<script>
+  import type { TransitionBeforePreparationEvent } from "astro:transitions/client";
+
+  const root = document.documentElement;
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+  const token = (name: string) => getComputedStyle(root).getPropertyValue(name).trim();
+  const ms = (name: string) => {
+    const value = token(name);
+    const n = parseFloat(value) || 0;
+    return /ms$/.test(value) ? n : /s$/.test(value) ? n * 1000 : n;
+  };
+  const veil = () => document.querySelector<HTMLElement>(".page-veil");
+  /* A page's ground: its theme class (on <html>) read through a hidden probe, so the theme's own colour is used */
+  const groundOf = (classes: string) => {
+    const probe = document.createElement("div");
+    probe.className = classes.split(/\s+/).filter((c) => c.startsWith("theme-")).join(" ") || "theme-dark";
+    probe.style.cssText = "position:fixed;width:0;height:0;visibility:hidden";
+    document.body.append(probe);
+    const colour = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    return colour;
+  };
+  let covered = false;
+
+  document.addEventListener("astro:before-preparation", (event) => {
+    const prep = event as TransitionBeforePreparationEvent;
+    const el = veil();
+    if (root.dataset.pageTransition !== "custom" || !el) return;
+    if (prep.navigationType === "traverse") return;
+    const quick = reduce.matches;
+    const from = groundOf(root.className);
+    const load = prep.loader;
+    prep.loader = async () => {
+      covered = true;
+      el.getAnimations().forEach((a) => a.cancel());
+      el.style.backgroundColor = from;
+      el.style.visibility = "visible";
+      const duration = quick ? ms("--hover-duration") : ms("--page-leave-duration");
+      const easing = quick ? "linear" : token("--page-leave-ease") || "ease-out";
+      const fade = el.animate([{ opacity: 0 }, { opacity: 1 }], { duration, easing, fill: "forwards" });
+      await load();
+      const to = prep.newDocument ? groundOf(prep.newDocument.documentElement.className) : from;
+      if (to !== from) {
+        // the colour turns once the next page is known, overlapping the fade when it loads fast
+        const turn = el.animate([{ backgroundColor: from }, { backgroundColor: to }], { duration, easing, fill: "forwards" });
+        await turn.finished.catch(() => {});
+      }
+      await fade.finished.catch(() => {});
+      el.style.backgroundColor = to;
+      el.style.opacity = "1";
+      el.getAnimations().forEach((a) => a.cancel());
+    };
+  });
+
+  document.addEventListener("astro:after-swap", () => {
+    const el = veil();
+    if (!covered || !el) return;
+    covered = false;
+    const quick = reduce.matches;
+    const duration = quick ? ms("--hover-duration") : ms("--page-arrive-duration");
+    const fade = el.animate([{ opacity: 1 }, { opacity: 0 }], {
+      duration,
+      easing: quick ? "linear" : token("--ease-out") || "ease-out",
+      fill: "forwards",
+    });
+    fade.finished
+      .then(() => {
+        if (covered) return;
+        el.style.visibility = "";
+        el.style.opacity = "";
+        el.getAnimations().forEach((a) => a.cancel());
+      })
+      .catch(() => {});
+    if (quick) return;
+    /* The next page's opening elements rise into place as the veil lifts, 70 ms apart (the stagger capped at 420) */
+    const items = [...document.querySelectorAll<HTMLElement>("[data-page-reveal]")];
+    const gap = Math.min(70, 420 / Math.max(1, items.length));
+    items.forEach((item, i) => {
+      item.animate(
+        [
+          { opacity: 0, translate: "0 1.25rem" },
+          { opacity: 1, translate: "0 0" },
+        ],
+        {
+          duration: ms("--duration-base"),
+          easing: token("--ease-out") || "ease-out",
+          delay: duration * 0.2 + i * gap,
+          fill: "backwards",
+        },
+      );
+    });
+  });
+</script>
+
+<style is:global>
+  @layer components {
+    /* The page is swapped under the veil at once (its script fades it); without the veil, a cut */
+    html[data-page-transition="custom"][data-astro-transition]::view-transition-group(*),
+    html[data-page-transition="custom"][data-astro-transition]::view-transition-old(*),
+    html[data-page-transition="custom"][data-astro-transition]::view-transition-new(*) {
+      animation: none;
+    }
+    .page-veil {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      visibility: hidden;
+      opacity: 0;
+      pointer-events: none;
+      view-transition-name: page-veil;
+    }
+  }
+</style>

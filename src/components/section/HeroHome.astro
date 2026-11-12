@@ -1,6 +1,6 @@
 ---
 /* Home's opening: a featured film's still across the screen under the wordmark, darker towards the foot (30 % black,
-   then a fade to the page's black), « Play » where the Figma puts it, and the featured work's row at the bottom.
+   then a fade to the page's black), and the featured work's row at the bottom.
    The wordmark runs margin to margin (its own drawing measures the Figma's « curveball » exactly: 1664 x 315.6 at
    1728). The still is the Figma's placeholder (a 793 px screenshot), cut to the part the Figma shows and enlarged twice,
    until the films are in. */
@@ -33,12 +33,11 @@ const first = featured[0];
         )}
       </div>
       <div class="hero-home_layout site-grid">
-        <h1 class="hero-home_title">
+        <h1 class="hero-home_title" data-page-reveal>
           <Wordmark class="hero-home_wordmark" aria-hidden="true" />
           <span class="sr-only">{SITE_NAME}</span>
         </h1>
-        <span class="hero-home_play text-style-main" aria-hidden="true">Play</span>
-        <div class="hero-home_row rule-top" data-op-list="featured" data-op-source="src/data/featured.ts">
+        <div class="hero-home_row rule-top" data-op-list="featured" data-op-source="src/data/featured.ts" data-page-reveal>
           <p class="hero-home_label dot-label text-style-main">Featured work</p>
           <p class="hero-home_client text-style-main" data-op-item="0">
             <span class="hero-home_key">Client</span>
@@ -114,15 +113,6 @@ const first = featured[0];
       display: block;
       width: 100%;
       height: auto;
-    }
-    .hero-home_play {
-      grid-column: aside;
-      grid-row: 2;
-      align-self: center;
-      display: none;
-      @media (width >= 64rem) {
-        display: block;
-      }
     }
     .hero-home_row {
       grid-column: margin / end;

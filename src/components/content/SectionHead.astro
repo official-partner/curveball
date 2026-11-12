@@ -1,7 +1,7 @@
 ---
 /* An inner page's section head: the rule, the label at half strength, the heading in h2's style over ten columns (the
    Figma's 1378, which keeps its line breaks), or the full width for a statement (wide). The page's first one is its
-   h1. */
+   h1, and rises into place after a page change (data-page-reveal, TransitionCustom). */
 interface Props {
   /** Set to `false` to omit the component. */
   render?: boolean;
@@ -23,8 +23,14 @@ const { render = true, label, heading, as: Tag = "h2", wide = false, class: extr
 {
   render && (
     <header class:list={["section-head", "rule-top", wide && "is-wide", extra]}>
-      {label && <p class="section-head_label text-style-label">{label}</p>}
-      <Tag class="section-head_heading text-style-h2">{heading}</Tag>
+      {label && (
+        <p class="section-head_label text-style-label" data-page-reveal={Tag === "h1" ? "" : undefined}>
+          {label}
+        </p>
+      )}
+      <Tag class="section-head_heading text-style-h2" data-page-reveal={Tag === "h1" ? "" : undefined}>
+        {heading}
+      </Tag>
     </header>
   )
 }

@@ -25,7 +25,7 @@ const columns = ["is-right", "is-left", "is-middle"].map((place, c) => ({
     <section class="news-list_wrap" data-op-section="NewsList">
       <div class="news-list_layout site-grid">
         <SectionHead label="News and awards" heading="Signings, launches, recognition and the occasional thing we're proud of." as="h1" />
-        <div class="news-list_cards" data-op-list="news" data-op-source="src/data/news.ts">
+        <div class="news-list_cards" data-op-list="news" data-op-source="src/data/news.ts" data-page-reveal>
           {columns.map((col) => (
             <div class:list={["news-list_col", col.place]}>
               {col.items.map(({ item, index }) => (

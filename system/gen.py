@@ -49,7 +49,7 @@ w("  --duration-faster: 150ms;\n  --duration-fast: 250ms;\n  --duration-medium: 
   "  --duration-slow: 1200ms;\n  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);\n  --ease-arrive: cubic-bezier(0.625, 0.05, 0, 1);")
 w("  --hover-duration: var(--duration-fast);\n  --hover-ease: var(--ease-out);\n  --open-duration: var(--duration-medium);\n"
   "  --open-ease: var(--ease-out);\n  --loader-duration: 600ms;\n  --loader-ease: var(--ease-arrive);\n"
-  "  --page-leave-duration: 320ms;\n  --page-leave-ease: var(--ease-out);\n  --page-arrive-duration: 560ms;\n"
+  "  --page-leave-duration: var(--duration-medium);\n  --page-leave-ease: var(--ease-out);\n  --page-arrive-duration: var(--duration-base);\n"
   "  --page-arrive-ease: var(--ease-arrive);")
 w("  --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);\n  --ease-osmo: var(--ease-arrive);\n  --ease-rebound: cubic-bezier(0.34, 1.56, 0.64, 1);")
 w("\n  /* Radius: the design has no rounded corner but full circles (the photos, the ball, the dot) */")

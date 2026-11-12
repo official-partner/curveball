@@ -5,7 +5,7 @@ import type { TransitionPreset } from "@/utils/finishes.ts";
 interface Props {
   /** Set to `false` to omit the component. */
   render?: boolean;
-  /** `head`: Astro's router and the transition's styles and scripts. `body`: the curtain, first in the body (`curtain` only). */
+  /** `head`: Astro's router and the transition's styles and scripts. `body`: the curtain, first in the body (`curtain`), or the site's own cover (`custom`, when TransitionCustom.astro has a `body` part). */
   part: "head" | "body";
   /** The transition: a crossfade (`fade`), the page lifting away as the next one rises (`slide`), a curtain in the brand's colour (`curtain`), or the site's own (`custom`: src/components/system/TransitionCustom.astro). */
   preset?: TransitionPreset;
@@ -16,7 +16,7 @@ const { render = true, part, preset: asked = "slide" } = Astro.props;
 /* The site's own transition (op.config.json "transition": "custom"), made by Claude from the team's words: its styles
    and scripts in TransitionCustom.astro, scoped to html[data-page-transition="custom"]. Missing, the slide stands in. */
 const [Custom] = Object.values(
-  import.meta.glob<{ default: (props: object) => unknown }>(
+  import.meta.glob<{ default: (props: { part?: "head" | "body" }) => unknown }>(
     "/src/components/system/TransitionCustom.astro",
     { eager: true },
   ),
@@ -40,10 +40,12 @@ document.addEventListener("astro:after-swap", () => {
     <Fragment>
       <ClientRouter />
       <script is:inline set:html={SCRIPT} />
-      {preset === "custom" && Custom && <Custom />}
+      {preset === "custom" && Custom && <Custom part="head" />}
     </Fragment>
   )
 }
+
+{render && part === "body" && preset === "custom" && Custom && <Custom part="body" />}
 
 {
   render && part === "body" && preset === "curtain" && (

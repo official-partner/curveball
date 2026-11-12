@@ -2,6 +2,26 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-11, Sam (23:05 to 23:38: « les boules ... sont trop grosses, ils dépassent ... comme dans Figma », « qu'au
+  scroll down, la boule voyage à travers sa shape », « le lenis Smooth scroll », « pas de grosse boule ... juste un
+  gros fade avec les couleurs qui vont changer, les éléments qui apparaissent », « pas ces curseurs-là », « faudrait
+  pas que la boule soit coupée »): the curve band's balls, the page change, the cursors.
+  - The balls measured on the Figma's render (the PDF), not on its layer boxes (737 and 729, larger than drawn): Home
+    276 at 1167, 1342; News 273 at 1123.5, 1610.8; Contact 273 at 1556.5, 1612.3 (cut by the right edge, as drawn).
+  - Each ball travels through its stroke as the page scrolls (scrubbed, GSAP ScrollTrigger on Lenis): along the
+    stroke's centre line, filling it by the share the Figma gives it at rest (Home 97 %, News 93.6 %, Contact 93.1 %;
+    the brand guide's rule, a ball fills its stroke), so it shrinks a little round a bend and lands on the Figma's
+    centre and radius. Home's trip starts on the upper bend, clear of the last director names, and lands when its
+    rest point is 60 % down the screen; News and Contact roll in from the edge. The tracks are computed from the
+    shapes by system/curve-tracks.py (src/data/curve-tracks.json). Reduced motion: the ball rests where the Figma has it.
+  - No section paints over the band any more (the directors section had its own dark ground, which cut the ball).
+  - Smooth scroll on, medium (Lenis).
+  - The page change is a colour fade (transition custom): the page dissolves into its own colour, the colour turns to
+    the next page's, the next page comes up with its opening elements rising into place (data-page-reveal). The ball
+    cover tried first is gone. Back and forward cut; reduced motion a short crossfade.
+  - No custom cursor on this site (the Figma's pixel hand only shows what is clickable): removed, with « Play »,
+    which was only a cursor label. A custom cursor only when the team asks for one.
+
 - 2026-11-11, Sam (« on teste de faire un nouveau site ensemble »): News and Contact built from the Figma.
   - News: the head, then the cards in three columns starting at three heights as drawn (the right one level with the
     heading's last line, the left 112 lower, the middle 384 lower), 192 between two cards of a column; two columns on
