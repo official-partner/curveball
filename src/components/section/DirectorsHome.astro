@@ -3,9 +3,10 @@
    Figma), then every director's name in the big type, one per line, each a link to their page. A filter keeps the
    names that match it; « All » shows everyone. The directors come from the collection « Directors ».
    The name that crosses the middle of the screen is the active one (Sam, Nov 11: « les noms seraient actifs au milieu
-   de l'écran et non pas au over »): the section takes that director's colour (the same as their page), the active
-   name turns black, the others black at 30 %, and balls carrying their films rise through the screen. Home shows it on
-   the page's dark; a director's page shows it as « Other Directors » (without them) on its own dark. */
+   de l'écran et non pas au over »; Nov 12: the first caught earlier, the last kept later): the whole page takes that
+   director's colour (the same as their page), the active name turns black, the others black at 30 %, and that
+   director's own balls, carrying their films, rise through the screen. Home shows it on the page's dark; a
+   director's page shows it as « Other Directors » (without them) on its own dark. */
 import { getImage } from "astro:assets";
 import { getItems, LIVE } from "@/utils/content.ts";
 
@@ -42,7 +43,6 @@ const stills = Object.fromEntries(
     }),
   ),
 );
-const BALLS = 7;
 const industries = ["Docustyle", "Comedy", "Story", "Spectacle", "Fashion"];
 const locations = ["Chicago", "Los Angeles", "New Orleans", "New York"];
 const filters = [
@@ -53,7 +53,11 @@ const filters = [
 
 {
   render && (
-    <section class:list={["directors-home_wrap", dark && "theme-dark", Heading === "h1" && "is-page"]} data-op-section="DirectorsHome">
+    <section
+      class:list={["directors-home_wrap", dark && "theme-dark is-dark", Heading === "h1" && "is-page"]}
+      data-paint={dark ? "theme-dark" : undefined}
+      data-op-section="DirectorsHome"
+    >
       <div class="directors-home_layout site-grid">
         <div class="directors-home_row rule-top">
           <Heading class="directors-home_label dot-label text-style-large" data-page-reveal={Heading === "h1" ? "" : undefined}>
@@ -88,7 +92,6 @@ const filters = [
               data-industry={(d.data.industries ?? []).join("|")}
               data-location={d.data.location ?? ""}
               data-colour={d.data.colour ?? "red"}
-              data-stills={JSON.stringify(stills[d.id] ?? [])}
             >
               <a class="directors-home_name" href={`/directors/${d.id}`} data-op-field="name">
                 {d.data.name}
@@ -101,12 +104,13 @@ const filters = [
         </p>
       </div>
       <div class="directors-home_balls" aria-hidden="true">
-        {Array.from({ length: BALLS }, () => (
-          <span class="directors-home_ball">
-            <img class="directors-home_film" alt="" decoding="async" />
-            <img class="directors-home_film" alt="" decoding="async" />
-          </span>
-        ))}
+        {directors.map((d) =>
+          (stills[d.id] ?? []).slice(0, 3).map((src) => (
+            <span class="directors-home_ball" data-for={d.id}>
+              <img class="directors-home_film" alt="" decoding="async" data-src={src} />
+            </span>
+          )),
+        )}
       </div>
     </section>
   )
@@ -114,179 +118,190 @@ const filters = [
 
 <script>
   import { gsap } from "gsap";
+  import { CustomEase } from "gsap/CustomEase";
   import { onPage } from "@/utils/page.ts";
 
-  /* The balls, after Sam (Nov 12: « scale up apparaître, down disparaître en haut, plus smooth, mieux réfléchi »).
-     Each is born low in the list, grows to its size (ease-out), rises, and near the top shrinks to nothing (ease-in)
-     before being born again low down with another film: it never meets an edge, of the screen or of a section. The
-     scroll carries them up, the near (big) ones faster than the far (small) ones, a parallax; their speed follows the
-     scroll's own, smoothed, so they ease in and out of motion; after a scroll they keep drifting up a little and
-     settle within four seconds of rest (WCAG 2.2.2). Seven lanes across the width, a slight sway while they move. */
-  const LANES = [0.12, 0.72, 0.42, 0.9, 0.27, 0.58, 0.05];
-  const DEPTH = [1.15, 0.82, 1, 0.75, 1.25, 0.9, 1.05];
+  gsap.registerPlugin(CustomEase);
   const THEMES: Record<string, string> = { red: "theme-brand", mustard: "theme-mustard", teal: "theme-teal" };
-  const grow = (t: number) => 1 - (1 - Math.min(1, Math.max(0, t))) ** 3;
+  const ALL = Object.values(THEMES);
+  /* Each director's balls, after the Figma's three hover frames (James, Jasper, Kevin) and Sam (Nov 12: « moins de
+     boules, 2, 3 ou 4 par écran, plus scattered ... chaque director a ses propres boules qui scroll de bas en haut »):
+     [x, y, pace], where the ball's centre is when its director's name is in the middle of the screen (fractions of
+     the screen), and how much faster than the names it rises. Directors take the three in turn, mirrored every
+     other round, so two neighbours never share a place. */
+  const LAYOUTS: [number, number, number][][] = [
+    [
+      [0.32, 0.16, 1.45],
+      [0.77, 0.62, 1.85],
+      [0.42, 0.9, 1.6],
+    ],
+    [
+      [0.42, 0.26, 1.5],
+      [0.76, 0.74, 1.8],
+      [0.18, 0.92, 1.6],
+    ],
+    [
+      [0.52, 0.04, 1.55],
+      [0.89, 0.68, 1.85],
+      [0.25, 0.82, 1.45],
+    ],
+  ];
+  const css = (name: string) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  const seconds = (name: string) => (parseFloat(css(name)) || 0) / (css(name).endsWith("ms") ? 1000 : 1);
+  const curve = (name: string, fallback: string) => {
+    const m = css(name).match(/cubic-bezier\(([^)]+)\)/);
+    return CustomEase.create(`directors${name}`, m ? m[1] : fallback);
+  };
 
   onPage((signal) => {
     document.querySelectorAll<HTMLElement>(".directors-home_wrap").forEach((wrap) => {
       const items = [...wrap.querySelectorAll<HTMLElement>(".directors-home_item")];
-      const list = wrap.querySelector<HTMLElement>(".directors-home_list");
       const empty = wrap.querySelector<HTMLElement>(".directors-home_empty");
-      const layer = wrap.querySelector<HTMLElement>(".directors-home_balls");
       const reduce = matchMedia("(prefers-reduced-motion: reduce)");
       const root = document.documentElement;
-      const themesOf = (el: Element) => [...el.classList].filter((c) => c.startsWith("theme-"));
-      const pageThemes = themesOf(root);
-      // the section itself when it paints its own dark, and any other part of the page that asks to follow it
-      // (`data-paint`: the reel's stage on a director's page, whose last strip is still on screen)
-      const painted = [wrap, ...document.querySelectorAll<HTMLElement>("[data-paint]")]
-        .filter((el, i, all) => all.indexOf(el) === i)
-        .map((el) => ({ el, own: themesOf(el) }))
-        .filter((p) => p.own.length > 0);
+      const out = curve("--ease-out", "0.23, 1, 0.32, 1");
+      const leave = curve("--ease-leave", "0.5, 0, 0.75, 0");
 
-      const balls = [...(layer?.querySelectorAll<HTMLElement>(".directors-home_ball") ?? [])].map((el, i) => ({
+      /* The whole page takes the active director's colour (Sam, Nov 12: « c'est la page au complet qui devrait
+         changer de couleur ... même le background du footer »): the page's theme turns to theirs, and so does every
+         part that paints its own ground (`data-paint`, its own theme as the value: Home's opening, the reel and
+         « Other Directors » on a director's page, the footer), back to their own when no name is active. Each keeps
+         its own theme in the markup, read from there, never from what a script left on the page. Grounds, text and
+         the curves' fills change together (CSS: --paint-duration on the travel curve): base to or from the page's own
+         ground (Sam: the change to the black was too quick), medium between two directors. */
+      const pageThemes = (root.dataset.pageTheme ?? "").split(" ").filter(Boolean);
+      const painted = [...document.querySelectorAll<HTMLElement>("[data-paint]")].map((el) => ({
         el,
-        films: [...el.querySelectorAll<HTMLImageElement>(".directors-home_film")],
-        front: 0,
-        lane: LANES[i % LANES.length],
-        depth: DEPTH[i % DEPTH.length],
-        u: i / 7 + 0.04 * (i % 3),
-        x: 0,
-        from: 0,
-        to: 0,
-        d: 0,
-        film: i,
-        room: true,
+        own: (el.dataset.paint ?? "").split(" ").filter(Boolean),
       }));
-      balls.forEach((b) => (b.el.style.zIndex = String(Math.round(b.depth * 10))));
-      let base = 0;
-      let films: string[] = [];
-      const show = (b: (typeof balls)[number], src: string | undefined, fade: boolean) => {
-        if (!src) return;
-        const next = fade ? 1 - b.front : b.front;
-        const img = b.films[next];
-        if (img.getAttribute("src") !== src) img.src = src;
-        img.style.opacity = "1";
-        if (fade) b.films[b.front].style.opacity = "0";
-        b.front = next;
-      };
-      /* a life's path, on the screen: born just above the list's foot (or the screen's), dying just under its top */
-      const path = (b: (typeof balls)[number]) => {
-        const box = (list ?? wrap).getBoundingClientRect();
-        const r = b.d / 2;
-        b.from = Math.min(innerHeight * 0.9, box.bottom) - r;
-        b.to = Math.max(innerHeight * 0.1, box.top) + r;
-        b.room = b.from - b.to > b.d;
-        const jitter = (((b.film * 37) % 9) - 4) / 100;
-        b.x = Math.min(0.94, Math.max(0.06, b.lane + jitter)) * innerWidth - r;
-      };
-      const measure = () => {
-        base = innerWidth >= 768 ? innerWidth * 0.138 : innerWidth * 0.26;
-        balls.forEach((b) => {
-          b.d = base * b.depth;
-          b.el.style.width = `${b.d}px`;
-          b.el.style.height = `${b.d}px`;
-          path(b);
-        });
-      };
-
-      let last = window.scrollY;
-      let speed = 0;
-      let calm = 0;
-      let clock = 0;
-      let running = false;
-      const tick = (_time: number, deltaMs: number) => {
-        const dt = Math.min(deltaMs, 50) / 1000;
-        if (!dt) return;
-        clock += dt;
-        const scroll = window.scrollY;
-        const target = (scroll - last) / dt;
-        last = scroll;
-        calm = target === 0 ? calm + dt : 0;
-        // the scroll's speed, smoothed (a quarter second), so the balls ease in and out of it
-        speed += (target - speed) * (1 - Math.exp(-dt / 0.25));
-        const alive = Math.max(0, 1 - calm / 4);
-        balls.forEach((b, i) => {
-          const length = Math.max(1, b.from - b.to);
-          const rise = speed * (0.55 + b.depth * 0.55) + 26 * b.depth * alive;
-          b.u += (rise * dt) / length;
-          if (b.u >= 1 || b.u < 0) {
-            b.u -= Math.floor(b.u);
-            b.film += balls.length;
-            path(b);
-            show(b, films[b.film % Math.max(1, films.length)], false);
-          }
-          // grows over the first quarter of its life (ease-out), shrinks to nothing over the last (ease-in)
-          const shrink = b.u > 0.72 ? 1 - ((b.u - 0.72) / 0.28) ** 3 : 1;
-          const size = b.room ? grow(b.u / 0.25) * shrink : 0;
-          const y = b.from - b.u * length - b.d / 2;
-          const sway = Math.sin(clock * (0.55 + i * 0.07) + i * 1.7) * 8 * alive;
-          b.el.style.transform = `translate3d(${(b.x + sway).toFixed(1)}px, ${y.toFixed(1)}px, 0) scale(${Math.max(0, size).toFixed(3)})`;
-          b.el.style.opacity = size > 0.02 ? "1" : "0";
-        });
-      };
-      const start = () => {
-        if (running || reduce.matches || !layer) return;
-        running = true;
-        last = window.scrollY;
-        speed = 0;
-        measure();
-        gsap.ticker.add(tick);
-      };
-      const stop = () => {
-        if (!running) return;
-        running = false;
-        gsap.ticker.remove(tick);
-      };
-
-      /* The whole page takes the active director's colour (Sam, Nov 12: « sur toute la page »): the page's theme turns
-         to theirs (and the parts that paint their own dark, on a director's page, with it), back to its own when no
-         name is in the middle. Colours and text change over the fast duration (CSS). */
-      const paint = (colour: string | null) => {
+      let paintedAs: string | null = null;
+      root.dataset.paints = "";
+      const paint = (colour: string | null, instant = false) => {
         const theme = colour ? (THEMES[colour] ?? "theme-brand") : null;
-        root.classList.remove(...Object.values(THEMES), ...pageThemes);
+        if (theme === paintedAs) return;
+        const duration = instant
+          ? 0
+          : reduce.matches
+            ? seconds("--duration-faster")
+            : seconds(theme && paintedAs ? "--duration-medium" : "--duration-base");
+        paintedAs = theme;
+        root.style.setProperty("--paint-duration", `${duration}s`);
+        root.classList.remove(...ALL, ...pageThemes);
         root.classList.add(...(theme ? [theme] : pageThemes));
         painted.forEach(({ el, own }) => {
-          el.classList.remove(...Object.values(THEMES), ...own);
+          el.classList.remove(...ALL, ...own);
           el.classList.add(...(theme ? [theme] : own));
         });
       };
 
-      /* The active name: the one under the middle of the screen (job: show whose colour and films these are) */
+      /* The balls (job: show the active director's films, playfully). Only the active director's are out, two to
+         four on the screen at once, spread as the Figma spreads them; each rises with the scroll faster than the names
+         (its pace), a little behind it (a quick catch-up gives it weight), so they travel from the foot of the screen
+         to its top as the names go by. A director's balls grow in when their name becomes active (base, ease-out, 80
+         ms apart) and shrink away when it gives way (medium, the leave curve), still rising. They move only with the
+         scroll: at rest, they rest. None with reduced motion. */
+      type Ball = { el: HTMLElement; img: HTMLImageElement | null; item: HTMLElement; x: number; y: number; pace: number; s: number; at: number | null };
+      const balls: Ball[] = [];
+      items.forEach((item, k) => {
+        const layout = LAYOUTS[k % LAYOUTS.length];
+        const mirror = Math.floor(k / LAYOUTS.length) % 2 === 1;
+        wrap.querySelectorAll<HTMLElement>(`.directors-home_ball[data-for="${item.dataset.opItem}"]`).forEach((el, i) => {
+          const [x, y, pace] = layout[i % layout.length];
+          balls.push({ el, img: el.querySelector("img"), item, x: mirror ? 1 - x : x, y, pace, s: 0, at: null });
+        });
+      });
+      const load = (item: HTMLElement | undefined) =>
+        balls.forEach((b) => {
+          if (b.item === item && b.img && !b.img.getAttribute("src") && b.img.dataset.src) b.img.src = b.img.dataset.src;
+        });
+      let size = 0;
+      const measure = () => {
+        size = balls[0]?.el.offsetWidth ?? 0;
+      };
+      const draw = () => {
+        const middle = innerHeight / 2;
+        const rows = new Map<HTMLElement, number>();
+        // reads first: the rows of the directors whose balls are out
+        balls.forEach((b) => {
+          if (b.s > 0.001 && !rows.has(b.item)) {
+            const box = b.item.getBoundingClientRect();
+            rows.set(b.item, box.top + box.height / 2 - middle);
+          }
+        });
+        const k = 1 - Math.exp(-gsap.ticker.deltaRatio() / 6);
+        balls.forEach((b) => {
+          if (b.s <= 0.001) {
+            b.at = null;
+            if (b.el.style.visibility !== "hidden") b.el.style.visibility = "hidden";
+            return;
+          }
+          const target = innerHeight * b.y + (rows.get(b.item) ?? 0) * b.pace;
+          b.at = b.at === null ? target : b.at + (target - b.at) * k;
+          const r = size / 2;
+          b.el.style.visibility = "visible";
+          b.el.style.transform = `translate3d(${(innerWidth * b.x - r).toFixed(1)}px, ${(b.at - r).toFixed(1)}px, 0) scale(${b.s.toFixed(3)})`;
+        });
+      };
+      let running = false;
+      const start = () => {
+        if (running || reduce.matches || !balls.length) return;
+        running = true;
+        measure();
+        gsap.ticker.add(draw);
+      };
+      const stop = () => {
+        if (!running) return;
+        running = false;
+        gsap.ticker.remove(draw);
+      };
+      let idle = 0;
+      const show = (item: HTMLElement | null) => {
+        if (reduce.matches) return;
+        let i = 0;
+        balls.forEach((b) => {
+          const on = b.item === item;
+          if (!on && b.s === 0) return;
+          gsap.to(b, on
+            ? { s: 1, duration: seconds("--duration-base"), ease: out, delay: i++ * 0.08, overwrite: true }
+            : { s: 0, duration: seconds("--duration-medium"), ease: leave, overwrite: true });
+        });
+        if (item) {
+          // its films, and the neighbours' ahead of their turn
+          const k = items.indexOf(item);
+          [k, k + 1, k - 1].forEach((n) => load(items[n]));
+          clearTimeout(idle);
+          start();
+        } else {
+          clearTimeout(idle);
+          idle = window.setTimeout(stop, seconds("--duration-medium") * 1000 + 100);
+        }
+      };
+
+      /* The active name (job: show whose colour and films these are): the one under the middle of the screen; the
+         first is caught a quarter of a screen early (as its top reaches 75 % down) and the last kept a quarter late
+         (until its foot rises to 25 %), so neither flicks by */
       let active: HTMLElement | null = null;
-      let fadeOut = 0;
-      const setActive = (item: HTMLElement | null) => {
+      const setActive = (item: HTMLElement | null, instant = false) => {
         if (item === active) return;
-        const first = !active;
         active = item;
         items.forEach((i) => i.classList.toggle("is-active", i === item));
         wrap.classList.toggle("is-coloured", !!item);
-        paint(item ? (item.dataset.colour ?? "red") : null);
-        clearTimeout(fadeOut);
-        if (!item || !layer) {
-          // the balls stop once their layer has faded out
-          fadeOut = window.setTimeout(stop, 600);
-          return;
-        }
-        films = JSON.parse(item.dataset.stills ?? "[]") as string[];
-        balls.forEach((b, i) => {
-          b.film = i;
-          show(b, films[i % Math.max(1, films.length)], !first);
-        });
-        start();
+        paint(item ? (item.dataset.colour ?? "red") : null, instant);
+        show(item);
       };
-      const check = () => {
+      const check = (instant = false) => {
         const middle = innerHeight / 2;
+        const reach = innerHeight / 4;
+        const shown = items.filter((i) => !i.hidden);
         let found: HTMLElement | null = null;
-        for (const item of items) {
-          if (item.hidden) continue;
+        shown.forEach((item, k) => {
+          if (found) return;
           const box = item.getBoundingClientRect();
-          if (box.top <= middle && box.bottom > middle) {
-            found = item;
-            break;
-          }
-        }
-        setActive(found);
+          const from = k === 0 ? middle + reach : middle;
+          const until = k === shown.length - 1 ? middle - reach : middle;
+          if (box.top <= from && box.bottom > until) found = item;
+        });
+        setActive(found, instant);
       };
 
       /* Filters: Industry and Location keep the names that match; « All » shows everyone */
@@ -319,12 +334,12 @@ const filters = [
         { signal },
       );
 
-      measure();
-      check();
+      // the page as it opens: its colour at once (a page change's veil still covers it)
+      check(true);
       let frame = 0;
       const onScroll = () => {
         cancelAnimationFrame(frame);
-        frame = requestAnimationFrame(check);
+        frame = requestAnimationFrame(() => check());
       };
       window.addEventListener("scroll", onScroll, { passive: true, signal });
       window.addEventListener(
@@ -335,14 +350,28 @@ const filters = [
         },
         { signal },
       );
-      reduce.addEventListener("change", () => (reduce.matches ? stop() : active && start()), { signal });
+      reduce.addEventListener(
+        "change",
+        () => {
+          if (reduce.matches) {
+            stop();
+            balls.forEach((b) => {
+              gsap.killTweensOf(b);
+              b.s = 0;
+              b.el.style.visibility = "hidden";
+            });
+          } else show(active);
+        },
+        { signal },
+      );
       // leaving the page: the next page brings its own theme with it, nothing to put back
       signal.addEventListener(
         "abort",
         () => {
           stop();
-          clearTimeout(fadeOut);
+          clearTimeout(idle);
           cancelAnimationFrame(frame);
+          balls.forEach((b) => gsap.killTweensOf(b));
         },
         { once: true },
       );
@@ -353,32 +382,17 @@ const filters = [
 <style is:global>
   @layer components {
     /* On Home, above the curve that follows it, with no ground of its own: the page's ground shows through, dark, or
-       the active director's colour (the page's theme turns to it, src: the script) */
+       the active director's colour (the page's theme turns to it, src: the script; the change: project.css) */
     .directors-home_wrap {
       position: relative;
       z-index: 1;
       isolation: isolate;
       padding-top: var(--space-6);
       padding-bottom: var(--space-9);
-      transition:
-        background-color var(--duration-fast) var(--ease-out),
-        color var(--duration-fast) var(--ease-out);
-      @media (prefers-reduced-motion: reduce) {
-        transition-duration: var(--duration-faster);
-      }
     }
-    /* the page's ground turning to a director's colour and back: quick (fast), so a quick scroll through the names
-       never lingers on the mix of two colours */
-    :root:has(.directors-home_wrap) {
-      transition:
-        background-color var(--duration-fast) var(--ease-out),
-        color var(--duration-fast) var(--ease-out);
-      @media (prefers-reduced-motion: reduce) {
-        transition-duration: var(--duration-faster);
-      }
-    }
-    /* On a director's page it follows the reel's dark, and the list ends 144 above the footer's rule */
-    .directors-home_wrap.theme-dark {
+    /* On a director's page it paints its own dark over the reel's end, and the list ends 144 above the footer's rule
+       (keyed on .is-dark, which stays: its theme changes with the page's colour) */
+    .directors-home_wrap.is-dark {
       padding-top: var(--section-space-small);
       padding-bottom: var(--section-space-medium);
     }
@@ -457,7 +471,7 @@ const filters = [
     }
     .directors-home_name {
       color: inherit;
-      transition: color var(--duration-fast) var(--ease-out);
+      transition: color var(--duration-medium) var(--ease-out);
       @media (hover: hover) {
         &:hover {
           color: var(--text);
@@ -467,18 +481,14 @@ const filters = [
     .directors-home_empty {
       color: var(--text-2);
     }
-    /* The balls: a layer over the screen while a name is active, fading in and out with the colour */
+    /* The balls: a layer over the screen, over the other sections (the list's own stacking sits above them); the
+       Figma's 238 at 1728 (13.8 % of the width), 128 at the least on a phone */
     .directors-home_balls {
       position: fixed;
       inset: 0;
       z-index: 2;
       overflow: clip;
       pointer-events: none;
-      opacity: 0;
-      transition: opacity var(--duration-medium) var(--ease-out);
-      .is-coloured & {
-        opacity: 1;
-      }
       @media (prefers-reduced-motion: reduce) {
         display: none;
       }
@@ -487,9 +497,12 @@ const filters = [
       position: absolute;
       top: 0;
       left: 0;
+      width: max(13.8vw, 8rem);
+      aspect-ratio: 1;
       overflow: hidden;
-      border-radius: var(--radius-round);
+      border-radius: 50%;
       background-color: var(--black);
+      visibility: hidden;
       will-change: transform;
     }
     .directors-home_film {
@@ -498,8 +511,6 @@ const filters = [
       width: 100%;
       height: 100%;
       object-fit: cover;
-      opacity: 0;
-      transition: opacity var(--duration-fast) var(--ease-out);
       &:not([src]) {
         visibility: hidden;
       }

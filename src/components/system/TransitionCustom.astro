@@ -4,9 +4,10 @@
    et seamless ». Its job: carry the visitor from one page's colour to the next without a seam.
    A link followed: a veil in the page's own ground fades in over everything (the page dissolves into its colour) on
    the leave's timing while the next page loads; once it is in, the veil turns to the next page's ground; the page is
-   swapped under it, at its top; then the veil fades away on the arrival's timing while the next page's opening
-   elements (`data-page-reveal`, in their order) rise into place. Back and forward cut. Reduced motion: a short
-   crossfade, nothing moves.
+   swapped under it, at its top; the veil waits there until the next page's scripts have set it up (its colour, its
+   openings' first states: Sam, Nov 12, content seen, gone, then animated), then fades away on the arrival's timing
+   while the next page's opening elements (`data-page-reveal`, in their order) rise into place. Back and forward cut.
+   Reduced motion: a short crossfade, nothing moves.
    `head`: its styles and script; `body`: the veil, kept across pages (transition:persist). */
 interface Props {
   /** Set to `false` to omit the component. */
@@ -74,9 +75,26 @@ const { render = true, part = "head" } = Astro.props;
     };
   });
 
+  /* The veil leaves once the next page is set up: its scripts run on astro:page-load (onPage), and two frames later
+     every opening has put its elements where they start; a page that never says it loaded is uncovered after 1.5 s */
+  let arriving = false;
+  let safety = 0;
   document.addEventListener("astro:after-swap", () => {
+    if (!covered) return;
+    arriving = true;
+    clearTimeout(safety);
+    safety = window.setTimeout(uncover, 1500);
+  });
+  document.addEventListener("astro:page-load", () => {
+    if (!arriving) return;
+    requestAnimationFrame(() => requestAnimationFrame(uncover));
+  });
+
+  function uncover() {
     const el = veil();
-    if (!covered || !el) return;
+    clearTimeout(safety);
+    if (!arriving || !el) return;
+    arriving = false;
     covered = false;
     const quick = reduce.matches;
     const duration = quick ? ms("--hover-duration") : ms("--page-arrive-duration");
@@ -111,7 +129,7 @@ const { render = true, part = "head" } = Astro.props;
         },
       );
     });
-  });
+  }
 </script>
 
 <style is:global>

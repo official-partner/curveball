@@ -2,6 +2,34 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-12, Sam (10:51, with screenshots: the directors' balls, the time on each name, the colour changes, About's
+  text, the page changes, a director's page): third pass on the directors and the motion.
+  - The directors' balls follow the Figma's hover frames: each director has their own three (their films), placed as
+    those frames place them, the size they draw (238 at 1728); two to four are out at once, rising with the scroll
+    faster than the names; they grow in when the name becomes active and shrink away when it gives way. The seven
+    wandering balls are gone.
+  - The first name is caught a quarter of a screen early and the last kept a quarter late. The colour changes on the
+    travel curve, over base to or from the page's own ground (« la transition en noir trop snappy ») and medium
+    between two directors.
+  - The whole page takes the colour: Home's opening (its fade to the ground is the ground's colour through a mask),
+    the curve's « u » on Home (it is the page's ground showing through the red), the reel and « Other Directors »,
+    the footer (its symbol black on a red ground). The space under the last name no longer jumps: it was set on the
+    theme class that the colour swaps.
+  - A director's page opened from a link showed its opening black: the list of the page being left still answered a
+    scroll during the change and put its theme back. A component now stops before the next page is swapped in
+    (src/utils/page.ts), and the list reads each page's own theme from the markup (`data-page-theme`).
+  - The reel's growing ball is gone, for the Figma's gradient done cleanly: the film is fixed behind the page, the
+    opening's colour dissolves into it through a long eased gradient, and the dark rises over it after the last film.
+  - About: no text is split into lines any more (the line spacing went wrong); the title and each block of the story
+    simply fade in, the story as the ball reaches it on a computer.
+  - A page change no longer shows the next page before its animation: the veil waits until the page's scripts have
+    set it up, and what a script brings in is hidden from the first paint (`data-await`).
+  - A director's opening: « Based » and « Clients » on their own line above the names, as the Figma sets them.
+  - Home's curve starts 110 lower: its ball only grazes the last name as it rolls in.
+  - Checked on a phone profile (CPU slowed four times): a transition on every element while the colour changed cost
+    a quarter of a second per change; only the grounds and the named text change by a transition now (Home: one
+    long task over the whole list, was five before this pass).
+
 - 2026-11-12, Sam (Nov 11, 23:27: « une passe pour vérifier le site au complet ... ensuite la version tablette, la
   version mobile »; decided by Claude): the whole-site pass, at 1728, 1440, 1024, 768 and 390.
   - The reel's ball was a rounded square on a phone held upright (the round token is 100vw, smaller than a ball as

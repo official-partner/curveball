@@ -88,8 +88,8 @@ const reel = (await getItems("projects")).filter((p) => p.data.director?.id === 
     <ComponentSample file="section/DirectorHero.astro" note="A director's opening, in their colour: portrait, name, bio, cities, clients.">
       <div class="theme-mustard">{jasper && <DirectorHero director={jasper} enquire={{ text: "Enquire about Jasper", href: "mailto:bids@curveballfilms.com" }} />}</div>
     </ComponentSample>
-    <ComponentSample file="section/DirectorReel.astro" note="A director's reel: the film holds the screen, each project's line scrolls over it and changes it.">
-      <DirectorReel projects={reel} colour="mustard" />
+    <ComponentSample file="section/DirectorReel.astro" note="A director's reel: the opening's colour dissolves into the film, fixed behind the page; each project's line scrolls over it and changes it; the dark rises after the last.">
+      <DirectorReel projects={reel} colour="mustard" alone />
     </ComponentSample>
     <ComponentSample file="section/AboutStory.astro" note="About's story in the curve, the ball rolling in and uncovering it.">
       <AboutStory />

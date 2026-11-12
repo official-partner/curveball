@@ -212,6 +212,12 @@ const track = tracks[variant].points;
     .curve-band_shape {
       fill: var(--black);
     }
+    /* on Home the « u » is the page's own ground showing through the red, so it takes the colour the directors list
+       gives the page, with the rest (Sam, Nov 12: no seam between the list and the curve) */
+    .curve-band_wrap.is-home .curve-band_shape {
+      fill: var(--background);
+      transition: fill var(--paint-duration, 0s) var(--ease-travel);
+    }
     .curve-band_ball {
       fill: var(--page-accent);
     }
@@ -231,13 +237,18 @@ const track = tracks[variant].points;
       justify-self: start;
     }
     /* From a tablet up, the CTA sits inside the « u »'s lower stem, as the Figma draws it (its cap top 1283 down
-       the band, 600 wide), and the band rises behind the section before it */
+       the band, 600 wide), and the band rises behind the section before it. Home's starts 110 lower: its ball, as it
+       rolls in along the top stem, rises 218 above the band and only grazes the last director's name (Sam, Nov 12:
+       « elle peut embarquer un petit peu, mais pas trop ») */
     @media (width >= 48rem) {
       .curve-band_wrap {
         display: block;
         margin-top: calc(var(--u) * var(--_rise-tablet) * -1);
         @media (width >= 64rem) {
           margin-top: calc(var(--u) * var(--_rise) * -1);
+        }
+        &.is-home {
+          margin-top: calc(var(--u) * 110);
         }
       }
       .curve-band_content {
@@ -248,9 +259,9 @@ const track = tracks[variant].points;
       .curve-band_title {
         max-width: calc(var(--u) * 600);
       }
-      /* inside the black stroke: taupe, whatever colour the page has turned to */
+      /* inside the stroke, which is the page's ground: taupe on the dark, black on a director's colour */
       .curve-band_content {
-        color: var(--taupe);
+        color: var(--heading-accent);
       }
     }
   }

@@ -19,4 +19,7 @@ export function onPage(setup: (signal: AbortSignal) => void): void {
 
   run();
   document.addEventListener("astro:page-load", run);
+  // the page being left stops before the next one is swapped in, so none of its listeners acts on the next page
+  // (a scroll during the change once let the directors list put the previous page's theme on the next)
+  document.addEventListener("astro:before-swap", () => controller?.abort());
 }

@@ -1,11 +1,13 @@
 ---
-/* A director's reel, told by the scroll (Sam, Nov 11, the Figma's note: « the video player is sticky and the bottom bar
-   scrolls »; Nov 12: « plus immersif, scrollytelling, mieux intégré »). The page's colour runs on from the opening;
-   a ball rises into it carrying the film and grows until the film fills the screen. The film then holds the screen
-   while each project's line (play, title, client, agency, year) scrolls up over it, one screen apart, the film
-   cross-fading to that project's as its line comes in. After the last project the ball shrinks away upward and
-   leaves the page's dark, where the other directors follow. A project with a film file plays it (muted, looping) and
-   its line opens the player; until the files are in, its still stands in. */
+/* A director's reel (Sam, Nov 11, the Figma: « le gradient, c'est comme la transition entre le hero ... la vidéo reste
+   fixe en background et va switch en fade smooth entre les différents projets ... la ligne scroll »; Nov 12: « garder
+   l'idée du fade, gradient, plus clean, plus smooth et subtil »). The film is fixed behind the page: the reel's stage
+   sticks to the screen from before it shows (the section starts a screen higher, under the opening, which covers it)
+   until after it (the other directors come over its last screen), so it never moves. The opening's colour dissolves
+   into the film through a long eased gradient the scroll draws up; the film holds the screen while each project's
+   line (play, title, client, agency, year) scrolls up over it, cross-fading to that project's as its line comes in;
+   after the last, the dark rises over the film the same way, and the other directors follow on it. A project with a
+   film file plays it (muted, looping) and its line opens the player; until the files are in, its still stands in. */
 import Img from "@/components/media/Img.astro";
 import { img, type Item } from "@/utils/content.ts";
 
@@ -14,40 +16,41 @@ interface Props {
   render?: boolean;
   /** The director's films, in their order. */
   projects: Item<"projects">[];
-  /** The page's colour, which the ball rises into (the director's). */
+  /** The page's colour, which dissolves into the film (the director's). */
   colour?: "red" | "mustard" | "teal";
+  /** Shown alone (the components page): no screen under an opening before it or under a section after it. */
+  alone?: boolean;
 }
 
-const { render = true, projects, colour = "red" } = Astro.props;
+const { render = true, projects, colour = "red", alone = false } = Astro.props;
 ---
 
 {
   render && projects.length > 0 && (
     <section
-      class="director-reel_wrap theme-dark"
+      class:list={["director-reel_wrap theme-dark", alone && "is-alone"]}
       style={`--_colour: var(--${colour})`}
-      data-paint
+      data-paint="theme-dark"
       data-op-section="DirectorReel"
       data-op-list="projects"
       data-op-source="astro:projects"
     >
-      <div class="director-reel_stage">
-        <div class="director-reel_ball" aria-hidden="true">
-          <div class="director-reel_film">
-            {projects.map((p, i) => (
-              <div class:list={["director-reel_media", i === 0 && "is-active"]} data-index={i}>
-                {p.data.still && (
-                  <Img {...img(p.data.still)} alt="" variant="full-width" loading={i === 0 ? "eager" : "lazy"} />
-                )}
-                {p.data.video && <video class="director-reel_video" src={p.data.video} muted loop playsinline preload="none" />}
-              </div>
-            ))}
-            <div class="director-reel_shade" />
-          </div>
+      <div class="director-reel_stage" aria-hidden="true">
+        <div class="director-reel_film">
+          {projects.map((p, i) => (
+            <div class:list={["director-reel_media", i === 0 && "is-active"]} data-index={i}>
+              {p.data.still && (
+                <Img {...img(p.data.still)} alt="" variant="full-width" loading={i === 0 ? "eager" : "lazy"} />
+              )}
+              {p.data.video && <video class="director-reel_video" src={p.data.video} muted loop playsinline preload="none" />}
+            </div>
+          ))}
+          <div class="director-reel_shade" />
         </div>
       </div>
       <ol class="director-reel_list">
-        <li class="director-reel_slot is-space" aria-hidden="true" />
+        <li class="director-reel_space" aria-hidden="true" />
+        <li class="director-reel_fade is-in" aria-hidden="true" />
         {projects.map((p, i) => (
           <li class="director-reel_slot" data-op-item={p.id} data-index={i} data-vertical={p.data.vertical ? "true" : undefined}>
             <div class="director-reel_line site-grid rule-top text-style-main">
@@ -90,7 +93,8 @@ const { render = true, projects, colour = "red" } = Astro.props;
             </div>
           </li>
         ))}
-        <li class="director-reel_slot is-space" aria-hidden="true" />
+        <li class="director-reel_fade is-out" aria-hidden="true" />
+        <li class="director-reel_space is-end" aria-hidden="true" />
       </ol>
       <dialog class="director-reel_player theme-dark" aria-label="Film">
         <video class="director-reel_movie" playsinline />
@@ -116,91 +120,55 @@ const { render = true, projects, colour = "red" } = Astro.props;
   import { onPage } from "@/utils/page.ts";
 
   const clamp = (t: number) => Math.min(1, Math.max(0, t));
-  // smoothstep: the ball eases into its growth and out of it, the scroll still the clock
-  const ease = (t: number) => t * t * (3 - 2 * t);
 
   onPage((signal) => {
     document.querySelectorAll<HTMLElement>(".director-reel_wrap").forEach((wrap) => {
-      const stage = wrap.querySelector<HTMLElement>(".director-reel_stage");
-      const ball = wrap.querySelector<HTMLElement>(".director-reel_ball");
       const film = wrap.querySelector<HTMLElement>(".director-reel_film");
+      const fadeIn = wrap.querySelector<HTMLElement>(".director-reel_fade.is-in");
+      const end = wrap.querySelector<HTMLElement>(".director-reel_space.is-end");
       const media = [...wrap.querySelectorAll<HTMLElement>(".director-reel_media")];
-      const slots = [...wrap.querySelectorAll<HTMLElement>(".director-reel_slot:not(.is-space)")];
+      const slots = [...wrap.querySelectorAll<HTMLElement>(".director-reel_slot")];
       const reduce = matchMedia("(prefers-reduced-motion: reduce)");
-      if (!stage || !ball || !film) return;
+      if (!film || !fadeIn || !end) return;
 
       /* The film behind (job: show the project whose line is on screen): the last line wholly in from the bottom wins;
-         its layer fades in over the others (slow), its film plays, the others pause */
+         its layer fades in over the others (slow); its film plays while the reel shows, the others pause */
       let active = -1;
-      const play = (i: number) => {
+      let shown = false;
+      const play = () => {
         media.forEach((m, k) => {
-          m.classList.toggle("is-active", k === i);
+          m.classList.toggle("is-active", k === active);
           const video = m.querySelector<HTMLVideoElement>("video");
           if (!video) return;
-          if (k === i && !reduce.matches) {
+          if (k === active && shown && !reduce.matches) {
             video.preload = "auto";
             video.play().catch(() => {});
           } else video.pause();
         });
       };
 
-      /* The ball (job: carry the reader from the page's colour into the film, and out to the dark): a circle as wide
-         as the screen's diagonal, scaled, the film inside counter-scaled so it stays still while the ball reveals it.
-         It rises into view with the stage's top edge, just under it, so the colour under the opening is never empty;
-         grows from a tenth, low in the screen, to the whole screen while the reel's top travels from 75 % down the
-         screen to 85 % of a screen past its top; holds; after the last project has held the screen a little, shrinks
-         to nothing on its way up, gone as the other directors come up. The stage turns dark once the film covers it.
-         Transform only, from the scroll; with reduced motion the film simply fills the stage. */
-      let top = 0;
-      let height = innerHeight;
-      const measure = () => {
-        height = innerHeight;
-        top = wrap.getBoundingClientRect().top + window.scrollY;
-        ball.style.setProperty("--_d", `${Math.hypot(innerWidth, height)}px`);
-      };
+      /* As the colour dissolves (job: carry the eye from the opening into the film, gently), the film settles from
+         105 % to its size: scrubbed by the scroll, from the gradient's top entering the screen to its foot leaving it.
+         Transform only; none with reduced motion. */
       const place = () => {
-        // reads first (the lines' places), then the writes, so a frame never lays the page out twice
+        // reads first (the lines', the gradient's and the end's places), then the writes
         let found = 0;
         slots.forEach((slot, i) => {
           const bar = slot.querySelector<HTMLElement>(".director-reel_line");
           if (bar && bar.getBoundingClientRect().bottom <= innerHeight) found = i;
         });
-        const y = window.scrollY - top;
-        const n = slots.length;
-        const d = Math.hypot(innerWidth, height);
-        let scale = 1;
-        // the ball's centre, from the stage's top
-        let centre = height / 2;
-        if (!reduce.matches) {
-          if (y < height * 0.85) {
-            const t = ease(clamp((y + height * 0.75) / (height * 1.6)));
-            scale = 0.1 + 0.9 * t;
-            // low in the screen first, then to its middle; the stage's top may still be on screen (not stuck yet)
-            const edge = Math.max(0, -y);
-            centre = height * (0.82 - 0.32 * t) - edge;
-            // while that edge shows, the ball keeps under it, a little room between (it fades out as the stage sticks)
-            const room = clamp((edge - height * 0.1) / (height * 0.2));
-            centre = Math.max(centre, ((scale * d) / 2 + 24) * room);
-          } else if (y > height * (n + 0.3)) {
-            // the last film holds a third of a screen, then the ball shrinks away up; the stage lets go (its last
-            // space is 80 % of a screen) once the ball is down to a fifth of its size, high in the screen
-            const t = ease(clamp((y - height * (n + 0.3)) / (height * 0.7)));
-            scale = 1 - t;
-            centre = height * (0.5 - 0.3 * t);
-          }
-        }
-        const lift = centre - height / 2;
-        const s = Math.max(scale, 0.001);
-        ball.style.transform = `translate3d(0, ${lift.toFixed(1)}px, 0) scale(${s.toFixed(4)})`;
-        film.style.transform = `scale(${(1 / s).toFixed(4)}) translate3d(0, ${(-lift).toFixed(1)}px, 0)`;
-        ball.style.visibility = scale < 0.01 ? "hidden" : "";
-        stage.classList.toggle("is-dark", y > height * 0.85);
-        if (found !== active) {
+        const fade = fadeIn.getBoundingClientRect();
+        // seen from the gradient's top coming in to the screen under the other directors (alone: the section's foot)
+        const tail = end.offsetParent ? end.getBoundingClientRect().top : wrap.getBoundingClientRect().bottom;
+        const visible = fade.top < innerHeight && tail > 0;
+        const settle = clamp((innerHeight - fade.top) / (innerHeight + fade.height));
+        film.style.transform = reduce.matches ? "" : `scale(${(1.05 - 0.05 * settle).toFixed(4)})`;
+        if (found !== active || visible !== shown) {
           active = found;
-          play(active);
+          shown = visible;
+          play();
         }
       };
-      measure();
       place();
       let frame = 0;
       const tick = () => {
@@ -208,18 +176,8 @@ const { render = true, projects, colour = "red" } = Astro.props;
         frame = requestAnimationFrame(place);
       };
       window.addEventListener("scroll", tick, { passive: true, signal });
-      window.addEventListener(
-        "resize",
-        () => {
-          measure();
-          tick();
-        },
-        { signal },
-      );
-      // the page's pictures above settle their height once loaded: measure again then
-      window.addEventListener("load", () => (measure(), tick()), { once: true, signal });
+      window.addEventListener("resize", tick, { signal });
       reduce.addEventListener("change", tick, { signal });
-
       /* The player (job: watch a film whole): its line opens it over everything, the film plays with its sound, the
          rule fills as it plays, a click or the button pauses, Close or Escape leaves */
       const dialog = wrap.querySelector<HTMLDialogElement>(".director-reel_player");
@@ -283,46 +241,33 @@ const { render = true, projects, colour = "red" } = Astro.props;
 
 <style is:global>
   @layer components {
+    /* The section starts a screen higher, under the opening (which paints its own ground above it), and ends a screen
+       lower, under the other directors (likewise): its stage, stuck to the screen all that time, is only seen
+       between them, so the film never moves */
     .director-reel_wrap {
       position: relative;
+      z-index: 0;
+      margin-block: -100svh;
       background-color: transparent;
       /* the rule and the text stay stone over any film */
       --border: var(--text);
+      /* an eased gradient's stops (ease-in-out): from the colour's full strength to none, without a visible edge */
+      --_eased: black 0%, rgb(0 0 0 / 0.987) 8.1%, rgb(0 0 0 / 0.951) 15.5%, rgb(0 0 0 / 0.896) 22.5%,
+        rgb(0 0 0 / 0.825) 29%, rgb(0 0 0 / 0.741) 35.3%, rgb(0 0 0 / 0.648) 41.2%, rgb(0 0 0 / 0.55) 47.1%,
+        rgb(0 0 0 / 0.45) 52.9%, rgb(0 0 0 / 0.352) 58.8%, rgb(0 0 0 / 0.259) 64.7%, rgb(0 0 0 / 0.175) 71%,
+        rgb(0 0 0 / 0.104) 77.5%, rgb(0 0 0 / 0.049) 84.5%, rgb(0 0 0 / 0.013) 91.9%, transparent 100%;
     }
     .director-reel_stage {
       position: sticky;
       top: 0;
       height: 100svh;
       overflow: hidden;
-      background-color: var(--_colour);
-      &.is-dark {
-        background-color: var(--background);
-        transition: background-color var(--duration-fast) var(--ease-out);
-      }
-    }
-    /* the ball: a circle as wide as the screen's diagonal, centred; the film inside as big as the screen, centred */
-    .director-reel_ball {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      width: var(--_d, 150vmax);
-      aspect-ratio: 1;
-      margin-left: calc(var(--_d, 150vmax) / -2);
-      margin-top: calc(var(--_d, 150vmax) / -2);
-      overflow: hidden;
-      border-radius: 50%;
-      will-change: transform;
+      background-color: var(--black);
     }
     .director-reel_film {
       position: absolute;
-      left: 50%;
-      top: 50%;
-      width: 100vw;
-      height: 100svh;
-      margin-left: -50vw;
-      margin-top: -50svh;
+      inset: 0;
       background-color: var(--black);
-      will-change: transform;
     }
     .director-reel_media {
       position: absolute;
@@ -356,16 +301,38 @@ const { render = true, projects, colour = "red" } = Astro.props;
       position: relative;
       margin-top: -100svh;
     }
+    /* a screen under the opening, a screen under the other directors */
+    .director-reel_space {
+      height: 100svh;
+    }
+    .director-reel_wrap.is-alone {
+      margin-block: 0;
+      & .director-reel_space {
+        display: none;
+      }
+    }
+    /* The gradients the scroll draws over the film, 90 % of a screen each: the opening's colour into the film (the
+       colour's own ground through an eased mask), and after the last project's line and a breath (the last film's
+       third of a screen), the film into the section's ground, dark, or the colour the directors list paints it */
+    .director-reel_fade {
+      height: 90svh;
+      &.is-in {
+        background-color: var(--_colour);
+        mask-image: linear-gradient(to bottom, var(--_eased));
+      }
+      &.is-out {
+        margin-top: 30svh;
+        background-color: var(--background);
+        mask-image: linear-gradient(to top, var(--_eased));
+        transition: background-color var(--paint-duration, 0s) var(--ease-travel);
+      }
+    }
     .director-reel_slot {
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
       height: 100svh;
       padding-bottom: var(--space-7);
-      /* the ball's way out: the stage lets go as it nears its end, and the other directors come up */
-      &.is-space:last-child {
-        height: 80svh;
-      }
     }
     .director-reel_line {
       row-gap: var(--space-5);

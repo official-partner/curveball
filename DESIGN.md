@@ -21,8 +21,9 @@ it (system/gen.py).
   page's colour for its mark; Directors, a director's page and About have the plain footer (a rule, no curve).
 - Each director has a colour, from the brand's three, in turn down the list: teal, mustard, red (src/content/
   directors, `colour`). Their page wears it; on the directors list (Home, Directors, the foot of a director's page)
-  the name in the middle of the screen turns the whole page to it, and balls carrying their films rise behind the
-  names.
+  the name in the middle of the screen turns the whole page to it, every ground included (Home's opening and its
+  curve's « u », the reel, the footer: `data-paint`), and that director's own balls, carrying their films, rise
+  through the screen.
 
 ## Measures (Figma at 1728)
 - Grid: 12 columns, margin 32, gutter 12 (Sam, Nov 11). Content width 1664; nothing grows beyond it.
@@ -40,18 +41,22 @@ it (system/gen.py).
   the directors list), medium 450 ms (menus, a page leaving), base 800 ms (headings, a page arriving), slow 1200 ms
   (media fading in, the reel's films); ease-out (answers), ease-arrive (arrivals), ease-travel (from one place to
   another), ease-leave (leaving the screen). Scrubbed motion has no ease of its own: the scroll is the curve.
-- The opening, once per page: the page's opening elements rise into place as the veil leaves (base, ease-out, 70 ms
-  apart at most); About's title lines fade up while its ball rolls in to the bend (slow x 1.5, ease-travel). Text is
-  never split behind a mask (Sam, Nov 12: it cut the descenders): lines fade up.
+- The opening, once per page: the veil leaves once the next page's scripts have set it up, then its opening elements
+  rise into place (base, ease-out, 70 ms apart at most); About's title fades in while its ball rolls in to the bend
+  (slow x 1.5, ease-travel). Nothing is split into lines (Sam, Nov 12): text fades in whole. An element a script
+  brings in is hidden from the first paint (`data-await`), so it is never seen before its animation.
 - The curve bands (Home, News, Contact, About): the ball follows the stroke's middle, its radius following the
   stroke's width, from where it enters to the Figma's rest and out by the other edge, scrubbed (0.5).
-- The directors list: the active name is the one under the middle of the screen; the page's colour follows it (fast).
-  Seven film balls rise behind the names, each born near the list's foot, growing (ease-out) then shrinking to
-  nothing near its top (ease-in); the scroll's speed carries them (near ones faster), they drift on a little and
-  settle within four seconds of rest (WCAG 2.2.2).
-- A director's reel: a ball rises into the page's colour under the opening, grows with the scroll until its film
-  fills the screen (smoothstep), holds while each project's line scrolls over it and the films cross-fade (slow);
-  after the last project it shrinks away up into the dark as the other directors come up.
+- The directors list: the active name is the one under the middle of the screen, the first caught a quarter of a
+  screen early and the last kept a quarter late. The page's colour follows it on the travel curve: base to or from
+  the page's own ground, medium between two directors. Each director has three balls (their films), placed as the
+  Figma's hover frames place them (238 at 1728, 128 at least), two to four on screen: they grow in (base, ease-out,
+  80 ms apart) when the name becomes active and shrink away (medium, the leave curve) when it gives way, rising with
+  the scroll 1.45 to 1.85 times faster than the names, a tenth of a second behind; at rest they rest.
+- A director's reel: the film is fixed behind the page (its stage sticks from a screen under the opening to a screen
+  under the other directors). The opening's colour dissolves into it through an eased gradient 90 % of a screen
+  tall that the scroll draws up, the film settling from 105 % to its size; each project's line scrolls over it and
+  the films cross-fade (slow); after the last, the dark rises over it the same way.
 - Parallax: the news cards and the team's portraits drift at their own pace (fine pointer, 48rem and up, scrub 0.6).
 - Reduced motion: no travel, scale, parallax or smooth scroll; the balls sit at their Figma rest, the reel's film
   fills its stage, colours change at once or over faster, page changes crossfade.
@@ -62,6 +67,8 @@ it (system/gen.py).
   inner pages' sections).
 - .dot-label: the dot before a label, centred on its capitals (« Featured work », « Directors »); .is-plus draws a
   plus in it (a director's bio).
+- [data-paint] (with :root[data-paints]): the grounds and named text that follow the page's colour, and how they
+  change. [data-await]: hidden from the first paint until its script plays it (2 s at most).
 - main is the container of the design unit --u.
 
 ## Components

@@ -27,7 +27,7 @@ const curve =
 
 {
   render && (
-    <footer class:list={["footer_wrap theme-dark", variant === "plain" && "is-plain"]} data-op-section="Footer">
+    <footer class:list={["footer_wrap theme-dark", variant === "plain" && "is-plain"]} data-paint="theme-dark" data-op-section="Footer">
       {variant === "curve" && (
         <svg class="footer_curve" viewBox="0 0 1728 300" aria-hidden="true" focusable="false">
           <rect class="footer_curve-ground" width="1728" height="300" />
@@ -140,6 +140,11 @@ const curve =
         width: 100%;
         height: auto;
       }
+      /* on a red ground (the footer painted a red director's colour, data-paint), the symbol in the text's black */
+      .theme-brand & {
+        color: var(--text);
+      }
+      transition: color var(--paint-duration, 0s) var(--ease-travel);
     }
     .footer_menu,
     .footer_contact,

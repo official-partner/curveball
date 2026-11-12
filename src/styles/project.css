@@ -74,3 +74,46 @@ main {
   container-type: inline-size;
 }
 
+
+/* The page's colour following the directors list (DirectorsHome turns the theme of <html> and of every part marked
+   data-paint to the active director's, and marks <html> data-paints on the pages it is on): the grounds change over
+   --paint-duration on the travel curve, and so does the text of the parts seen while they change (the menu, the
+   opening's row, the list's row, the footer, the curve's words), each named by its class. Never the text colour of
+   <html> or a whole section, nor a rule on every element (`*`): a phone spent a quarter of a second per change. */
+:root[data-paints],
+:root[data-paints] [data-paint] {
+  transition: background-color var(--paint-duration, 0s) var(--ease-travel);
+}
+:root[data-paints]
+  :is(
+    .nav_logo,
+    .nav_menu,
+    .hero-home_row,
+    .directors-home_label,
+    .directors-home_filter,
+    .footer_symbol,
+    .footer_menu,
+    .footer_contact,
+    .footer_social,
+    .footer_line,
+    .footer_legal,
+    .footer_policies,
+    .curve-band_content
+  ) {
+  transition: color var(--paint-duration, 0s) var(--ease-travel);
+}
+
+/* An element its script brings in as the page opens (About's title, ball and story): hidden from the first paint while
+   motion is allowed, so it never shows before its own animation (Sam, Nov 12: « faudrait juste pas le voir avant qu'il
+   soit animé »); shown after 2 s if its script never comes */
+@media (prefers-reduced-motion: no-preference) {
+  [data-await] {
+    opacity: 0;
+    animation: await-shown 0s 2s forwards;
+  }
+}
+@keyframes await-shown {
+  to {
+    opacity: 1;
+  }
+}

@@ -54,6 +54,7 @@ const { smoothScroll } = finish;
 <html
   lang={SITE_LOCALE}
   class:list={[theme !== "inherit" && `theme-${theme}`]}
+  data-page-theme={theme !== "inherit" ? `theme-${theme}` : undefined}
   data-page-transition={transition ?? undefined}
 >
   <head>

@@ -22,7 +22,7 @@ const first = featured[0];
 
 {
   render && (
-    <section class="hero-home_wrap theme-dark" data-op-section="HeroHome">
+    <section class="hero-home_wrap theme-dark" data-paint="theme-dark" data-op-section="HeroHome">
       <div class="hero-home_media" aria-hidden="true">
         {still ? (
           <Img class="hero-home_still" src={still} alt="" variant="full-width" loading="eager" fetchPriority="high" />
@@ -67,16 +67,24 @@ const first = featured[0];
       min-height: 100svh;
       overflow: clip;
     }
+    /* the still under 30 % black (the still at 70 % on black), then a fade to the page's ground at its foot: the
+       ground's own colour through a mask, so it turns with the page when the directors list colours it (Sam, Nov 12:
+       « quand on est sur le premier director, le hero devrait être la même couleur ») */
     .hero-home_media {
       position: absolute;
       inset: 0;
+      background-color: var(--black);
+      & .hero-home_still,
+      & .hero-home_placeholder {
+        opacity: 0.7;
+      }
       &::after {
         content: "";
         position: absolute;
         inset: 0;
-        background:
-          linear-gradient(to bottom, transparent, var(--black)),
-          color-mix(in srgb, var(--black) 30%, transparent);
+        background-color: var(--background);
+        mask-image: linear-gradient(to bottom, transparent, black);
+        transition: background-color var(--paint-duration, 0s) var(--ease-travel);
       }
     }
     .hero-home_still,
