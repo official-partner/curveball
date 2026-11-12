@@ -1,0 +1,18 @@
+---
+/* About (the Figma's « About », Nov 11): the story in the curve, the ball rolling in and carrying the reader down,
+   then the call sheet and the schedule; the plain footer with the red symbol. */
+import Layout from "@/layouts/BaseLayout.astro";
+import AboutStory from "@/components/section/AboutStory.astro";
+import AboutLists from "@/components/section/AboutLists.astro";
+---
+
+<Layout
+  title="About"
+  description="How Curveball Films started: a call on a Friday, a brief that had changed, a director found in a day and a half."
+  theme="dark"
+  accent="red"
+  footer="plain"
+>
+  <AboutStory />
+  <AboutLists />
+</Layout>

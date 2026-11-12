@@ -46,7 +46,8 @@ w("\n  /* Borders & focus */\n  --border-width: 0.0625rem;\n  --focus-width: 0.1
 w("\n  /* Motion: OP's named durations and curves. Productive (what answers the person) on the out curve, expressive\n"
   "     (what is watched) on the arrive curve; leaving takes about 60 % of arriving. */")
 w("  --duration-faster: 150ms;\n  --duration-fast: 250ms;\n  --duration-medium: 450ms;\n  --duration-base: 800ms;\n"
-  "  --duration-slow: 1200ms;\n  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);\n  --ease-arrive: cubic-bezier(0.625, 0.05, 0, 1);")
+  "  --duration-slow: 1200ms;\n  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);\n  --ease-arrive: cubic-bezier(0.625, 0.05, 0, 1);\n"
+  "  --ease-travel: cubic-bezier(0.65, 0, 0.35, 1);\n  --ease-leave: cubic-bezier(0.5, 0, 0.75, 0);")
 w("  --hover-duration: var(--duration-fast);\n  --hover-ease: var(--ease-out);\n  --open-duration: var(--duration-medium);\n"
   "  --open-ease: var(--ease-out);\n  --loader-duration: 600ms;\n  --loader-ease: var(--ease-arrive);\n"
   "  --page-leave-duration: var(--duration-medium);\n  --page-leave-ease: var(--ease-out);\n  --page-arrive-duration: var(--duration-base);\n"

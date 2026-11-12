@@ -24,9 +24,13 @@ type Props = SeoProps & {
    * `paddingTop="navoverlap"` to clear the bar.
    */
   overlap?: boolean;
+  /** A link at the right end of the menu, on a computer (a director's page: « Enquire about Jasper »). */
+  action?: { text: string; href: string };
+  /** The footer: with the curve (Home, News, Contact) or plain, a rule over it (a director's page, About). */
+  footer?: "curve" | "plain";
 };
 
-const { theme = "inherit", accent = "red", overlap = false, ...seo } = Astro.props;
+const { theme = "inherit", accent = "red", overlap = false, action, footer = "curve", ...seo } = Astro.props;
 
 /* The finishing touches, each off until op.config.json turns it on (src/utils/finishes.ts): the loading screen, the
    transition between pages, the smooth scroll. A "custom" one without its file stands in as its first preset. */
@@ -70,10 +74,10 @@ const { smoothScroll } = finish;
     {loader && <Loader part="cover" preset={loader} />}
     {transition && <PageTransitions part="body" preset={transition} />}
     <SkipLink />
-    <Nav overlap={overlap} />
+    <Nav overlap={overlap} action={action} />
     <main id="main" tabindex="-1">
       <slot />
     </main>
-    <Footer />
+    <Footer variant={footer} />
   </body>
 </html>

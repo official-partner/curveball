@@ -9,8 +9,9 @@
 # STEP units. The shapes below mirror src/components/section/CurveBand.astro (Contact's arm is drawn past its real
 # end, 1780, so the end cap does not pinch the width near the ball).
 # Where each trip starts:
-#   home     on the upper bend, clear of the last director names (the centre line passing x 1440): the ball is seen
-#            there as the band comes in, then rolls round the bend into the lower stem;
+#   home     all the way (Sam, Nov 12: « la boule peut voyager all the way, même sortir du cadre »): in from beyond the
+#            left edge along the top stem, round the bend (past the right edge), into the lower stem (its arms drawn
+#            past their real end, -194.7, so the end cap does not pinch the width where the ball comes in);
 #   news     just outside the right edge, coming down the stroke's turn;
 #   contact  just outside the left edge, the same turn mirrored.
 import json, math, os, re
@@ -26,10 +27,10 @@ WIDTH = 1728
 BANDS = {
     "home": dict(
         y=-226.84,
-        d="M1852.96 949.314C1848.7 336.304 1465.57 0 924.931 0L-194.663 0L-194.663 587.468L882.361 587.468C1163.32 587.468 1337.86 710.921 1342.12 949.314C1346.38 1208.99 1171.84 1319.67 886.618 1319.67L-194.663 1319.67L-194.663 1907.14L929.188 1907.14C1444.29 1907.14 1857.22 1511.24 1852.96 949.314Z",
+        d="M1852.96 949.314C1848.7 336.304 1465.57 0 924.931 0L-900 0L-900 587.468L882.361 587.468C1163.32 587.468 1337.86 710.921 1342.12 949.314C1346.38 1208.99 1171.84 1319.67 886.618 1319.67L-900 1319.67L-900 1907.14L929.188 1907.14C1444.29 1907.14 1857.22 1511.24 1852.96 949.314Z",
         ball=(1167, 1342, 276),
-        guide="M 700 66.9 L 903.7 66.9 C 1314.5 66.9 1593.3 296.8 1597.6 722.5 C 1600.8 1037.3 1429.1 1259.7 1167 1342 L 900 1386.5",
-        start=("x>=", 1440),
+        guide="M -420 66.9 L 903.7 66.9 C 1314.5 66.9 1593.3 296.8 1597.6 722.5 C 1600.8 1037.3 1429.1 1259.7 1167 1342 L 900 1386.5",
+        start=("first", None),
     ),
     "news": dict(
         y=0,
@@ -44,6 +45,16 @@ BANDS = {
         ball=(1556.5, 1612.3, 273),
         guide="M -269.3 900 L -269.3 957.8 C -265 1383.5 13.8 1613.4 424.6 1613.4 L 1700 1613.4",
         start=("hidden-left", None),
+    ),
+    # About (Figma 15:597): the same « u » as Home's, 92.5 to the left, its band starting 206.2 down the page; the
+    # ball rolls in along the top arm when the page opens, then the scroll carries it round the bend to its rest (its
+    # arm drawn past its real end, -287, so the end cap does not pinch the width where the ball comes in)
+    "about": dict(
+        y=0,
+        d="M1760.62 722.38C1764.88 1284.31 1351.95 1680.21 836.85 1680.21L-900 1680.21L-900 1092.74L794.28 1092.74C1079.5 1092.74 1254.04 982.06 1249.78 722.38C1245.52 483.99 1070.99 360.54 790.02 360.54L-900 360.54L-900 -226.93L832.59 -226.93C1373.23 -226.93 1756.37 109.37 1760.62 722.38Z",
+        ball=(1288.6, 1226.4, 260.5),
+        guide="M -320 66.9 L 811.2 66.9 C 1222 66.9 1500.8 296.8 1505.1 722.5 C 1508.3 1037.3 1336.6 1259.7 1074.5 1342 L 800 1386.5",
+        start=("first", None),
     ),
 }
 
@@ -139,7 +150,9 @@ for name, b in BANDS.items():
     radius = half * share
     end = int(np.hypot(centre[:, 0] - bx, centre[:, 1] - by).argmin())
     kind, val = b["start"]
-    if kind == "x>=":
+    if kind == "first":
+        begin = 0
+    elif kind == "x>=":
         begin = next(i for i in range(end) if centre[i, 0] >= val)
     elif kind == "hidden-right":
         begin = max(i for i in range(end) if centre[i, 0] - radius[i] >= WIDTH + 2)

@@ -1,0 +1,40 @@
+---
+/* A director's page: the opening in their colour, their reel, then the other directors on the dark, the plain footer
+   with the red symbol (as the Figma). Built for every director of the collection; on the staging (rendered on
+   demand) the address names the director. */
+import Layout from "@/layouts/BaseLayout.astro";
+import DirectorHero from "@/components/section/DirectorHero.astro";
+import DirectorReel from "@/components/section/DirectorReel.astro";
+import DirectorsHome from "@/components/section/DirectorsHome.astro";
+import { getItem, getItems } from "@/utils/content.ts";
+
+export async function getStaticPaths() {
+  const directors = await getItems("directors");
+  return directors.map((d) => ({ params: { id: d.id } }));
+}
+
+const id = Astro.params.id ?? "";
+const director = await getItem("directors", id);
+if (!director) return new Response(null, { status: 404 });
+const projects = (await getItems("projects")).filter((p) => p.data.director?.id === director.id);
+const colour = director.data.colour ?? "red";
+const theme = colour === "red" ? "brand" : colour;
+const short = director.data.shortName || director.data.name;
+const enquire = {
+  text: `Enquire about ${short}`,
+  href: `mailto:bids@curveballfilms.com?subject=${encodeURIComponent(director.data.name)}`,
+};
+---
+
+<Layout
+  title={director.data.name}
+  description={director.data.bio?.split(". ")[0] ?? `${director.data.name}, director at Curveball Films.`}
+  theme={theme}
+  accent="red"
+  action={enquire}
+  footer="plain"
+>
+  <DirectorHero director={director} enquire={enquire} />
+  <DirectorReel projects={projects} colour={colour} />
+  <DirectorsHome label="Other Directors" exclude={director.id} dark />
+</Layout>

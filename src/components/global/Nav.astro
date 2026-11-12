@@ -3,6 +3,7 @@
    column 7, contact us at column 10, as the footer's menu (the same place on every page: Sam, Nov 11). Their cap tops
    line up with the symbol's top, one margin from the top of the page. */
 import LogoSymbol from "@/assets/logo/symbol.svg";
+import ArrowLink from "@/components/content/ArrowLink.astro";
 import { SITE_NAME } from "@/consts.ts";
 
 interface Props {
@@ -10,9 +11,11 @@ interface Props {
   render?: boolean;
   /** Kept for the starter's layout: the menu always lies over the page. */
   overlap?: boolean;
+  /** A link at the right end, from a computer up (a director's page: « Enquire about Jasper »). */
+  action?: { text: string; href: string };
 }
 
-const { render = true } = Astro.props;
+const { render = true, action } = Astro.props;
 const path = Astro.url.pathname.replace(/\/$/, "") || "/";
 const links = [
   { href: "/directors", label: "directors" },
@@ -43,6 +46,7 @@ const current = (href: string) => (path === href || path.startsWith(href + "/") 
         <a class="nav_contact nav_link text-style-large" href="/contact" aria-current={current("/contact")}>
           contact us
         </a>
+        {action && <ArrowLink class="nav_action nav_link" href={action.href} text={action.text} />}
       </div>
     </header>
   )
@@ -79,6 +83,16 @@ const current = (href: string) => (path === href || path.startsWith(href + "/") 
       justify-self: start;
       @media (width >= 48rem) {
         grid-column: aside;
+      }
+    }
+    /* at the right end, from a computer up; below it the page carries it (DirectorHero) */
+    .nav_action {
+      display: none;
+      @media (width >= 64rem) {
+        display: inline-flex;
+        grid-column: last;
+        justify-self: end;
+        white-space: nowrap;
       }
     }
     .nav_link {

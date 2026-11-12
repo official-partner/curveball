@@ -68,6 +68,8 @@
   --duration-slow: 1200ms;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-arrive: cubic-bezier(0.625, 0.05, 0, 1);
+  --ease-travel: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-leave: cubic-bezier(0.5, 0, 0.75, 0);
   --hover-duration: var(--duration-fast);
   --hover-ease: var(--ease-out);
   --open-duration: var(--duration-medium);
@@ -115,6 +117,9 @@
   --text-label: clamp(var(--text-label-min) / 16 * 1rem, ((var(--text-label-min) - ((var(--text-label-max) - var(--text-label-min)) / (var(--viewport-max) - var(--viewport-min)) * var(--viewport-min))) / 16 * 1rem + ((var(--text-label-max) - var(--text-label-min)) / (var(--viewport-max) - var(--viewport-min))) * 100vw), var(--text-label-max) / 16 * 1rem);
   --text-label-min: 18;
   --text-label-max: 18;
+  --text-lead: clamp(var(--text-lead-min) / 16 * 1rem, ((var(--text-lead-min) - ((var(--text-lead-max) - var(--text-lead-min)) / (var(--viewport-max) - var(--viewport-min)) * var(--viewport-min))) / 16 * 1rem + ((var(--text-lead-max) - var(--text-lead-min)) / (var(--viewport-max) - var(--viewport-min))) * 100vw), var(--text-lead-max) / 16 * 1rem);
+  --text-lead-min: 18;
+  --text-lead-max: 20;
   --text-large: clamp(var(--text-large-min) / 16 * 1rem, ((var(--text-large-min) - ((var(--text-large-max) - var(--text-large-min)) / (var(--viewport-max) - var(--viewport-min)) * var(--viewport-min))) / 16 * 1rem + ((var(--text-large-max) - var(--text-large-min)) / (var(--viewport-max) - var(--viewport-min))) * 100vw), var(--text-large-max) / 16 * 1rem);
   --text-large-min: 16;
   --text-large-max: 16;
@@ -198,6 +203,7 @@
   --text-small-floor: 0.75rem;
   --dot-floor: 0.875rem;
   --logo-size-floor: 2.25rem;
+  --text-lead-floor: 1.125rem;
 
   /* Text style properties */
   --display-line-height: 0.95;
@@ -240,6 +246,14 @@
   --text-label-margin-top: 0rem;
   --text-label-margin-bottom: 0rem;
   --text-label-text-wrap: pretty;
+  --text-lead-line-height: 1.08;
+  --text-lead-letter-spacing: -0.03em;
+  --text-lead-text-transform: none;
+  --text-lead-font-family: var(--es-build);
+  --text-lead-font-weight: 700;
+  --text-lead-margin-top: 0rem;
+  --text-lead-margin-bottom: 0rem;
+  --text-lead-text-wrap: pretty;
   --text-large-line-height: 1.1;
   --text-large-letter-spacing: -0.03em;
   --text-large-text-transform: none;
@@ -296,6 +310,8 @@
     --h3-max: 57;
     --text-label-min: 14.222;
     --text-label-max: 24;
+    --text-lead-min: 14.222;
+    --text-lead-max: 24;
     --text-large-min: 10.667;
     --text-large-max: 18;
     --text-main-min: 10.667;
@@ -635,6 +651,17 @@ h6,
   text-wrap: var(--text-label-text-wrap);
   --_margin-top: var(--text-label-margin-top);
   --_margin-bottom: var(--text-label-margin-bottom);
+}
+.text-style-lead {
+  font-family: var(--text-lead-font-family);
+  font-size: max(var(--text-lead-floor), var(--text-lead));
+  font-weight: var(--text-lead-font-weight);
+  line-height: var(--text-lead-line-height);
+  letter-spacing: var(--text-lead-letter-spacing);
+  text-transform: var(--text-lead-text-transform);
+  text-wrap: var(--text-lead-text-wrap);
+  --_margin-top: var(--text-lead-margin-top);
+  --_margin-bottom: var(--text-lead-margin-bottom);
 }
 .text-style-large {
   font-family: var(--text-large-font-family);

@@ -1,0 +1,375 @@
+---
+/* About's story (the Figma's « About », Nov 11): the curve from Home (ES Build's « u », 92.5 to the left, red ground
+   and black stroke) opening right under the menu, the title on its top stem, the story inside its bend, « Let's
+   swing for the fences. » in its lower stem with the ball beside it, then the second « u » sweeping in at the foot.
+   Sam, Nov 11: « la balle qui va se promener, qui va partir du hero quand on arrive, qui va se promener avec le
+   scroll, qui va reveal le texte ». The page opens with the title rising and the ball rolling in along the top stem,
+   behind the title, to the bend; the scroll then carries it round the bend (filling its stroke, as on every curve)
+   to where the Figma rests it, and the story appears line by line as the ball passes, the last heading and its link
+   as it lands. On a computer the text sits in the shapes as drawn; below, it follows the drawing. Reduced motion or
+   no JS: everything in place, the ball at rest. */
+import ArrowLink from "@/components/content/ArrowLink.astro";
+import tracks from "@/data/curve-tracks.json";
+
+interface Props {
+  /** Set to `false` to omit the component. */
+  render?: boolean;
+}
+
+const { render = true } = Astro.props;
+/* In the band's units (1728 wide, from its top, 206.2 down the page): the first « u », the second, the corner the
+   Figma fills black, and the ball as it renders (Figma 15:622: 521 across) */
+const HEIGHT = 2193;
+const u1 =
+  "M1760.62 722.38C1764.88 1284.31 1351.95 1680.21 836.85 1680.21L-287 1680.21L-287 1092.74L794.28 1092.74C1079.5 1092.74 1254.04 982.06 1249.78 722.38C1245.52 483.99 1070.99 360.54 790.02 360.54L-287 360.54L-287 -226.93L832.59 -226.93C1373.23 -226.93 1756.37 109.37 1760.62 722.38Z";
+const u2 =
+  "M-220.93 2697.75C-225.19 2135.83 187.74 1739.92 702.84 1739.92L1826.69 1739.92L1826.69 2327.39L745.41 2327.39C460.19 2327.39 285.65 2438.07 289.91 2697.75C294.17 2936.14 468.7 3059.6 749.67 3059.6L1826.69 3059.6L1826.69 3647.06L707.1 3647.06C166.46 3647.06 -216.67 3310.76 -220.93 2697.75Z";
+const ball = { cx: 1288.6, cy: 1226.4, r: 260.5 };
+/* where the opening leaves the ball, on the bend just past the title (a point of its track) */
+const START = 275;
+---
+
+{
+  render && (
+    <section class="about-story_wrap" data-op-section="AboutStory">
+      <div class="about-story_art" aria-hidden="true">
+        <svg class="about-story_drawing" viewBox={`0 0 1728 ${HEIGHT}`} focusable="false">
+          <rect class="about-story_ground" width="1728" height={HEIGHT} />
+          <path class="about-story_shape" d={u1} />
+          <path class="about-story_shape" d={u2} />
+          <rect class="about-story_shape" x="1159.2" y="0" width="568.8" height="443.4" />
+        </svg>
+        <svg
+          class="about-story_layer"
+          viewBox={`0 0 1728 ${HEIGHT}`}
+          focusable="false"
+          data-track={JSON.stringify(tracks.about)}
+          data-start={START}
+        >
+          <circle class="about-story_ball" cx={ball.cx} cy={ball.cy} r={ball.r} />
+        </svg>
+      </div>
+      <div class="about-story_layout site-grid">
+        <h1 class="about-story_title text-style-h1">We got a curveball for ya.</h1>
+        <div class="about-story_text text-style-lead">
+          <p>
+            That's how the call started. An agency producer, on a Friday, sounding like she'd already tried everyone
+            else. The brief had changed, the window had moved, and the whole thing now hung on finding the right
+            director in about a day and a half.
+          </p>
+          <p>
+            We took it. It went well. And afterwards it was hard not to notice that this wasn't the exception to the
+            job. This was the job. Every good one arrives slightly bent, and we built a company for those.
+          </p>
+        </div>
+        <h2 class="about-story_swing text-style-h1">Let's swing for the fences.</h2>
+        <ArrowLink class="about-story_link" href="/contact" text="Start a conversation" />
+      </div>
+    </section>
+  )
+}
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { SplitText } from "gsap/SplitText";
+  import { CustomEase } from "gsap/CustomEase";
+  import { onPage } from "@/utils/page.ts";
+  import { scrollTriggerWithLenis } from "@/utils/smooth-scroll.ts";
+
+  gsap.registerPlugin(ScrollTrigger, SplitText, CustomEase);
+  scrollTriggerWithLenis(gsap, ScrollTrigger);
+  const css = (name: string) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  const seconds = (name: string) => (parseFloat(css(name)) || 0) / (css(name).endsWith("ms") ? 1000 : 1);
+  const curve = (name: string, fallback: string) => {
+    const m = css(name).match(/cubic-bezier\(([^)]+)\)/);
+    return CustomEase.create(name, m ? m[1] : fallback);
+  };
+
+  onPage((signal) => {
+    const wrap = document.querySelector<HTMLElement>(".about-story_wrap");
+    const svg = wrap?.querySelector<SVGSVGElement>("svg[data-track]");
+    const ball = svg?.querySelector<SVGCircleElement>(".about-story_ball");
+    if (!wrap || !svg || !ball) return;
+    const track = JSON.parse(svg.dataset.track ?? "[]") as number[];
+    const count = track.length / 3;
+    const startAt = Number(svg.dataset.start ?? 0) / (count - 1);
+    const height = svg.viewBox.baseVal.height;
+    const rest = (["cx", "cy", "r"] as const).map((a) => ball.getAttribute(a) ?? "");
+    const at = (p: number) => {
+      const f = Math.min(Math.max(p, 0), 1) * (count - 1);
+      const i = Math.min(Math.floor(f), count - 2);
+      const t = f - i;
+      const a = i * 3;
+      return [0, 1, 2].map((k) => track[a + k] + (track[a + 3 + k] - track[a + k]) * t);
+    };
+    const title = wrap.querySelector<HTMLElement>(".about-story_title");
+    const text = wrap.querySelector<HTMLElement>(".about-story_text");
+    const swing = wrap.querySelector<HTMLElement>(".about-story_swing");
+    const link = wrap.querySelector<HTMLElement>(".about-story_link");
+    const travel = curve("--ease-travel", "0.65, 0, 0.35, 1");
+    const arrive = curve("--ease-arrive", "0.625, 0.05, 0, 1");
+
+    const mm = gsap.matchMedia();
+    mm.add(
+      { motion: "(prefers-reduced-motion: no-preference)", wide: "(width >= 64rem)" },
+      (context) => {
+        const { motion, wide } = context.conditions as { motion: boolean; wide: boolean };
+        if (!motion) return;
+        const state = { opening: 0, scroll: 0 };
+        let lines: { el: HTMLElement; y: number }[] = [];
+        let swingLines: HTMLElement[] = [];
+        const progress = () => Math.min(1, state.opening + state.scroll * (1 - startAt));
+
+        /* The story's lines (job: let the ball uncover the story): each fades up as the ball's centre comes level
+           with it, from half a ball above; the heading's lines rise from their masks and the link comes in as the
+           ball lands (the last tenth of its way). On a computer only, where the text sits in the ball's path. */
+        const reveal = (p: number, y: number, r: number) => {
+          lines.forEach((line) => {
+            const o = Math.min(1, Math.max(0, (y - line.y + r / 2) / (r / 2)));
+            line.el.style.opacity = String(o);
+            line.el.style.translate = `0 ${((1 - o) * 0.5).toFixed(3)}em`;
+          });
+          swingLines.forEach((line, k) => {
+            const o = Math.min(1, Math.max(0, (p - 0.86 - k * 0.03) / 0.08));
+            line.style.translate = `0 ${((1 - arrive(o)) * 110).toFixed(1)}%`;
+          });
+          if (link) {
+            const o = Math.min(1, Math.max(0, (p - 0.94) / 0.06));
+            link.style.opacity = String(o);
+            link.style.translate = `0 ${((1 - o) * 0.75).toFixed(3)}em`;
+          }
+        };
+        const update = () => {
+          const p = progress();
+          const [x, y, r] = at(p);
+          ball.setAttribute("cx", x.toFixed(1));
+          ball.setAttribute("cy", y.toFixed(1));
+          ball.setAttribute("r", r.toFixed(1));
+          if (wide) reveal(p, y, r);
+        };
+        // a line's height in the band's units, measured on the page as it lies
+        const measure = () => {
+          const box = svg.getBoundingClientRect();
+          const k = height / box.height;
+          lines = lines.map((line) => {
+            const b = line.el.getBoundingClientRect();
+            return { el: line.el, y: (b.top + b.height / 2 - box.top) * k };
+          });
+        };
+        const splits: SplitText[] = [];
+        if (wide && text && swing) {
+          splits.push(
+            SplitText.create(text, {
+              type: "lines",
+              autoSplit: true,
+              onSplit: (self) => {
+                lines = (self.lines as HTMLElement[]).map((el) => ({ el, y: 0 }));
+                // measured untranslated, then put back where the ball says
+                lines.forEach((l) => (l.el.style.translate = ""));
+                measure();
+                update();
+              },
+            }),
+            SplitText.create(swing, {
+              type: "lines",
+              mask: "lines",
+              autoSplit: true,
+              onSplit: (self) => {
+                swingLines = self.lines as HTMLElement[];
+                update();
+              },
+            }),
+          );
+        }
+        update();
+
+        /* The opening (job: the page's one moment): the title's lines rise from their masks (base, 80 ms apart, the
+           arrive curve) while the ball rolls in along the top stem, behind it, to the bend (slow, the travel curve),
+           once the page is uncovered (a page change's veil leaves first) */
+        const titleSplit = title
+          ? SplitText.create(title, {
+              type: "lines",
+              mask: "lines",
+              autoSplit: true,
+              onSplit: (self) =>
+                gsap.from(self.lines, { yPercent: 110, duration: seconds("--duration-base"), ease: arrive, stagger: 0.08, delay: 0.25 }),
+            })
+          : null;
+        const opening = gsap.to(state, {
+          opening: startAt,
+          duration: seconds("--duration-slow") * 1.5,
+          ease: travel,
+          delay: 0.25,
+          onUpdate: update,
+        });
+
+        /* Then the scroll carries it (scrubbed, a little smoothing on top of Lenis): from the page's top to when its
+           rest is 60 % down the screen */
+        const trigger = ScrollTrigger.create({
+          trigger: svg,
+          start: 0,
+          end: () => {
+            const box = svg.getBoundingClientRect();
+            return box.top + window.scrollY + (Number(rest[1]) / height) * box.height - innerHeight * 0.6 + 1;
+          },
+          scrub: 0.5,
+          invalidateOnRefresh: true,
+          onUpdate: (self) => {
+            state.scroll = self.progress;
+            update();
+          },
+        });
+        return () => {
+          opening.kill();
+          trigger.kill();
+          titleSplit?.revert();
+          splits.forEach((s) => s.revert());
+          if (link) {
+            link.style.opacity = "";
+            link.style.translate = "";
+          }
+          ball.setAttribute("cx", rest[0]);
+          ball.setAttribute("cy", rest[1]);
+          ball.setAttribute("r", rest[2]);
+        };
+      },
+    );
+    signal.addEventListener("abort", () => mm.revert(), { once: true });
+  });
+</script>
+
+<style is:global>
+  @layer components {
+    .about-story_wrap {
+      position: relative;
+      padding-top: var(--page-top);
+      color: var(--heading-accent);
+    }
+    .about-story_art {
+      position: relative;
+      aspect-ratio: 1728 / 2193;
+      margin-block: var(--section-space-small);
+      & svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+      /* the ball on its own layer: it comes in from beyond the frame and may leave it, under the text */
+      & .about-story_layer {
+        overflow: visible;
+        pointer-events: none;
+      }
+    }
+    .about-story_ground {
+      fill: var(--page-accent);
+    }
+    .about-story_shape {
+      fill: var(--black);
+    }
+    .about-story_ball {
+      fill: var(--page-accent);
+    }
+    .about-story_layout {
+      row-gap: var(--section-space-small);
+      align-items: start;
+    }
+    .about-story_title,
+    .about-story_text,
+    .about-story_swing,
+    .about-story_link {
+      position: relative;
+      z-index: 1;
+    }
+    /* h1's size, set as the Figma sets these two: sentence case, 91 % (h2's own) */
+    .about-story_title,
+    .about-story_swing {
+      grid-column: margin / end;
+      line-height: var(--h2-line-height);
+      text-transform: var(--h2-text-transform);
+    }
+    .about-story_text {
+      grid-column: margin / end;
+      display: flex;
+      flex-direction: column;
+      gap: 1.08em;
+      max-width: 26em;
+    }
+    .about-story_link {
+      grid-column: margin / end;
+      justify-self: start;
+    }
+    /* Below a computer the drawing sits between the title and the story */
+    @media (width < 64rem) {
+      .about-story_wrap {
+        display: flex;
+        flex-direction: column;
+      }
+      .about-story_art {
+        order: 1;
+      }
+      .about-story_layout {
+        display: contents;
+      }
+      .about-story_title {
+        order: 0;
+        padding-inline: var(--site-margin);
+      }
+      .about-story_text,
+      .about-story_swing,
+      .about-story_link {
+        order: 2;
+        margin-inline: var(--site-margin);
+      }
+      .about-story_swing {
+        margin-top: var(--section-space-small);
+      }
+      .about-story_link {
+        margin-top: var(--space-9);
+      }
+    }
+    /* On a computer, as drawn: the band 206.2 down the page, the title's cap top 35 into it, the story at column 10
+       375.6 down, « Let's swing » 1148.1 down, its link 1607.4 down; the section ends with the ground */
+    @media (width >= 64rem) {
+      .about-story_wrap {
+        height: calc(var(--u) * (206.2 + 2193));
+        padding-top: 0;
+      }
+      .about-story_art {
+        position: absolute;
+        inset: calc(var(--u) * 206.2) 0 auto;
+        margin: 0;
+      }
+      .about-story_layout {
+        position: absolute;
+        inset: calc(var(--u) * 206.2) 0 auto;
+        display: grid;
+      }
+      .about-story_title,
+      .about-story_text,
+      .about-story_swing,
+      .about-story_link {
+        grid-row: 1;
+        position: relative;
+      }
+      .about-story_title {
+        top: calc(var(--u) * 35.1);
+        max-width: calc(var(--u) * 1197);
+      }
+      .about-story_text {
+        grid-column: aside / end;
+        top: calc(var(--u) * 375.6);
+        max-width: none;
+      }
+      .about-story_swing {
+        top: calc(var(--u) * 1148.1);
+        max-width: calc(var(--u) * 1197);
+      }
+      .about-story_link {
+        top: calc(var(--u) * 1607.4);
+      }
+    }
+  }
+</style>

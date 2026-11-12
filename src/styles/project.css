@@ -60,6 +60,13 @@
     border-radius: var(--radius-round);
     background-color: var(--dot-color);
   }
+  /* with a plus in it, in the ground's colour (a director's bio, as the Figma draws it) */
+  &.is-plus::before {
+    background:
+      linear-gradient(var(--background), var(--background)) center / 54% 9.5% no-repeat,
+      linear-gradient(var(--background), var(--background)) center / 9.5% 54% no-repeat,
+      var(--dot-color);
+  }
 }
 
 /* The page's main area is the container of the design unit (--u, one Figma pixel at 1728): 1cqw is 1 % of its width */

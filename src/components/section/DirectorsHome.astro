@@ -1,16 +1,46 @@
 ---
-/* Home's directors: the row « Directors » with its two filters (Industry at column 7, Location at column 10, as the
-   Figma), then every director's name in the big type, taupe, one per line, each a link to their page. A filter
-   keeps the names that match it; « All » shows everyone. The directors come from the collection « Directors ». */
+/* The directors: the row « Directors » with its two filters (Industry at column 7, Location at column 10, as the
+   Figma), then every director's name in the big type, one per line, each a link to their page. A filter keeps the
+   names that match it; « All » shows everyone. The directors come from the collection « Directors ».
+   The name that crosses the middle of the screen is the active one (Sam, Nov 11: « les noms seraient actifs au milieu
+   de l'écran et non pas au over »): the section takes that director's colour (the same as their page), the active
+   name turns black, the others black at 30 %, and balls carrying their films rise through the screen. Home shows it on
+   the page's dark; a director's page shows it as « Other Directors » (without them) on its own dark. */
+import { getImage } from "astro:assets";
 import { getItems } from "@/utils/content.ts";
 
 interface Props {
   /** Set to `false` to omit the component. */
   render?: boolean;
+  /** The row's label. */
+  label?: string;
+  /** A director left out (their own page). */
+  exclude?: string;
+  /** On a page of another colour: the section paints the dark itself. */
+  dark?: boolean;
+  /** `h1` when the list is the page (the directors' own page): it then starts a page's height down. */
+  as?: "h1" | "h2";
 }
 
-const { render = true } = Astro.props;
-const directors = await getItems("directors");
+const { render = true, label = "Directors", exclude, dark = false, as: Heading = "h2" } = Astro.props;
+const directors = (await getItems("directors")).filter((d) => d.id !== exclude);
+const projects = await getItems("projects");
+/* Each director's film stills, as small pictures for the balls (480 wide, twice a ball's size on a computer) */
+const stills = Object.fromEntries(
+  await Promise.all(
+    directors.map(async (d) => {
+      const own = projects.filter((p) => p.data.director?.id === d.id && p.data.still);
+      const urls = await Promise.all(
+        own.map(async (p) => {
+          const pic = p.data.still!;
+          return "format" in pic ? (await getImage({ src: pic, width: 480, format: "webp" })).src : pic.src;
+        }),
+      );
+      return [d.id, urls] as const;
+    }),
+  ),
+);
+const BALLS = 7;
 const industries = ["Docustyle", "Comedy", "Story", "Spectacle", "Fashion"];
 const locations = ["Chicago", "Los Angeles", "New Orleans", "New York"];
 const filters = [
@@ -21,10 +51,12 @@ const filters = [
 
 {
   render && (
-    <section class="directors-home_wrap" data-op-section="DirectorsHome">
+    <section class:list={["directors-home_wrap", dark && "theme-dark", Heading === "h1" && "is-page"]} data-op-section="DirectorsHome">
       <div class="directors-home_layout site-grid">
         <div class="directors-home_row rule-top">
-          <h2 class="directors-home_label dot-label text-style-large">Directors</h2>
+          <Heading class="directors-home_label dot-label text-style-large" data-page-reveal={Heading === "h1" ? "" : undefined}>
+            {label}
+          </Heading>
           {filters.map((f) => (
             <div class:list={["directors-home_filter", f.class]} role="group" aria-label={`Filter by ${f.label.toLowerCase()}`}>
               <p class="text-style-main">{f.label}</p>
@@ -53,6 +85,8 @@ const filters = [
               data-op-item={d.id}
               data-industry={(d.data.industries ?? []).join("|")}
               data-location={d.data.location ?? ""}
+              data-colour={d.data.colour ?? "red"}
+              data-stills={JSON.stringify(stills[d.id] ?? [])}
             >
               <a class="directors-home_name" href={`/directors/${d.id}`} data-op-field="name">
                 {d.data.name}
@@ -64,17 +98,176 @@ const filters = [
           No director here yet.
         </p>
       </div>
+      {dark && <div class="directors-home_fade" aria-hidden="true" />}
+      <div class="directors-home_balls" aria-hidden="true">
+        {Array.from({ length: BALLS }, () => (
+          <span class="directors-home_ball">
+            <img class="directors-home_film" alt="" decoding="async" />
+            <img class="directors-home_film" alt="" decoding="async" />
+          </span>
+        ))}
+      </div>
     </section>
   )
 }
 
 <script>
+  import { gsap } from "gsap";
   import { onPage } from "@/utils/page.ts";
+
+  /* The balls: where each rides across the screen (a fraction of the width), how near it is (its size and how fast
+     the scroll carries it: the near ones faster than the page, the far ones slower, a parallax), and where it starts
+     on its loop. Fixed, so the same seven come back the same way on every visit. */
+  const LANES = [0.1, 0.74, 0.4, 0.9, 0.24, 0.6, 0.52];
+  const DEPTH = [1.15, 0.8, 1, 0.72, 1.25, 0.88, 1.05];
+  // every ball outruns the page (1.15 to 1.44 times its scroll), so none is ever caught by the section's edge
+  const speedOf = (depth: number) => 0.75 + depth * 0.55;
 
   onPage((signal) => {
     document.querySelectorAll<HTMLElement>(".directors-home_wrap").forEach((wrap) => {
       const items = [...wrap.querySelectorAll<HTMLElement>(".directors-home_item")];
       const empty = wrap.querySelector<HTMLElement>(".directors-home_empty");
+      const layer = wrap.querySelector<HTMLElement>(".directors-home_balls");
+      const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+
+      /* The balls (job: carry the active director's films through the screen, as balls rising, the brand's play).
+         Each rides a loop taller than the screen; the scroll carries it up at its own speed (its depth), it follows
+         with a little weight (a spring, a hint of overshoot), drifts up slowly after a scroll and settles within four
+         seconds when the page rests (nothing moves on its own for long: WCAG 2.2.2). A ball takes a new film each
+         time it comes round, out of sight. Near the list's top or bottom edge a ball fades, gone by the time it would
+         touch it, so none is ever cut by the next section (Sam, Nov 11). The near ones go in front. Without reduced
+         motion only. */
+      const balls = [...(layer?.querySelectorAll<HTMLElement>(".directors-home_ball") ?? [])].map((el, i) => ({
+        el,
+        films: [...el.querySelectorAll<HTMLImageElement>(".directors-home_film")],
+        front: 0,
+        lane: LANES[i % LANES.length],
+        depth: DEPTH[i % DEPTH.length],
+        start: 0,
+        y: 0,
+        v: 0,
+        turn: 0,
+        film: i,
+        d: 0,
+      }));
+      balls.forEach((b) => (b.el.style.zIndex = String(Math.round(b.depth * 10))));
+      let size = 0;
+      let loop = 1;
+      let drift = 0;
+      let calm = 0;
+      let last = window.scrollY;
+      let clock = 0;
+      let running = false;
+      let films: string[] = [];
+      const measure = () => {
+        const base = innerWidth >= 768 ? innerWidth * 0.138 : innerWidth * 0.26;
+        size = base * Math.max(...DEPTH);
+        loop = innerHeight + size * 2;
+        balls.forEach((b, i) => {
+          const d = base * b.depth;
+          b.d = d;
+          b.el.style.width = `${d}px`;
+          b.el.style.height = `${d}px`;
+          b.el.style.left = `${b.lane * innerWidth - d / 2}px`;
+          b.start = (i / balls.length) * loop;
+        });
+      };
+      const show = (b: (typeof balls)[number], src: string | undefined, fade: boolean) => {
+        if (!src) return;
+        const next = fade ? 1 - b.front : b.front;
+        const img = b.films[next];
+        if (img.getAttribute("src") !== src) img.src = src;
+        img.style.opacity = "1";
+        if (fade) b.films[b.front].style.opacity = "0";
+        b.front = next;
+      };
+      const targetOf = (b: (typeof balls)[number], scroll: number) =>
+        b.start - (scroll + drift) * speedOf(b.depth);
+      const tick = (_time: number, deltaMs: number) => {
+        const dt = Math.min(deltaMs, 50) / 1000;
+        clock += dt;
+        const scroll = window.scrollY;
+        if (scroll !== last) {
+          calm = 0;
+          last = scroll;
+        } else calm += dt;
+        // the drift fades out over four seconds of rest
+        const alive = Math.max(0, 1 - calm / 4);
+        drift += 22 * alive * dt;
+        const box = wrap.getBoundingClientRect();
+        balls.forEach((b, i) => {
+          const stiffness = 70 / b.depth;
+          const damping = 2 * 0.82 * Math.sqrt(stiffness);
+          b.v += (stiffness * (targetOf(b, scroll) - b.y) - damping * b.v) * dt;
+          b.y += b.v * dt;
+          const turn = Math.floor(b.y / loop);
+          if (turn !== b.turn) {
+            b.turn = turn;
+            b.film += balls.length;
+            show(b, films[b.film % Math.max(1, films.length)], false);
+          }
+          const y = b.y - turn * loop - size;
+          // faded within half a ball of the list's edges, gone before it would touch them
+          const room = Math.min(box.bottom - (y + b.d), y - box.top) / (b.d / 2);
+          b.el.style.opacity = String(Math.max(0, Math.min(1, room)));
+          const sway = Math.sin(clock * (0.6 + i * 0.07) + i * 1.7) * 10 * alive;
+          b.el.style.transform = `translate3d(${sway.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
+        });
+      };
+      const start = () => {
+        if (running || reduce.matches || !layer) return;
+        running = true;
+        balls.forEach((b) => {
+          b.y = targetOf(b, window.scrollY);
+          b.v = 0;
+          b.turn = Math.floor(b.y / loop);
+        });
+        gsap.ticker.add(tick);
+      };
+      const stop = () => {
+        if (!running) return;
+        running = false;
+        gsap.ticker.remove(tick);
+      };
+
+      /* The active name: the one under the middle of the screen (job: show whose colour and films these are) */
+      let active: HTMLElement | null = null;
+      let fadeOut = 0;
+      const setActive = (item: HTMLElement | null) => {
+        if (item === active) return;
+        const first = !active;
+        active = item;
+        items.forEach((i) => i.classList.toggle("is-active", i === item));
+        wrap.classList.toggle("is-coloured", !!item);
+        clearTimeout(fadeOut);
+        if (!item || !layer) {
+          // the balls stop once their layer has faded out
+          fadeOut = window.setTimeout(stop, 600);
+          return;
+        }
+        wrap.dataset.ground = item.dataset.colour ?? "red";
+        films = JSON.parse(item.dataset.stills ?? "[]") as string[];
+        balls.forEach((b, i) => {
+          b.film = i;
+          show(b, films[i % Math.max(1, films.length)], !first);
+        });
+        start();
+      };
+      const check = () => {
+        const middle = innerHeight / 2;
+        let found: HTMLElement | null = null;
+        for (const item of items) {
+          if (item.hidden) continue;
+          const box = item.getBoundingClientRect();
+          if (box.top <= middle && box.bottom > middle) {
+            found = item;
+            break;
+          }
+        }
+        setActive(found);
+      };
+
+      /* Filters: Industry and Location keep the names that match; « All » shows everyone */
       const chosen: Record<string, string> = { industry: "", location: "" };
       const apply = () => {
         let shown = 0;
@@ -87,6 +280,7 @@ const filters = [
           if (ok) shown++;
         });
         if (empty) empty.hidden = shown > 0;
+        check();
       };
       wrap.addEventListener(
         "click",
@@ -102,18 +296,104 @@ const filters = [
         },
         { signal },
       );
+
+      measure();
+      check();
+      let frame = 0;
+      const onScroll = () => {
+        cancelAnimationFrame(frame);
+        frame = requestAnimationFrame(check);
+      };
+      window.addEventListener("scroll", onScroll, { passive: true, signal });
+      window.addEventListener(
+        "resize",
+        () => {
+          measure();
+          check();
+        },
+        { signal },
+      );
+      reduce.addEventListener("change", () => (reduce.matches ? stop() : active && start()), { signal });
+      signal.addEventListener(
+        "abort",
+        () => {
+          stop();
+          clearTimeout(fadeOut);
+          cancelAnimationFrame(frame);
+        },
+        { once: true },
+      );
     });
   });
 </script>
 
 <style is:global>
   @layer components {
-    /* Above the curve that rises behind its last names (CurveBand on Home), with no ground of its own (the page's
-       dark shows through), so the curve's ball is never cut by the section's edge (Sam, Nov 11) */
+    /* On Home, above the curve that follows it, with no ground of its own (the page's dark shows through, so the
+       curve's ball is never cut by the section's edge). Its colour, when a name is active, is a layer of its own
+       under its content. */
     .directors-home_wrap {
       position: relative;
       z-index: 1;
+      isolation: isolate;
       padding-top: var(--space-6);
+      padding-bottom: var(--space-9);
+      &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background-color: var(--_ground, var(--red));
+        opacity: 0;
+        transition:
+          opacity var(--duration-medium) var(--ease-out),
+          background-color var(--duration-medium) var(--ease-out);
+      }
+      &[data-ground="red"] {
+        --_ground: var(--red);
+      }
+      &[data-ground="mustard"] {
+        --_ground: var(--mustard);
+      }
+      &[data-ground="teal"] {
+        --_ground: var(--teal);
+      }
+      /* the colour on: black text at full, half and 30 %, as the coloured themes */
+      &.is-coloured {
+        --text: var(--black);
+        --heading-accent: var(--black);
+        --text-2: color-mix(in srgb, var(--black) var(--tone-muted), transparent);
+        --text-3: color-mix(in srgb, var(--black) var(--tone-faint), transparent);
+        --border: color-mix(in srgb, var(--black) var(--tone-faint), transparent);
+        --dot-color: var(--black);
+        color: var(--text);
+        &::before {
+          opacity: 1;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        &::before {
+          transition-duration: var(--duration-faster);
+        }
+      }
+    }
+    /* On a director's page the reel above fades to this dark (the Figma's 315 at the film's foot), and the list
+       ends 144 above the footer's rule */
+    .directors-home_wrap.theme-dark {
+      padding-top: var(--section-space-small);
+      padding-bottom: var(--section-space-medium);
+    }
+    .directors-home_wrap.is-page {
+      padding-top: var(--page-top);
+      padding-bottom: var(--section-space-medium);
+    }
+    .directors-home_fade {
+      position: absolute;
+      inset: auto 0 100%;
+      height: calc(var(--u) * 315);
+      min-height: 8rem;
+      background: linear-gradient(transparent, var(--background));
+      pointer-events: none;
     }
     .directors-home_layout {
       row-gap: var(--section-space-large);
@@ -167,9 +447,21 @@ const filters = [
     .directors-home_list {
       color: var(--heading-accent);
     }
+    /* Under the balls but the active one, which stays above them (the Figma's hover frames) */
+    .directors-home_item {
+      position: relative;
+      z-index: 1;
+      .is-coloured & {
+        color: var(--text-3);
+      }
+      &.is-active {
+        z-index: 3;
+        color: var(--text);
+      }
+    }
     .directors-home_name {
       color: inherit;
-      transition: color var(--hover-duration) var(--hover-ease);
+      transition: color var(--duration-medium) var(--ease-out);
       @media (hover: hover) {
         &:hover {
           color: var(--text);
@@ -178,6 +470,43 @@ const filters = [
     }
     .directors-home_empty {
       color: var(--text-2);
+    }
+    /* The balls: a layer over the screen while a name is active, fading in and out with the colour */
+    .directors-home_balls {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      overflow: clip;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity var(--duration-medium) var(--ease-out);
+      .is-coloured & {
+        opacity: 1;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        display: none;
+      }
+    }
+    .directors-home_ball {
+      position: absolute;
+      top: 0;
+      left: 0;
+      overflow: hidden;
+      border-radius: var(--radius-round);
+      background-color: var(--black);
+      will-change: transform;
+    }
+    .directors-home_film {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity var(--duration-fast) var(--ease-out);
+      &:not([src]) {
+        visibility: hidden;
+      }
     }
   }
 </style>

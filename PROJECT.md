@@ -2,6 +2,37 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-12, Sam (Nov 11, 23:27: the new Figma pages, « les noms seraient actifs au milieu de l'écran », « la vidéo
+  reste fixe en background et va switch en fade smooth », « la balle qui va ... reveal le texte »; 00:21: « la boule
+  peut voyager all the way, même sortir du cadre »): the directors' pages, About, the directors list's colours.
+  - The directors list (Home, the directors' page, « Other Directors » on each director's page): the name crossing the
+    middle of the screen is active (not on hover, as asked): the section takes that director's colour, the name turns
+    black, the others black at 30 %, and balls carrying the director's films rise through the screen, the near ones
+    faster than the page (parallax), with a little weight (a spring) and a drift that settles within four seconds of
+    rest; a ball fades before it would touch the list's edge, so none is cut by another section. Each director has a
+    colour (the collection's new field, teal, mustard, red in turn, the Figma's James, Jasper, Kevin), used by their
+    page too.
+  - Home's curve no longer rises behind the last names (the colours would have shown its black behind them): it
+    starts after the list. Its ball travels the whole stroke now, in from beyond the left edge, round the bend past the
+    right edge, to its rest, on a layer over the sections so it is never cut.
+  - A director's page (/directors/<id>, from the collection): the opening in their colour (portrait, name, the bio
+    with the Figma's plus, Based, Clients, « Enquire about … » in the menu on a computer, under the bio below it,
+    writing to bids@ with the director's name as the subject), then the reel: the film holds the screen while each
+    project's line scrolls over it, the film cross-fading as a line comes in; the page's colour melts into the film
+    and is gone once it fills the screen; after the last project, a fade to the dark and « Other Directors ». A film
+    file plays muted in the reel and opens the player (sound, progress in the rule, pause, Close or Escape).
+  - The films are a collection (« Films »: title, director, client, agency, year, still, film link, vertical), since
+    they show on the director's page and in Home's balls. Placeholders: three per director, copies of the Figma's
+    Factor (Wieden+Kennedy, 2024), their stills the Figma's two film frames (no film files yet: the player waits
+    for them). Jasper Soloff's bio, cities, clients and portrait are the Figma's; the others' are to write.
+  - The directors' own page (/directors, the menu's link): the list alone, no Figma frame of its own.
+  - About (/about): built as drawn on a computer (the curve opening under the menu, the story in its bend, « Let's
+    swing for the fences. » by the ball, the call sheet and the schedule on the second curve), stacked below a
+    computer. The ball rolls in along the top stem behind the title as the page opens, the title's lines rising;
+    the scroll carries it round the bend, the story appearing line by line as it passes, the last heading and its
+    link as it lands. New text style « lead » (Bold 24, the story) and OP's travel and leave curves in the tokens.
+  - The footer on a director's page and About is plain (a rule, no curve) with the red symbol, as the Figma draws them.
+
 - 2026-11-11, Sam (23:05 to 23:38: « les boules ... sont trop grosses, ils dépassent ... comme dans Figma », « qu'au
   scroll down, la boule voyage à travers sa shape », « le lenis Smooth scroll », « pas de grosse boule ... juste un
   gros fade avec les couleurs qui vont changer, les éléments qui apparaissent », « pas ces curseurs-là », « faudrait

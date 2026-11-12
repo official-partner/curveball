@@ -1,0 +1,440 @@
+---
+/* A director's reel (Sam, Nov 11, and the Figma's note: « The videos switch between different projects while the user
+   scrolls down the page. The video player is sticky and the bottom bar scrolls »). The film holds the screen while
+   each project's line (play, title, client, agency, year) scrolls up over it, one screen apart; as a line comes in
+   from the bottom, the film behind cross-fades to that project's. Coming from the hero, a gradient in the page's
+   colour melts the film into it, gone once the film fills the screen; after the last project the page fades to its
+   dark. A project with a film file plays it (muted, looping) and its line opens the player; until the files are in,
+   its still stands in. */
+import Img from "@/components/media/Img.astro";
+import { img, type Item } from "@/utils/content.ts";
+
+interface Props {
+  /** Set to `false` to omit the component. */
+  render?: boolean;
+  /** The director's films, in their order. */
+  projects: Item<"projects">[];
+  /** The page's colour, melting into the film (the director's). */
+  colour?: "red" | "mustard" | "teal";
+}
+
+const { render = true, projects, colour = "red" } = Astro.props;
+---
+
+{
+  render && projects.length > 0 && (
+    <section
+      class="director-reel_wrap theme-dark"
+      style={`--_melt: var(--${colour})`}
+      data-op-section="DirectorReel"
+      data-op-list="projects"
+      data-op-source="astro:projects"
+    >
+      <div class="director-reel_stage" aria-hidden="true">
+        {projects.map((p, i) => (
+          <div class:list={["director-reel_media", i === 0 && "is-active"]} data-index={i}>
+            {p.data.still && <Img {...img(p.data.still)} alt="" variant="full-width" loading={i === 0 ? "eager" : "lazy"} />}
+            {p.data.video && (
+              <video class="director-reel_video" src={p.data.video} muted loop playsinline preload="none" />
+            )}
+          </div>
+        ))}
+        <div class="director-reel_shade" />
+        <div class="director-reel_melt" />
+      </div>
+      <ol class="director-reel_list">
+        {projects.map((p, i) => (
+          <li class="director-reel_slot" data-op-item={p.id} data-index={i} data-vertical={p.data.vertical ? "true" : undefined}>
+            <div class="director-reel_line site-grid rule-top text-style-main">
+              {p.data.video ? (
+                <button class="director-reel_title" type="button" data-play={i} aria-label={`Play ${p.data.name}`}>
+                  <svg class="director-reel_icon" viewBox="0 0 22 24" aria-hidden="true">
+                    <path d="M0 0l22 12L0 24z" />
+                  </svg>
+                  <span data-op-field="name">{p.data.name}</span>
+                </button>
+              ) : (
+                <p class="director-reel_title">
+                  <svg class="director-reel_icon" viewBox="0 0 22 24" aria-hidden="true">
+                    <path d="M0 0l22 12L0 24z" />
+                  </svg>
+                  <span data-op-field="name">{p.data.name}</span>
+                </p>
+              )}
+              {p.data.client && (
+                <p class="director-reel_client">
+                  <span class="director-reel_key">Client</span>
+                  <br />
+                  <span data-op-field="client">{p.data.client}</span>
+                </p>
+              )}
+              {p.data.agency && (
+                <p class="director-reel_agency">
+                  <span class="director-reel_key">Agency</span>
+                  <br />
+                  <span data-op-field="agency">{p.data.agency}</span>
+                </p>
+              )}
+              {p.data.year && (
+                <p class="director-reel_year">
+                  <span class="director-reel_key">Year</span>
+                  <br />
+                  <span data-op-field="year">{p.data.year}</span>
+                </p>
+              )}
+            </div>
+          </li>
+        ))}
+      </ol>
+      <dialog class="director-reel_player theme-dark" aria-label="Film">
+        <video class="director-reel_film" playsinline />
+        <button class="director-reel_close text-style-large" type="button">Close</button>
+        <div class="director-reel_bar site-grid text-style-main">
+          <div class="director-reel_progress" aria-hidden="true">
+            <span class="director-reel_elapsed" />
+          </div>
+          <button class="director-reel_toggle" type="button" aria-label="Pause">
+            <svg viewBox="0 0 16 22" aria-hidden="true">
+              <path class="is-pause" d="M0 0h5v22H0zM11 0h5v22h-5z" />
+              <path class="is-play" d="M0 0l16 11L0 22z" />
+            </svg>
+            <span class="director-reel_now" />
+          </button>
+        </div>
+      </dialog>
+    </section>
+  )
+}
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { onPage } from "@/utils/page.ts";
+  import { scrollTriggerWithLenis } from "@/utils/smooth-scroll.ts";
+
+  gsap.registerPlugin(ScrollTrigger);
+  scrollTriggerWithLenis(gsap, ScrollTrigger);
+
+  onPage((signal) => {
+    document.querySelectorAll<HTMLElement>(".director-reel_wrap").forEach((wrap) => {
+      const media = [...wrap.querySelectorAll<HTMLElement>(".director-reel_media")];
+      const slots = [...wrap.querySelectorAll<HTMLElement>(".director-reel_slot")];
+      const melt = wrap.querySelector<HTMLElement>(".director-reel_melt");
+      const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+
+      /* The film behind (job: show the project whose line is on screen): the last line wholly in from the bottom wins;
+         its layer fades in over the others (slow), its film plays, the others pause */
+      let active = 0;
+      const play = (i: number) => {
+        media.forEach((m, k) => {
+          m.classList.toggle("is-active", k === i);
+          const video = m.querySelector<HTMLVideoElement>("video");
+          if (!video) return;
+          if (k === i && !reduce.matches) {
+            video.preload = "auto";
+            video.play().catch(() => {});
+          } else video.pause();
+        });
+      };
+      const check = () => {
+        let found = 0;
+        slots.forEach((slot, i) => {
+          const bar = slot.querySelector<HTMLElement>(".director-reel_line");
+          if (bar && bar.getBoundingClientRect().bottom <= innerHeight) found = i;
+        });
+        if (found !== active) {
+          active = found;
+          play(active);
+        }
+      };
+      play(0);
+      check();
+      let frame = 0;
+      window.addEventListener(
+        "scroll",
+        () => {
+          cancelAnimationFrame(frame);
+          frame = requestAnimationFrame(check);
+        },
+        { passive: true, signal },
+      );
+
+      /* The melt (job: carry the page's colour into the film, then get out of its way): the gradient fades as the
+         reel rises, gone when the film fills the screen. Scrubbed; with reduced motion it simply stays. */
+      const mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        if (!melt) return;
+        gsap.fromTo(
+          melt,
+          { opacity: 1 },
+          {
+            opacity: 0,
+            ease: "none",
+            scrollTrigger: { trigger: wrap, start: "top 60%", end: "top top", scrub: true, invalidateOnRefresh: true },
+          },
+        );
+      });
+
+      /* The player (job: watch a film whole): its line opens it over everything, the film plays with its sound, the
+         rule fills as it plays, a click or the button pauses, Close or Escape leaves */
+      const dialog = wrap.querySelector<HTMLDialogElement>(".director-reel_player");
+      const film = dialog?.querySelector<HTMLVideoElement>(".director-reel_film");
+      const toggle = dialog?.querySelector<HTMLButtonElement>(".director-reel_toggle");
+      const now = dialog?.querySelector<HTMLElement>(".director-reel_now");
+      const elapsed = dialog?.querySelector<HTMLElement>(".director-reel_elapsed");
+      const sync = () => {
+        if (!film || !toggle) return;
+        toggle.classList.toggle("is-paused", film.paused);
+        toggle.setAttribute("aria-label", film.paused ? "Play" : "Pause");
+      };
+      wrap.addEventListener(
+        "click",
+        (event) => {
+          const button = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-play]");
+          if (!button || !dialog || !film) return;
+          const i = Number(button.dataset.play);
+          const source = media[i]?.querySelector<HTMLVideoElement>("video");
+          if (!source) return;
+          film.src = source.currentSrc || source.src;
+          film.classList.toggle("is-vertical", slots[i]?.dataset.vertical === "true");
+          if (now) now.textContent = button.textContent?.trim() ?? "";
+          dialog.showModal();
+          film.play().catch(() => {});
+        },
+        { signal },
+      );
+      film?.addEventListener("click", () => (film.paused ? film.play() : film.pause()), { signal });
+      toggle?.addEventListener("click", () => film && (film.paused ? film.play() : film.pause()), { signal });
+      film?.addEventListener("play", sync, { signal });
+      film?.addEventListener("pause", sync, { signal });
+      film?.addEventListener(
+        "timeupdate",
+        () => {
+          if (film && elapsed && film.duration) elapsed.style.scale = `${film.currentTime / film.duration} 1`;
+        },
+        { signal },
+      );
+      dialog?.querySelector(".director-reel_close")?.addEventListener("click", () => dialog.close(), { signal });
+      dialog?.addEventListener(
+        "close",
+        () => {
+          film?.pause();
+          film?.removeAttribute("src");
+          film?.load();
+        },
+        { signal },
+      );
+      signal.addEventListener(
+        "abort",
+        () => {
+          mm.revert();
+          cancelAnimationFrame(frame);
+          media.forEach((m) => m.querySelector("video")?.pause());
+        },
+        { once: true },
+      );
+    });
+  });
+</script>
+
+<style is:global>
+  @layer components {
+    .director-reel_wrap {
+      position: relative;
+      /* the rule and the text stay stone over any film */
+      --border: var(--text);
+    }
+    .director-reel_stage {
+      position: sticky;
+      top: 0;
+      height: 100svh;
+      overflow: hidden;
+      background-color: var(--black);
+    }
+    .director-reel_media {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity var(--duration-slow) var(--ease-out);
+      &.is-active {
+        opacity: 1;
+      }
+      & img,
+      & video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        transition-duration: var(--duration-fast);
+      }
+    }
+    /* the Figma's 20 % black over the film, and a shade at its foot for the line */
+    .director-reel_shade {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to top, color-mix(in srgb, var(--black) 45%, transparent), transparent 35%),
+        color-mix(in srgb, var(--black) 20%, transparent);
+    }
+    /* the page's colour melting into the film (the Figma's 551 of 1009) */
+    .director-reel_melt {
+      position: absolute;
+      inset: 0 0 auto;
+      height: 55%;
+      background: linear-gradient(var(--_melt), transparent);
+    }
+    .director-reel_list {
+      position: relative;
+      margin-top: -100svh;
+    }
+    .director-reel_slot {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      height: 100svh;
+      padding-bottom: var(--space-7);
+    }
+    .director-reel_line {
+      row-gap: var(--space-5);
+      align-items: start;
+      color: var(--text);
+    }
+    .director-reel_title {
+      grid-column: margin / span 3;
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-3);
+      @media (width >= 64rem) {
+        grid-column: margin / half;
+      }
+    }
+    button.director-reel_title {
+      text-align: start;
+      transition: color var(--hover-duration) var(--hover-ease);
+      @media (hover: hover) {
+        &:hover {
+          color: var(--text-2);
+        }
+      }
+    }
+    .director-reel_icon {
+      flex: none;
+      width: 1.2em;
+      height: 1.3em;
+      margin-top: -0.12em;
+      fill: currentColor;
+    }
+    .director-reel_client {
+      grid-column: margin / span 2;
+      @media (width >= 48rem) {
+        grid-column: two / span 2;
+      }
+      @media (width >= 64rem) {
+        grid-column: half / span 3;
+      }
+    }
+    .director-reel_agency {
+      grid-column: three / end;
+      @media (width >= 48rem) {
+        grid-column: aside / span 1;
+      }
+      @media (width >= 64rem) {
+        grid-column: aside / span 2;
+      }
+    }
+    .director-reel_year {
+      grid-column: last;
+      grid-row: 1;
+      @media (width >= 48rem) {
+        grid-row: auto;
+      }
+    }
+    .director-reel_key {
+      color: var(--text-2);
+    }
+    /* The player */
+    .director-reel_player {
+      width: 100%;
+      max-width: none;
+      height: 100%;
+      max-height: none;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      background-color: var(--black);
+      color: var(--text);
+      &::backdrop {
+        background-color: var(--black);
+      }
+      &[open] {
+        animation: director-reel-in var(--duration-medium) var(--ease-out);
+      }
+    }
+    @keyframes director-reel-in {
+      from {
+        opacity: 0;
+      }
+    }
+    .director-reel_film {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      &.is-vertical {
+        object-fit: contain;
+      }
+    }
+    .director-reel_close {
+      position: absolute;
+      top: var(--site-margin);
+      right: var(--site-margin);
+      color: var(--text);
+    }
+    .director-reel_bar {
+      position: absolute;
+      inset: auto 0 0;
+      padding-bottom: var(--space-7);
+      row-gap: var(--space-rule);
+    }
+    .director-reel_progress {
+      grid-column: margin / end;
+      position: relative;
+      height: var(--border-width);
+      background-color: color-mix(in srgb, var(--text) var(--tone-muted), transparent);
+    }
+    .director-reel_elapsed {
+      position: absolute;
+      inset: auto 0 0;
+      height: 6px;
+      background-color: var(--text);
+      transform-origin: left;
+      scale: 0 1;
+    }
+    .director-reel_toggle {
+      grid-column: margin / end;
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      justify-self: start;
+      color: var(--text);
+      & svg {
+        width: 1em;
+        height: 1.3em;
+        fill: currentColor;
+      }
+      & .is-play {
+        display: none;
+      }
+      &.is-paused .is-play {
+        display: inline;
+      }
+      &.is-paused .is-pause {
+        display: none;
+      }
+    }
+  }
+</style>

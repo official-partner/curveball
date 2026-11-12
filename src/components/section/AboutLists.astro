@@ -1,0 +1,90 @@
+---
+/* About's two lists (the Figma's « About »): « Some of the names on the call sheet: » at column 7 with its two columns
+   of clients, and « Some of the work on the schedule: » at column 1, lower, with its two columns of work. On a
+   computer they sit on the second « u »'s black stem, as drawn: the first heading's cap top 210 above the story's
+   end, the second 366 lower; below a computer, one after the other. */
+import { callSheet, schedule } from "@/data/about.ts";
+
+interface Props {
+  /** Set to `false` to omit the component. */
+  render?: boolean;
+}
+
+const { render = true } = Astro.props;
+const blocks = [
+  { key: "names", heading: "Some of the names on the call sheet:", columns: callSheet, list: "call-sheet" },
+  { key: "work", heading: "Some of the work on the schedule:", columns: schedule, list: "schedule" },
+];
+---
+
+{
+  render && (
+    <section class="about-lists_wrap" data-op-section="AboutLists">
+      <div class="about-lists_layout site-grid">
+        {blocks.map((b) => (
+          <div class:list={["about-lists_block", `is-${b.key}`]}>
+            <h2 class="about-lists_heading text-style-h2">{b.heading}</h2>
+            {b.columns.map((col, c) => (
+              <ul class="about-lists_column text-style-main" data-op-list={`${b.list}-${c + 1}`} data-op-source="src/data/about.ts">
+                {col.map((item) => (
+                  <li data-op-item={item}>{item}</li>
+                ))}
+              </ul>
+            ))}
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+<style is:global>
+  @layer components {
+    .about-lists_wrap {
+      position: relative;
+      padding-top: var(--section-space-medium);
+      padding-bottom: var(--section-space-large);
+      color: var(--heading-accent);
+    }
+    .about-lists_layout {
+      row-gap: var(--section-space-medium);
+      align-items: start;
+    }
+    .about-lists_block {
+      grid-column: margin / end;
+      display: grid;
+      grid-template-columns: subgrid;
+      row-gap: var(--space-9);
+      align-content: start;
+    }
+    .about-lists_heading {
+      grid-column: margin / end;
+      max-width: 7.3em;
+    }
+    .about-lists_column {
+      grid-column: span 2;
+      @media (width >= 48rem) {
+        grid-column: span 2;
+      }
+    }
+    @media (width >= 64rem) {
+      .about-lists_wrap {
+        margin-top: calc(var(--u) * -210.1);
+        padding-top: 0;
+      }
+      .about-lists_block {
+        grid-row: 1;
+      }
+      .about-lists_block.is-names {
+        grid-column: half / end;
+      }
+      .about-lists_block.is-work {
+        grid-column: margin / half;
+        margin-top: calc(var(--u) * 366);
+      }
+      .about-lists_heading {
+        grid-column: 1 / -1;
+      }
+    }
+  }
+</style>

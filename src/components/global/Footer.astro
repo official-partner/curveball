@@ -10,9 +10,11 @@ import { social, legal } from "@/data/site.ts";
 interface Props {
   /** Set to `false` to omit the component. */
   render?: boolean;
+  /** `plain`: no curve, a rule over it (a director's page, About: the Figma's own). */
+  variant?: "curve" | "plain";
 }
 
-const { render = true } = Astro.props;
+const { render = true, variant = "curve" } = Astro.props;
 const menu = [
   { href: "/directors", label: "directors" },
   { href: "/about", label: "about" },
@@ -25,11 +27,13 @@ const curve =
 
 {
   render && (
-    <footer class="footer_wrap theme-dark" data-op-section="Footer">
-      <svg class="footer_curve" viewBox="0 0 1728 300" aria-hidden="true" focusable="false">
-        <rect class="footer_curve-ground" width="1728" height="300" />
-        <path class="footer_curve-shape" d={curve} />
-      </svg>
+    <footer class:list={["footer_wrap theme-dark", variant === "plain" && "is-plain"]} data-op-section="Footer">
+      {variant === "curve" && (
+        <svg class="footer_curve" viewBox="0 0 1728 300" aria-hidden="true" focusable="false">
+          <rect class="footer_curve-ground" width="1728" height="300" />
+          <path class="footer_curve-shape" d={curve} />
+        </svg>
+      )}
       <div class="footer_layout site-grid">
         <a class="footer_symbol" href="/" aria-label={`${SITE_NAME}, home`}>
           <LogoSymbol aria-hidden="true" />
@@ -112,6 +116,12 @@ const curve =
       padding-bottom: var(--site-margin);
       row-gap: var(--space-9);
       align-items: start;
+      /* plain: the rule margin to margin at its top, the symbol 24 under it (the Figma's director page and About) */
+      .is-plain & {
+        padding-top: var(--space-5);
+        background: linear-gradient(var(--border), var(--border)) var(--site-margin) 0 / calc(100% - 2 * var(--site-margin))
+          var(--border-width) no-repeat;
+      }
     }
     .footer_symbol {
       grid-column: margin / span 2;

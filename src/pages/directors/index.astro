@@ -1,0 +1,16 @@
+---
+/* The directors' own page (the menu's « directors »): the list with its filters on the dark, each name active as it
+   crosses the middle of the screen, as on Home. No Figma frame of its own: Home's list, alone. */
+import Layout from "@/layouts/BaseLayout.astro";
+import DirectorsHome from "@/components/section/DirectorsHome.astro";
+---
+
+<Layout
+  title="Directors"
+  description="The directors of Curveball Films, by industry and city."
+  theme="dark"
+  accent="red"
+  footer="plain"
+>
+  <DirectorsHome as="h1" />
+</Layout>
