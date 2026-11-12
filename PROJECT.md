@@ -22,6 +22,11 @@ One line per decision: the date, who asked, what was decided and why. The newest
     comes half a screen sooner; the film rises at its own pace as the colour dissolves into it (a parallax).
   - About: the call sheet and the schedule drift at their own pace as the page scrolls (fine pointer, tablet up).
 
+- 2026-11-12, Sam (comment 13, a director's page): much more parallax on the reel's film. It is now a third of a
+  screen taller than the screen and rises through it slower than the scroll: about a quarter of a screen while the
+  colour dissolves into it (settling from 108 % to its size), then the rest over the whole reel, until the other
+  directors cover it (was 14 % of a screen during the dissolve only). The foot's shade stays on the screen.
+
 - 2026-11-12, Sam (10:51, with screenshots: the directors' balls, the time on each name, the colour changes, About's
   text, the page changes, a director's page): third pass on the directors and the motion.
   - The directors' balls follow the Figma's hover frames: each director has their own three (their films), placed as
