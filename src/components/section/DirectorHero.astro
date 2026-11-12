@@ -1,6 +1,6 @@
 ---
 /* A director's page opens on their colour (the page's theme): their portrait in a circle and their name in the
-   display type on one line, then the rule and the row of their bio (with the Figma's dot and plus), where they are
+   display type on one line, then the rule and the row of their bio (with the dot), where they are
    based (column 7) and their clients (column 10), each label on its own line above its names, as the Figma sets them.
    Measured on the Figma's « Directors » frame (Jasper Soloff): the name's cap top 342 down, the portrait 0.8 of the
    type's size, 64 to the rule, 144 to the reel. It paints its own ground, above the reel, whose film waits under it
@@ -37,7 +37,7 @@ const empty = !bio && !(based ?? []).length && !(clients ?? []).length;
           </h1>
         </div>
         <div class:list={["director-hero_row rule-top", empty && "is-empty"]} data-page-reveal>
-          <When field="bio" value={bio} as="p" class="director-hero_bio dot-label is-plus text-style-large">
+          <When field="bio" value={bio} as="p" class="director-hero_bio dot-label text-style-large">
             {bio}
           </When>
           <When field="based" value={based} as="p" class="director-hero_based text-style-main">

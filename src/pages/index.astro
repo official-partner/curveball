@@ -3,7 +3,6 @@ import Layout from "@/layouts/BaseLayout.astro";
 import HeroHome from "@/components/section/HeroHome.astro";
 import DirectorsHome from "@/components/section/DirectorsHome.astro";
 import CurveBand from "@/components/section/CurveBand.astro";
-import still from "@/assets/content/home/hero-still.jpg";
 ---
 
 <Layout
@@ -13,7 +12,7 @@ import still from "@/assets/content/home/hero-still.jpg";
   theme="dark"
   accent="red"
 >
-  <HeroHome still={still} />
+  <HeroHome />
   <DirectorsHome />
   <CurveBand variant="home" />
 </Layout>

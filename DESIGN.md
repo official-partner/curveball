@@ -47,17 +47,24 @@ it (system/gen.py).
   brings in is hidden from the first paint (`data-await`), so it is never seen before its animation.
 - The curve bands (Home, News, Contact, About): the ball follows the stroke's middle, its radius following the
   stroke's width, from where it enters to the Figma's rest and out by the other edge, scrubbed (0.5).
+- Home's opening: the featured work turns every six seconds while the row's rule fills (its time), the next still
+  fading in over the last (slow, ease-out) as it settles from 104 % (twice slow, the arrive curve), the client and
+  agency cross-fading (medium), the counter's digit rolling up (base, the arrive curve). The counter pauses it; a
+  hover or a focus in the row, the opening off screen or the tab hidden pause it too; no turning by itself with
+  reduced motion.
 - The directors list: the active name is the one under the middle of the screen, the first caught a quarter of a
-  screen early and the last kept a quarter late. The page's colour follows it on the travel curve: base to or from
+  screen early and the last kept a tenth late; « View director » fades in at the active row's far right (medium). The page's colour follows it on the travel curve: base to or from
   the page's own ground, medium between two directors. Each director has three balls (their films), placed as the
   Figma's hover frames place them (238 at 1728, 128 at least), two to four on screen: they grow in (base, ease-out,
   80 ms apart) when the name becomes active and shrink away (medium, the leave curve) when it gives way, rising with
   the scroll 1.45 to 1.85 times faster than the names, a tenth of a second behind; at rest they rest.
 - A director's reel: the film is fixed behind the page (its stage sticks from a screen under the opening to a screen
   under the other directors). The opening's colour dissolves into it through an eased gradient 90 % of a screen
-  tall that the scroll draws up, the film settling from 105 % to its size; each project's line scrolls over it and
-  the films cross-fade (slow); after the last, the dark rises over it the same way.
-- Parallax: the news cards and the team's portraits drift at their own pace (fine pointer, 48rem and up, scrub 0.6).
+  tall that the scroll draws up, the film rising 14 % of a screen at its own pace as it settles from 116 % (a
+  parallax); the first line comes half a screen early; each project's line scrolls over it and the films cross-fade
+  (slow); after the last, the dark rises over it the same way.
+- Parallax: the news cards, the team's portraits and About's two lists drift at their own pace (fine pointer, 48rem
+  and up, scrub 0.6).
 - Reduced motion: no travel, scale, parallax or smooth scroll; the balls sit at their Figma rest, the reel's film
   fills its stage, colours change at once or over faster, page changes crossfade.
 
@@ -65,8 +72,8 @@ it (system/gen.py).
 - .site-grid: the 12 columns with named lines (margin, nav, two, split, half, three, aside, last, end).
 - .rule-top: the rule that opens a row or a section, and --space-rule to the text under it (Home's two rows, the
   inner pages' sections).
-- .dot-label: the dot before a label, centred on its capitals (« Featured work », « Directors »); .is-plus draws a
-  plus in it (a director's bio).
+- .dot-label: the dot before a label, centred on its capitals (« Featured work », « Directors », a director's bio:
+  the plus the Figma put in that one is gone, Sam, Nov 12).
 - [data-paint] (with :root[data-paints]): the grounds and named text that follow the page's colour, and how they
   change. [data-await]: hidden from the first paint until its script plays it (2 s at most).
 - main is the container of the design unit --u.
@@ -74,7 +81,8 @@ it (system/gen.py).
 ## Components
 - Nav, Footer (global): the menu at columns 7 and 10 on every page, an action at the last column when the page has
   one (« Enquire about Jasper »); the footer opens with the curve in the page's colour (or a rule: plain), the
-  symbol in that colour, the menu, the line and the small print.
+  symbol in that colour, the menu, the line and the small print. On a computer it stays within one screen: the symbol
+  is 531 at most, smaller on a short screen, 144 at least.
 - HeroHome, DirectorsHome, CurveBand (sections), ArrowLink (a link with its drawn arrow).
 - NewsList, ContactIntro, TeamList, Statement (sections); SectionHead, CardNews, ContactBlock, CardPerson (content).
 - DirectorHero, DirectorReel (a director's page), AboutStory, AboutLists (About); src/utils/parallax.ts.

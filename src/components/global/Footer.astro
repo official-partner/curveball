@@ -96,6 +96,13 @@ const curve =
       container-type: inline-size;
       overflow: clip;
       --_u: calc(100cqw / 1728);
+      /* on a computer, the footer's height without its symbol, which grows with the width: the curve, the line and the
+         small print come to 40.2 % of it; the plain one's rule instead of the curve, 24.8 % (measured from 1024 to
+         1920) */
+      --_rest: 40.2cqw;
+      &.is-plain {
+        --_rest: 24.8cqw;
+      }
     }
     .footer_curve {
       position: absolute;
@@ -131,9 +138,11 @@ const curve =
       @media (width >= 48rem) {
         grid-column: margin / span 3;
       }
+      /* the Figma's 531 at most, smaller on a short screen so the footer stays within one (Sam, Nov 12: « idéalement
+         max 100vh ... avec un min »), 144 at least */
       @media (width >= 64rem) {
         grid-column: margin / span 4;
-        width: calc(var(--_u) * 531);
+        width: clamp(9rem, calc(100svh - var(--_rest) - var(--space-3)), calc(var(--_u) * 531));
       }
       & svg {
         display: block;

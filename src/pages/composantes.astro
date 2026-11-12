@@ -9,7 +9,6 @@ import ArrowLink from "@/components/content/ArrowLink.astro";
 import HeroHome from "@/components/section/HeroHome.astro";
 import DirectorsHome from "@/components/section/DirectorsHome.astro";
 import CurveBand from "@/components/section/CurveBand.astro";
-import still from "@/assets/content/home/hero-still.jpg";
 import SectionHead from "@/components/content/SectionHead.astro";
 import CardNews from "@/components/content/CardNews.astro";
 import ContactBlock from "@/components/content/ContactBlock.astro";
@@ -42,8 +41,8 @@ const reel = (await getItems("projects")).filter((p) => p.data.director?.id === 
         <ArrowLink href="/contact" text="Start a conversation" />
       </div>
     </ComponentSample>
-    <ComponentSample file="section/HeroHome.astro" note="Home's opening: the featured film's still, the wordmark and the featured work's row.">
-      <HeroHome still={still} />
+    <ComponentSample file="section/HeroHome.astro" note="Home's opening: the featured films' stills turning under the wordmark, the featured work's row with its counter (the pause).">
+      <HeroHome />
     </ComponentSample>
     <ComponentSample file="section/DirectorsHome.astro" note="Every director in the big type, with the filters; the name in the middle of the screen takes its colour and its films.">
       <DirectorsHome />

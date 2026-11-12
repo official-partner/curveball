@@ -12,8 +12,9 @@ interface Props {
 
 const { render = true } = Astro.props;
 const blocks = [
-  { key: "names", heading: "Some of the names on the call sheet:", columns: callSheet, list: "call-sheet" },
-  { key: "work", heading: "Some of the work on the schedule:", columns: schedule, list: "schedule" },
+  // each drifts at its own pace as the page scrolls (Sam, Nov 12: « parallax sur ces 2 blocs au scroll »)
+  { key: "names", heading: "Some of the names on the call sheet:", columns: callSheet, list: "call-sheet", depth: 0.14 },
+  { key: "work", heading: "Some of the work on the schedule:", columns: schedule, list: "schedule", depth: -0.04 },
 ];
 ---
 
@@ -22,7 +23,7 @@ const blocks = [
     <section class="about-lists_wrap" data-op-section="AboutLists">
       <div class="about-lists_layout site-grid">
         {blocks.map((b) => (
-          <div class:list={["about-lists_block", `is-${b.key}`]}>
+          <div class:list={["about-lists_block", `is-${b.key}`]} data-parallax={b.depth}>
             <h2 class="about-lists_heading text-style-h2">{b.heading}</h2>
             {b.columns.map((col, c) => (
               <ul class="about-lists_column text-style-main" data-op-list={`${b.list}-${c + 1}`} data-op-source="src/data/about.ts">
@@ -37,6 +38,13 @@ const blocks = [
     </section>
   )
 }
+
+<script>
+  import { onPage } from "@/utils/page.ts";
+  import { parallax } from "@/utils/parallax.ts";
+
+  onPage((signal) => document.querySelectorAll(".about-lists_wrap").forEach((wrap) => parallax(wrap, signal)));
+</script>
 
 <style is:global>
   @layer components {

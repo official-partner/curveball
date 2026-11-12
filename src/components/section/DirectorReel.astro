@@ -147,9 +147,11 @@ const { render = true, projects, colour = "red", alone = false } = Astro.props;
         });
       };
 
-      /* As the colour dissolves (job: carry the eye from the opening into the film, gently), the film settles from
-         105 % to its size: scrubbed by the scroll, from the gradient's top entering the screen to its foot leaving it.
-         Transform only; none with reduced motion. */
+      /* As the colour dissolves (job: carry the eye from the opening into the film, gently, with depth), the film
+         rises at its own pace, a parallax (Sam, Nov 12: « parallax dans l'apparition du visuel »): from 14 % of a
+         screen low to its place while it settles from 116 % to its size, grown from its foot so no edge ever shows;
+         scrubbed by the scroll, from the gradient's top entering the screen to its foot leaving it. Transform only;
+         none with reduced motion. */
       const place = () => {
         // reads first (the lines', the gradient's and the end's places), then the writes
         let found = 0;
@@ -162,7 +164,10 @@ const { render = true, projects, colour = "red", alone = false } = Astro.props;
         const tail = end.offsetParent ? end.getBoundingClientRect().top : wrap.getBoundingClientRect().bottom;
         const visible = fade.top < innerHeight && tail > 0;
         const settle = clamp((innerHeight - fade.top) / (innerHeight + fade.height));
-        film.style.transform = reduce.matches ? "" : `scale(${(1.05 - 0.05 * settle).toFixed(4)})`;
+        const rest = 1 - settle;
+        film.style.transform = reduce.matches
+          ? ""
+          : `translate3d(0, ${(14 * rest).toFixed(2)}svh, 0) scale(${(1 + 0.16 * rest).toFixed(4)})`;
         if (found !== active || visible !== shown) {
           active = found;
           shown = visible;
@@ -268,6 +273,7 @@ const { render = true, projects, colour = "red", alone = false } = Astro.props;
       position: absolute;
       inset: 0;
       background-color: var(--black);
+      transform-origin: 50% 100%;
     }
     .director-reel_media {
       position: absolute;
@@ -333,6 +339,11 @@ const { render = true, projects, colour = "red", alone = false } = Astro.props;
       justify-content: flex-end;
       height: 100svh;
       padding-bottom: var(--space-7);
+    }
+    /* the first project's line comes in half a screen sooner, while the colour is still dissolving (Sam, Nov 12:
+       « amener le bloc Factor plus tôt ») */
+    .director-reel_fade.is-in + .director-reel_slot {
+      height: 50svh;
     }
     .director-reel_line {
       row-gap: var(--space-5);

@@ -2,6 +2,23 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-12, Sam (his ten comments in OP System, 11:27 to 11:40, handled at his ask in the conversation):
+  - Home's opening: the featured row sits at the foot of the first screen, the menu's margin under it. The featured
+    work turns by itself: six seconds each while the row's rule fills, the next still fading in over the last as it
+    settles, the client and agency cross-fading, the counter's digit rolling up. The counter is its pause (a hover or
+    a focus in the row pauses it too; it waits off screen and in a hidden tab); with reduced motion it does not turn
+    by itself (WCAG 2.2.2). Each featured work now has a still in src/data/featured.ts: the design's three film
+    frames in turn until the real ones are supplied.
+  - The directors list: « View director » at the active row's far right from a tablet up (the row is one link), a
+    name not active answers a hover from 30 % to half only; the last name gives way to the black when its foot is 40 %
+    down the screen (was 25 %).
+  - Home's curve: its ball leaves when the lower stem is 5 % down the screen (was 35 %), later in the scroll.
+  - The footer stays within one screen on a computer: the symbol is the Figma's 531 at most, smaller on a short
+    screen (144 at least).
+  - A director's page: the bio's dot without the plus (the global .dot-label.is-plus is gone); the first film's line
+    comes half a screen sooner; the film rises at its own pace as the colour dissolves into it (a parallax).
+  - About: the call sheet and the schedule drift at their own pace as the page scrolls (fine pointer, tablet up).
+
 - 2026-11-12, Sam (10:51, with screenshots: the directors' balls, the time on each name, the colour changes, About's
   text, the page changes, a director's page): third pass on the directors and the motion.
   - The directors' balls follow the Figma's hover frames: each director has their own three (their films), placed as

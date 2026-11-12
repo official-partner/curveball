@@ -4,10 +4,12 @@
    names that match it; « All » shows everyone. The directors come from the collection « Directors ».
    The name that crosses the middle of the screen is the active one (Sam, Nov 11: « les noms seraient actifs au milieu
    de l'écran et non pas au over »; Nov 12: the first caught earlier, the last kept later): the whole page takes that
-   director's colour (the same as their page), the active name turns black, the others black at 30 %, and that
-   director's own balls, carrying their films, rise through the screen. Home shows it on the page's dark; a
+   director's colour (the same as their page), the active name turns black, the others black at 30 %, « View
+   director » appears at the row's far right (Sam, Nov 12), and that director's own balls, carrying their films, rise
+   through the screen. Each row is one link: the name and its « View director ». Home shows it on the page's dark; a
    director's page shows it as « Other Directors » (without them) on its own dark. */
 import { getImage } from "astro:assets";
+import ArrowLink from "@/components/content/ArrowLink.astro";
 import { getItems, LIVE } from "@/utils/content.ts";
 
 interface Props {
@@ -93,8 +95,11 @@ const filters = [
               data-location={d.data.location ?? ""}
               data-colour={d.data.colour ?? "red"}
             >
-              <a class="directors-home_name" href={`/directors/${d.id}`} data-op-field="name">
-                {d.data.name}
+              <a class="directors-home_name" href={`/directors/${d.id}`}>
+                <span data-op-field="name">{d.data.name}</span>
+                <span class="directors-home_view" aria-hidden="true">
+                  <ArrowLink text="View director" />
+                </span>
               </a>
             </li>
           ))}
@@ -278,8 +283,9 @@ const filters = [
       };
 
       /* The active name (job: show whose colour and films these are): the one under the middle of the screen; the
-         first is caught a quarter of a screen early (as its top reaches 75 % down) and the last kept a quarter late
-         (until its foot rises to 25 %), so neither flicks by */
+         first is caught a quarter of a screen early (as its top reaches 75 % down) and the last kept a tenth late
+         (until its foot rises to 40 %; Sam, Nov 12: « switch au noir un peu plus tôt pour le dernier »), so neither
+         flicks by */
       let active: HTMLElement | null = null;
       const setActive = (item: HTMLElement | null, instant = false) => {
         if (item === active) return;
@@ -291,14 +297,13 @@ const filters = [
       };
       const check = (instant = false) => {
         const middle = innerHeight / 2;
-        const reach = innerHeight / 4;
         const shown = items.filter((i) => !i.hidden);
         let found: HTMLElement | null = null;
         shown.forEach((item, k) => {
           if (found) return;
           const box = item.getBoundingClientRect();
-          const from = k === 0 ? middle + reach : middle;
-          const until = k === shown.length - 1 ? middle - reach : middle;
+          const from = k === 0 ? middle + innerHeight * 0.25 : middle;
+          const until = k === shown.length - 1 ? middle - innerHeight * 0.1 : middle;
           if (box.top <= from && box.bottom > until) found = item;
         });
         setActive(found, instant);
@@ -469,13 +474,48 @@ const filters = [
         color: var(--text);
       }
     }
+    /* The row is the link: the name, and at the far right « View director », shown on the active row from a tablet
+       up (fades in, medium, as it slides a little from the left; the arrow slides on hover). A name not active
+       answers a hover quietly, from 30 % to half (Sam, Nov 12: « hover plus subtil ») */
     .directors-home_name {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-6);
       color: inherit;
       transition: color var(--duration-medium) var(--ease-out);
       @media (hover: hover) {
         &:hover {
           color: var(--text);
+          .is-coloured .directors-home_item:not(.is-active) & {
+            color: var(--text-2);
+          }
         }
+      }
+    }
+    .directors-home_view {
+      flex: none;
+      opacity: 0;
+      translate: -0.5em 0;
+      pointer-events: none;
+      transition:
+        opacity var(--duration-medium) var(--ease-out),
+        translate var(--duration-medium) var(--ease-out);
+      .is-active & {
+        opacity: 1;
+        translate: 0 0;
+        pointer-events: auto;
+      }
+      @media (width < 48rem) {
+        display: none;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        translate: 0 0;
+      }
+    }
+    @media (hover: hover) {
+      .directors-home_name:hover .arrow-link_icon {
+        translate: 0.25em 0;
       }
     }
     .directors-home_empty {

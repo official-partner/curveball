@@ -1,9 +1,12 @@
 ---
-/* Home's opening: a featured film's still across the screen under the wordmark, darker towards the foot (30 % black,
-   then a fade to the page's black), and the featured work's row at the bottom.
+/* Home's opening: the featured films' stills across the screen under the wordmark, darker towards the foot (30 % black,
+   then a fade to the page's ground), and the featured work's row at the foot of the first screen.
    The wordmark runs margin to margin (its own drawing measures the Figma's « curveball » exactly: 1664 x 315.6 at
-   1728). The still is the Figma's placeholder (a 793 px screenshot), cut to the part the Figma shows and enlarged twice,
-   until the films are in. */
+   1728). The featured work turns by itself (Sam, Nov 12: « créer l'anim switch hero visuel et numéros, smooth anim
+   switch counter entre les numéros »): each one holds the screen six seconds while the row's rule fills, then the next
+   still fades in over it as it settles, the client and agency cross-fade, and the counter rolls to its number. The
+   counter is the pause; a hover or a focus in the row pauses it too, and it waits while the opening is off screen or
+   the tab hidden. With reduced motion it does not turn by itself. */
 import Wordmark from "@/assets/logo/logo.svg";
 import Img from "@/components/media/Img.astro";
 import { featured } from "@/data/featured.ts";
@@ -12,51 +15,155 @@ import { SITE_NAME } from "@/consts.ts";
 interface Props {
   /** Set to `false` to omit the component. */
   render?: boolean;
-  /** The still (an import from src/assets), once supplied. */
-  still?: ImageMetadata;
 }
 
-const { render = true, still } = Astro.props;
-const first = featured[0];
+const { render = true } = Astro.props;
+const count = featured.length;
 ---
 
 {
   render && (
     <section class="hero-home_wrap theme-dark" data-paint="theme-dark" data-op-section="HeroHome">
       <div class="hero-home_media" aria-hidden="true">
-        {still ? (
-          <Img class="hero-home_still" src={still} alt="" variant="full-width" loading="eager" fetchPriority="high" />
-        ) : (
-          <div class="hero-home_placeholder">
-            <span class="text-style-small">Featured film still: to supply</span>
-          </div>
-        )}
+        {featured.map((f, i) => (
+          <Img
+            class:list={["hero-home_still", i === 0 && "is-active"]}
+            src={f.still}
+            alt=""
+            variant="full-width"
+            loading={i === 0 ? "eager" : "lazy"}
+            fetchPriority={i === 0 ? "high" : "low"}
+          />
+        ))}
       </div>
       <div class="hero-home_layout site-grid">
         <h1 class="hero-home_title" data-page-reveal>
           <Wordmark class="hero-home_wordmark" aria-hidden="true" />
           <span class="sr-only">{SITE_NAME}</span>
         </h1>
-        <div class="hero-home_row rule-top" data-op-list="featured" data-op-source="src/data/featured.ts" data-page-reveal>
+        <div class="hero-home_row rule-top" data-page-reveal>
+          <span class="hero-home_time" aria-hidden="true" />
           <p class="hero-home_label dot-label text-style-main">Featured work</p>
-          <p class="hero-home_client text-style-main" data-op-item="0">
-            <span class="hero-home_key">Client</span>
-            <br />
-            <span>{first.client}</span>
-          </p>
-          <p class="hero-home_agency text-style-main">
-            <span class="hero-home_key">Agency</span>
-            <br />
-            <span>{first.agency}</span>
-          </p>
-          <p class="hero-home_count text-style-main">
-            1 — {featured.length}
-          </p>
+          <ol class="hero-home_slides" data-op-list="featured" data-op-source="src/data/featured.ts">
+            {featured.map((f, i) => (
+              <li class:list={["hero-home_slide text-style-main", i === 0 && "is-active"]} data-op-item={String(i)}>
+                <p class="hero-home_client">
+                  <span class="hero-home_key">Client</span>
+                  <br />
+                  <span>{f.client}</span>
+                </p>
+                <p class="hero-home_agency">
+                  <span class="hero-home_key">Agency</span>
+                  <br />
+                  <span>{f.agency}</span>
+                </p>
+              </li>
+            ))}
+          </ol>
+          <button class="hero-home_count text-style-main" type="button" aria-label="Pause the featured work" disabled={count < 2}>
+            <span class="hero-home_now" aria-hidden="true">
+              <span class="hero-home_digits">
+                {[...featured.map((_, i) => i + 1), 1].map((n) => (
+                  <span>{n}</span>
+                ))}
+              </span>
+            </span>
+            <span aria-hidden="true">&nbsp;— {count}</span>
+          </button>
         </div>
       </div>
     </section>
   )
 }
+
+<script>
+  import { onPage } from "@/utils/page.ts";
+
+  /* The featured work turning (job: show the studio's range, one film at a time). Each holds six seconds, its time
+     the row's rule filling (linear); then the next still fades in over the last (slow, ease-out) as it settles from
+     104 % (on the arrive curve), its client and agency cross-fade (medium) and the counter's digit rolls up to its
+     number (base, the arrive curve; from the last back to the first it rolls on to a second « 1 », then sits back at
+     the top unseen). It pauses while the row is hovered or holds the focus, while the opening is off screen and while
+     the tab is hidden; the counter pauses and plays it. With reduced motion it waits for the counter. */
+  const HOLD = 6000;
+
+  onPage((signal) => {
+    document.querySelectorAll<HTMLElement>(".hero-home_wrap").forEach((wrap) => {
+      const stills = [...wrap.querySelectorAll<HTMLImageElement>(".hero-home_still")];
+      const slides = [...wrap.querySelectorAll<HTMLElement>(".hero-home_slide")];
+      const row = wrap.querySelector<HTMLElement>(".hero-home_row");
+      const time = wrap.querySelector<HTMLElement>(".hero-home_time");
+      const button = wrap.querySelector<HTMLButtonElement>(".hero-home_count");
+      const digits = wrap.querySelector<HTMLElement>(".hero-home_digits");
+      const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+      const n = slides.length;
+      if (n < 2 || !row || !time || !button || !digits) return;
+
+      let current = 0;
+      let stopped = reduce.matches;
+      let held = false;
+      let away = false;
+      const fill = time.animate([{ scale: "0 1" }, { scale: "1 1" }], { duration: HOLD, easing: "linear", fill: "both" });
+      fill.pause();
+
+      const roll = (to: number, instant = false) => {
+        digits.style.transition = instant ? "none" : "";
+        digits.style.translate = `0 ${-to * 1.2}em`;
+        if (instant) void digits.offsetHeight;
+      };
+      const show = async (next: number) => {
+        const still = stills[next];
+        // the next still decoded first, so it never fades in empty
+        await still?.decode().catch(() => {});
+        const last = stills[current];
+        last?.classList.add("is-leaving");
+        stills.forEach((s, i) => s.classList.toggle("is-active", i === next));
+        // once the next is in, the last one leaves from under it
+        window.setTimeout(() => last?.classList.remove("is-leaving"), 1300);
+        slides.forEach((s, i) => s.classList.toggle("is-active", i === next));
+        if (next === 0) {
+          // past the last: on to the second « 1 », then back to the top unseen
+          roll(n);
+          window.setTimeout(() => current === 0 && roll(0, true), 900);
+        } else roll(next);
+        current = next;
+        fill.currentTime = 0;
+        run();
+      };
+      const run = () => {
+        const play = !stopped && !held && !away && !document.hidden;
+        if (play) fill.play();
+        else fill.pause();
+        button.setAttribute("aria-label", stopped ? "Play the featured work" : "Pause the featured work");
+        button.classList.toggle("is-stopped", stopped);
+      };
+      // its time run out, the next one (never while stopped: a screenshot that settles every animation, say)
+      fill.onfinish = () => !stopped && show((current + 1) % n);
+
+      button.addEventListener(
+        "click",
+        () => {
+          stopped = !stopped;
+          run();
+        },
+        { signal },
+      );
+      row.addEventListener("pointerenter", (e) => e.pointerType === "mouse" && ((held = true), run()), { signal });
+      row.addEventListener("pointerleave", () => ((held = false), run()), { signal });
+      row.addEventListener("focusin", () => ((held = true), run()), { signal });
+      row.addEventListener("focusout", () => ((held = false), run()), { signal });
+      document.addEventListener("visibilitychange", run, { signal });
+      const seen = new IntersectionObserver(([entry]) => {
+        away = !entry.isIntersecting;
+        run();
+      });
+      seen.observe(wrap);
+      reduce.addEventListener("change", () => ((stopped = reduce.matches), run()), { signal });
+      signal.addEventListener("abort", () => (seen.disconnect(), fill.cancel()), { once: true });
+      run();
+    });
+  });
+</script>
 
 <style is:global>
   @layer components {
@@ -67,18 +174,24 @@ const first = featured[0];
       min-height: 100svh;
       overflow: clip;
     }
-    /* the still under 30 % black (the still at 70 % on black), then a fade to the page's ground at its foot: the
-       ground's own colour through a mask, so it turns with the page when the directors list colours it (Sam, Nov 12:
-       « quand on est sur le premier director, le hero devrait être la même couleur ») */
+    /* the stills under 30 % black, then a fade to the page's ground at its foot: the ground's own colour through a
+       mask, so it turns with the page when the directors list colours it (Sam, Nov 12: « quand on est sur le premier
+       director, le hero devrait être la même couleur ») */
     .hero-home_media {
       position: absolute;
       inset: 0;
+      z-index: 0;
+      pointer-events: none;
       background-color: var(--black);
-      & .hero-home_still,
-      & .hero-home_placeholder {
-        opacity: 0.7;
+      &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        background-color: color-mix(in srgb, var(--black) 30%, transparent);
       }
       &::after {
+        z-index: 3;
         content: "";
         position: absolute;
         inset: 0;
@@ -87,27 +200,43 @@ const first = featured[0];
         transition: background-color var(--paint-duration, 0s) var(--ease-travel);
       }
     }
-    .hero-home_still,
-    .hero-home_placeholder {
+    /* the stills stacked; the active one over the others, fading in as it settles; the one it replaces stays under
+       it, whole, until it is in */
+    .hero-home_still {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
-    }
-    .hero-home_placeholder {
-      display: grid;
-      place-items: center;
-      background-color: var(--background-3);
-      color: var(--text-2);
+      opacity: 0;
+      scale: 1.04;
+      transition:
+        opacity var(--duration-slow) var(--ease-out),
+        scale calc(var(--duration-slow) * 2) var(--ease-arrive);
+      &.is-active {
+        z-index: 1;
+        opacity: 1;
+        scale: 1;
+      }
+      &.is-leaving {
+        opacity: 1;
+        scale: 1;
+        transition: none;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        scale: 1;
+        transition: opacity var(--duration-fast) linear;
+      }
     }
     .hero-home_layout {
       position: relative;
       flex: 1;
       grid-template-rows: auto 1fr auto;
-      /* Under the menu below a computer's width, where the wordmark is too short to hold it between its letters */
+      /* Under the menu below a computer's width, where the wordmark is too short to hold it between its letters; the
+         featured row at the foot of the first screen, the menu's margin under it (Sam, Nov 12: « au bas de l'écran
+         hero ») */
       padding-top: calc(var(--nav-height) + var(--space-4));
-      padding-bottom: var(--section-space-small);
+      padding-bottom: var(--site-margin);
       @media (width >= 64rem) {
         padding-top: var(--site-margin);
       }
@@ -123,6 +252,7 @@ const first = featured[0];
       height: auto;
     }
     .hero-home_row {
+      position: relative;
       grid-column: margin / end;
       grid-row: 3;
       display: grid;
@@ -130,8 +260,34 @@ const first = featured[0];
       row-gap: var(--space-5);
       align-items: start;
     }
+    /* the featured one's time: the rule filling, in the text's colour */
+    .hero-home_time {
+      position: absolute;
+      inset: calc(var(--border-width) * -1) 0 auto;
+      height: var(--border-width);
+      background-color: var(--text);
+      transform-origin: left;
+      scale: 0 1;
+    }
     .hero-home_label {
       grid-column: margin / span 2;
+    }
+    /* the featured ones in one cell, the active one shown (they cross-fade) */
+    .hero-home_slides {
+      grid-column: half / last;
+      display: grid;
+      grid-template-columns: subgrid;
+    }
+    .hero-home_slide {
+      grid-column: 1 / -1;
+      grid-row: 1;
+      display: grid;
+      grid-template-columns: subgrid;
+      opacity: 0;
+      transition: opacity var(--duration-medium) var(--ease-out);
+      &.is-active {
+        opacity: 1;
+      }
     }
     .hero-home_client {
       grid-column: half / span 2;
@@ -139,10 +295,33 @@ const first = featured[0];
     .hero-home_agency {
       grid-column: aside / span 2;
     }
+    /* the counter: its digit in a slot one figure wide and one line high, rolling up to the next (the pause) */
     .hero-home_count {
       grid-column: last / end;
       justify-self: end;
+      display: inline-flex;
       white-space: nowrap;
+      color: inherit;
+      cursor: pointer;
+      &:disabled {
+        cursor: default;
+      }
+    }
+    .hero-home_now {
+      display: inline-block;
+      height: 1.2em;
+      overflow: hidden;
+      line-height: 1.2em;
+      font-variant-numeric: tabular-nums;
+      text-align: end;
+    }
+    .hero-home_digits {
+      display: flex;
+      flex-direction: column;
+      transition: translate var(--duration-base) var(--ease-arrive);
+      @media (prefers-reduced-motion: reduce) {
+        transition-duration: var(--duration-faster);
+      }
     }
     .hero-home_key {
       color: var(--text-2);
@@ -154,6 +333,9 @@ const first = featured[0];
       }
       .hero-home_count {
         grid-row: 1;
+      }
+      .hero-home_slides {
+        grid-column: margin / end;
       }
       .hero-home_client {
         grid-column: margin / span 2;
