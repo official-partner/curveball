@@ -237,10 +237,22 @@ const track = tracks[variant].points;
       grid-column: margin / end;
       justify-self: start;
     }
+    /* On Home the band waits for the directors, one step after the other: the last name gives its colour back to
+       the black, then the ball rolls in about a third of a screen later (Sam, Nov 12: « trop de choses en même temps
+       ... séparer les 2 actions, léger overlap si nécessaire ... plus d'espace sous Yaara »). The last name gives way
+       when its foot is 40 % down the screen, and the ball shows as the start of its track (67 down the drawing)
+       comes in at 95 %: 80 % of a screen between that foot and that start does it, whatever the screen's shape (less
+       the list's own space under it, --space-9). On a phone the CTA comes first, in the flow: half a screen above it
+       does the same. */
+    .directors-home_wrap ~ .curve-band_wrap.is-home {
+      margin-top: 50svh;
+      @media (width >= 48rem) {
+        margin-top: max(calc(var(--u) * 110), calc(80svh - var(--u) * 67 - var(--space-9)));
+      }
+    }
     /* From a tablet up, the CTA sits inside the « u »'s lower stem, as the Figma draws it (its cap top 1283 down
-       the band, 600 wide), and the band rises behind the section before it. Home's starts 110 lower: its ball, as it
-       rolls in along the top stem, rises 218 above the band and only grazes the last director's name (Sam, Nov 12:
-       « elle peut embarquer un petit peu, mais pas trop ») */
+       the band, 600 wide), and the band rises behind the section before it. Home's never rises: it starts 110 lower,
+       its ball rising 218 above it as it rolls in along the top stem (after the directors, the rule above) */
     @media (width >= 48rem) {
       .curve-band_wrap {
         display: block;

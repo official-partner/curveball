@@ -2,6 +2,15 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-12, Sam (12:44, a screenshot of Home on Yaara Sumeruk: « trop de chose se passe en même temps ici.
+  changement couleur bg, la grosse boule rouge arrive en même temps. séparer les 2 actions, léger overlap si
+  nécessaire ... plus d'espace sous yaara si nécessaire »): Home's curve band waits for the directors, one step after
+  the other: the last name gives its colour back to the black, about a third of a screen later the ball rolls in, then
+  the red band rises. The band starts 80 % of a screen below the last name's foot (less the list's own space under
+  it, never less than the 110 it had); on a phone half a screen above its CTA. Under Yaara: 664 px of black at
+  1440 x 900 (was 145). Measured: the ball shows 0.29 to 0.35 of a screen after the black from a phone to 1920; at a
+  quick wheel scroll the black is back before it. The components page's sample keeps its spacing.
+
 - 2026-11-12, Sam (comment 14, the home): the gradient under the opening, from the films to the directors, is half
   a screen tall instead of a whole one (`.hero-home_fade`, 50svh).
 - 2026-11-12, Sam (comment 15, a director's page): the gradient from the director's colour into the film is shorter,

@@ -46,7 +46,9 @@ it (system/gen.py).
   (slow x 1.5, ease-travel). Nothing is split into lines (Sam, Nov 12): text fades in whole. An element a script
   brings in is hidden from the first paint (`data-await`), so it is never seen before its animation.
 - The curve bands (Home, News, Contact, About): the ball follows the stroke's middle, its radius following the
-  stroke's width, from where it enters to the Figma's rest and out by the other edge, scrubbed (0.5).
+  stroke's width, from where it enters to the Figma's rest and out by the other edge, scrubbed (0.5). On Home the band
+  waits for the directors: its ball rolls in about a third of a screen after the last name gives its colour back
+  (the room under the list), so the colour change and the ball never come at once.
 - Home's opening: the featured work turns every six seconds while the row's rule fills (its time), the next still
   fading in over the last (slow, ease-out) as it settles from 104 % (twice slow, the arrive curve), the client and
   agency cross-fading (medium), the counter's digit rolling up (base, the arrive curve). The counter pauses it; a
