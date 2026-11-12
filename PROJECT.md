@@ -347,3 +347,7 @@ One line per decision: the date, who asked, what was decided and why. The newest
   the credit in README.md and LICENSE only). The swatches, themes and first page are replaced with the client's.
 - 2026-10-17, Sam: the site starts from OP's starter `official-partner/op-astro` (Lumos for Astro 1.0.0). `main` is
   the live site, `review` the one OP System shows; content in files until a CMS is decided.
+
+- 2026-11-12, Sam (comment 16, the footer): the footer's one screen is now counted from its symbol and menu, which
+  reach the screen's top with the site's margin over them, not from the footer's top: the curve's big space above
+  them sits over the screen, so the symbol is larger on a computer (the Figma's 531 at most, 144 at least).

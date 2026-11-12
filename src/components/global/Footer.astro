@@ -100,8 +100,12 @@ const curve =
          small print come to 40.2 % of it; the plain one's rule instead of the curve, 24.8 % (measured from 1024 to
          1920) */
       --_rest: 40.2cqw;
+      /* what may sit above the screen's top: the curve's 290 over the symbol and the menu, which come to the top
+         with a small margin (the site's) over them (Sam, Nov 12, comment 16); the plain one keeps its rule on screen */
+      --_above: calc(var(--_u) * 290 - var(--site-margin));
       &.is-plain {
         --_rest: 24.8cqw;
+        --_above: calc(-1 * var(--space-3));
       }
     }
     .footer_curve {
@@ -138,11 +142,11 @@ const curve =
       @media (width >= 48rem) {
         grid-column: margin / span 3;
       }
-      /* the Figma's 531 at most, smaller on a short screen so the footer stays within one (Sam, Nov 12: « idéalement
-         max 100vh ... avec un min »), 144 at least */
+      /* the Figma's 531 at most, smaller on a short screen so the footer, from its symbol and menu down, stays within
+         one (Sam, Nov 12: « idéalement max 100vh ... avec un min »), 144 at least */
       @media (width >= 64rem) {
         grid-column: margin / span 4;
-        width: clamp(9rem, calc(100svh - var(--_rest) - var(--space-3)), calc(var(--_u) * 531));
+        width: clamp(9rem, calc(100svh - var(--_rest) + var(--_above)), calc(var(--_u) * 531));
       }
       & svg {
         display: block;
