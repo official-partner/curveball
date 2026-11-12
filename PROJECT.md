@@ -2,6 +2,11 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-12, Sam (comment 14, the home): the gradient under the opening, from the films to the directors, is half
+  a screen tall instead of a whole one (`.hero-home_fade`, 50svh).
+- 2026-11-12, Sam (comment 15, a director's page): the gradient from the director's colour into the film is shorter,
+  65 % of a screen instead of 90 % (`.director-reel_fade.is-in`), so more of the film shows on arrival; the gradient
+  after the last project keeps 90 %.
 - 2026-11-12, Sam (his comment in OP System, 11:59: « une anim similaire à la page director individuelle pour la
   transition entre hero et contenu plus bas, visuel fixed, parallax, gradient, beaucoup plus d'espace entre Featured
   work et Directors »): Home's stills are fixed behind the page, seen only within the opening (clip-path); after the

@@ -270,11 +270,12 @@ const count = featured.length;
       transform-origin: 50% 0;
       mask-image: linear-gradient(to top, transparent, black 15%);
     }
-    /* the page's ground drawn up over the stills: a screen tall, eased (the reel's own curve), its colour the
-       ground's, so it turns with the page when the directors list colours it */
+    /* the page's ground drawn up over the stills: half a screen tall (Sam, Nov 12, comment 14: « reduire cet espace de
+       moitié »), eased (the reel's own curve), its colour the ground's, so it turns with the page when the directors
+       list colours it */
     .hero-home_fade {
       position: relative;
-      height: 100svh;
+      height: 50svh;
       background-color: var(--background);
       mask-image: linear-gradient(
         to top,

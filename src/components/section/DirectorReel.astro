@@ -327,12 +327,15 @@ const { render = true, projects, colour = "red", alone = false } = Astro.props;
         display: none;
       }
     }
-    /* The gradients the scroll draws over the film, 90 % of a screen each: the opening's colour into the film (the
-       colour's own ground through an eased mask), and after the last project's line and a breath (the last film's
-       third of a screen), the film into the section's ground, dark, or the colour the directors list paints it */
+    /* The gradients the scroll draws over the film: the opening's colour into the film, 65 % of a screen (the
+       colour's own ground through an eased mask; shorter than the other since Sam's comment 15, Nov 12: « reduire un
+       peu le gradient pour voir un peu plus du video en arrivant sur la page »), and after the last project's line and
+       a breath (the last film's third of a screen), the film into the section's ground, dark, or the colour the
+       directors list paints it, 90 % of a screen */
     .director-reel_fade {
       height: 90svh;
       &.is-in {
+        height: 65svh;
         background-color: var(--_colour);
         mask-image: linear-gradient(to bottom, var(--_eased));
       }
