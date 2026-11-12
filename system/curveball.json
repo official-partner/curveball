@@ -1,0 +1,75 @@
+{
+  "note": "Curveball system spec. Desktop values are the Figma's at 1728 (12 columns, margin 32, gutter 12: Sam, Nov 11); tablet at 1023, phone at 390. From 1024 to 1728 every value scales with the grid (value x width / 1728), floors keep reading text legible. Generated into src/styles/base.css by system/gen.py: edit here, never in base.css.",
+  "viewport": { "phone": 390, "tabletMax": 1023, "desktopMin": 1024, "reference": 1728 },
+  "fonts": {
+    "family": "\"ES Build\", ui-sans-serif, system-ui, sans-serif",
+    "files": [
+      { "file": "ESBuild-Regular.woff2", "weight": 400 },
+      { "file": "ESBuild-Medium.woff2", "weight": 500 },
+      { "file": "ESBuild-Bold.woff2", "weight": 700 }
+    ],
+    "note": "ES Build TRIAL: development only. The trial has letters, digits, comma, hyphen and period only: & ? ' @ + and the arrows show in the system font until the licensed font is in."
+  },
+  "swatches": {
+    "black": { "hex": "#1e1a21", "from": "brand guide, Black" },
+    "stone": { "hex": "#d7d5c7", "from": "brand guide, Stone" },
+    "taupe": { "hex": "#a79b8d", "from": "Figma: the directors' names, the CTA and the footer (not in the brand guide)" },
+    "red": { "hex": "#d6402d", "from": "brand guide, Red (the Figma's big shapes say #d44024: one red)" },
+    "mustard": { "hex": "#daa60a", "from": "brand guide, Mustard" },
+    "teal": { "hex": "#67c7b3", "from": "brand guide, Teal" }
+  },
+  "fluid": {
+    "display": [60, 124, 210],
+    "h1": [44, 96, 163],
+    "h2": [34, 58, 98],
+    "h3": [26, 34, 57],
+    "text-label": [18, 18, 24],
+    "text-large": [16, 16, 18],
+    "text-main": [16, 16, 18],
+    "text-small": [12, 12, 14],
+    "site-margin": [16, 20, 32],
+    "site-gutter": [8, 8, 12],
+    "dot": [14, 14, 20],
+    "logo-size": [36, 36, 57],
+    "space-1": [4, 5, 8],
+    "space-2": [6, 7, 12],
+    "space-3": [8, 9.5, 16],
+    "space-4": [10, 12, 20],
+    "space-5": [12, 14, 24],
+    "space-6": [16, 19, 32],
+    "space-7": [20, 24, 40],
+    "space-8": [24, 28, 48],
+    "space-9": [32, 38, 64],
+    "section-space-small": [48, 66, 112],
+    "section-space-medium": [64, 85, 144],
+    "section-space-large": [80, 114, 192]
+  },
+  "floors": {
+    "text-label": 18,
+    "text-large": 16,
+    "text-main": 16,
+    "text-small": 12,
+    "dot": 14,
+    "logo-size": 36
+  },
+  "roles": {
+    "space-rule": { "ref": "space-4", "job": "a rule to the cap top of the text under it (Figma 19 to 23 on the rows and the first labels)" },
+    "space-dot": { "ref": "space-4", "job": "the dot to the text it marks (Figma 18 on Home, 15 on Contact: one value)" },
+    "space-media": { "ref": "space-6", "job": "a picture to its first text (the news cards: 33; the team: 18 to 42, one value)" },
+    "space-meta": { "ref": "space-5", "job": "a card's source and date to its title (27)" },
+    "space-action": { "ref": "space-5", "job": "a text to its link or email (24 on Contact, 26 to 31 on News: one value)" },
+    "space-title": { "ref": "space-7", "job": "a card's or a block's title to its text (40 on News, 48 on Contact: one value)" },
+    "space-label": { "ref": "space-8", "job": "a section's label to its heading (46 to 48, four times)" },
+    "page-top": { "ref": "section-space-large", "job": "the top of the page to the first rule of an inner page (Figma 190)" }
+  },
+  "text": {
+    "display": { "weight": 700, "lh": "0.95", "ls": "-0.03em", "tt": "capitalize", "from": "Figma specimen: Bold 210 / 95 % / -3 %, Title case" },
+    "h1": { "weight": 700, "lh": "0.95", "ls": "-0.03em", "tt": "capitalize", "from": "the directors' names: Bold 163 / 95 % / -3 %, Title case" },
+    "h2": { "weight": 700, "lh": "0.91", "ls": "-0.03em", "tt": "none", "from": "the pages' headings and the footer line: Bold 98 / 91 % / -3 %" },
+    "h3": { "weight": 700, "lh": "0.91", "ls": "-0.03em", "tt": "none", "from": "the cards' and blocks' titles: Bold 57 / 91 % (10 uses; the specimen and the Home CTA say 105 %)" },
+    "text-label": { "weight": 400, "lh": "1.08", "ls": "0em", "tt": "none", "from": "a section's label (Get in touch., The team): Regular 24, auto, at half strength" },
+    "text-large": { "weight": 700, "lh": "1.1", "ls": "-0.03em", "tt": "none", "from": "Figma specimen Large: Bold 18 / 110 % / -3 % (the menu, the links, the bios)" },
+    "text-main": { "weight": 500, "lh": "1.1", "ls": "0em", "tt": "none", "from": "Figma specimen Main: Medium 18 / 110 % / 0" },
+    "text-small": { "weight": 400, "lh": "1.2", "ls": "0em", "tt": "none", "from": "Figma specimen Small: 14 (set in Inter in the Figma, Figma's default: ES Build here)" }
+  }
+}

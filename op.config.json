@@ -1,7 +1,7 @@
 {
   "id": "curveball",
   "name": "Curveball",
-  "client": "",
+  "client": "Curveball Films",
   "studio": "Official Partner",
   "description": "The website of Curveball, made by Official Partner.",
   "staging": "",
@@ -10,9 +10,11 @@
   "loader": false,
   "transition": false,
   "smoothScroll": false,
-  "brandColor": "#141413",
+  "brandColor": "#1e1a21",
   "systemPages": [
     "composantes",
+    "style-sheet",
     "test-contenu"
-  ]
+  ],
+  "designWidth": 1728
 }

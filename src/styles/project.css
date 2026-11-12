@@ -2,4 +2,38 @@
    two declarations or more seen in three places, written once here and put beside a component's own class. Each class
    has a one-line comment above it that says its job: OP System's Web System shows that line under Classes. Values from
    the tokens of base.css only; no px, no raw colour. Lumos's patterns.css and utilities.css are never edited for a
-   project. Empty in the starter. */
+   project. */
+
+/* The site grid: the Figma's 12 columns (margin 32, gutter 12 at 1728), a named line at every column a component starts at.
+   margin c1 · nav c3 · two c5 · split c6 · half c7 · three c9 · aside c10 · last c12 · end. A tablet keeps the names on
+   8 columns and a phone on 4: a component placed on a name needs no media query to follow. */
+.site-grid {
+  display: grid;
+  width: var(--site-width);
+  max-width: var(--max-width-main);
+  margin-inline: auto;
+  grid-template-columns:
+    [margin nav two split three] repeat(2, minmax(0, 1fr))
+    [half aside] minmax(0, 1fr)
+    [last] minmax(0, 1fr) [end];
+  column-gap: var(--site-gutter);
+  @media (width >= 48rem) {
+    grid-template-columns:
+      [margin] repeat(2, minmax(0, 1fr))
+      [nav] repeat(2, minmax(0, 1fr))
+      [two split half three] repeat(2, minmax(0, 1fr))
+      [aside] minmax(0, 1fr)
+      [last] minmax(0, 1fr) [end];
+  }
+  @media (width >= 64rem) {
+    grid-template-columns:
+      [margin] repeat(2, minmax(0, 1fr))
+      [nav] repeat(2, minmax(0, 1fr))
+      [two] minmax(0, 1fr)
+      [split] minmax(0, 1fr)
+      [half] repeat(2, minmax(0, 1fr))
+      [three] minmax(0, 1fr)
+      [aside] repeat(2, minmax(0, 1fr))
+      [last] minmax(0, 1fr) [end];
+  }
+}

@@ -2,6 +2,42 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-11, Sam (« on teste de faire un nouveau site ensemble », from the Figma b3sFmBDWNYeXOydmTL79JU, page
+  « curveball »: Home 9:517, News 9:436, Contact 9:355, the type specimen beside them): the Web System first, measured
+  from the Figma by script (every text's cap top and baseline from ES Build's metrics, every shape's box), written in
+  system/curveball.json and generated into src/styles/base.css by system/gen.py (never edit base.css by hand). The
+  style sheet (src/pages/style-sheet.astro, a system page) reads the same file.
+  - Grid: 12 columns, margin 32, gutter 12 at 1728 (Sam, 22:11, from the Figma's layout grid); 8 on a tablet, 4 on a
+    phone. Named lines in project.css (.site-grid): margin c1, nav c3, two c5, split c6, half c7, three c9, aside c10,
+    last c12; the tablet and phone placements are provisional until the components.
+  - Scale: Figma values at 1728; from 1728 down to 1024 everything follows the grid (value x width / 1728); tablet
+    (1023) and phone (390) values of their own, the tablet's equal to the computer's at 1024 so nothing jumps. Floors
+    keep reading text at 16 (main, large), 18 (label) and 12 (small).
+  - Type, ES Build (Regular, Medium, Bold), 8 styles: display 210, h1 163, h2 98 and h3 57 in Bold at -3 % (display and
+    h1 capitalise each word, as the Figma's Title case: they set names), label 24 Regular (the sections' « Get in
+    touch. », « The team », not in the specimen: 4 uses), large 18 Bold, main 18 Medium, small 14 Regular.
+    Decided: h3's line height is 0.91 as in its 10 uses (the cards' and blocks' titles); the specimen and the Home CTA
+    say 1.05 and follow. Small is set in ES Build: the Figma's Inter is Figma's default font, not the brand's. Main
+    keeps the specimen's 0 tracking (the cards' meta lines say -2 %, 0.36 px at 18).
+  - Colour: the brand guide's palette (Black, Stone, Red, Mustard, Teal) and the Figma's taupe #a79b8d (the directors'
+    names, the CTA, the footer), which the brand guide lacks. One red, the guide's #d6402d (the Figma's big shapes say
+    #d44024). Two tones of the text colour, 50 % and 30 % (the Figma's 60 % on Home's « Client » and « Agency » joins
+    50 %). Themes: dark (default, black with stone text, taupe as --heading-accent), mustard (News), teal (Contact),
+    light (stone), brand (red); the page's own colour, --page-accent, set by .accent-red, .accent-mustard or
+    .accent-teal on a page, never reset by a theme: the footer's mark, the ball and the curve take it.
+  - Spacing: steps of 8, 12, 16, 20, 24, 32, 40, 48 and 64, sections 112, 144 and 192; one role per relation where the
+    Figma varies: a rule to its text 20 (19 to 34 in the Figma), a picture to its text 32 (the team's 18 to 42), a
+    card's meta to its title 24, a text to its link 24, a title to its text 40 (48 on Contact), a label to its heading
+    48, an inner page's first rule 192 from the top (190).
+  - Radius: none but full circles. The dot that marks a row or a hovered title: 20 at 1728, centred on the capitals.
+  - The logo (src/assets/logo/): logo.svg is the wordmark, symbol.svg the target, both from the brand guide
+    (« Curveball Brand Guidelines », Sep 30) in currentColor. The wordmark measures exactly the Figma's « curveball »
+    at the content width (1664 x 315.6).
+  - The favicon: the wordmark's own « c » in stone on black (src/assets/logo/mark.svg, brandColor #1e1a21,
+    npm run favicon); og-image.jpg is the starter's stand-in until the site has its own picture.
+  - To supply: the licensed ES Build. The trial has letters, digits, the comma, the hyphen and the period only: the
+    ampersand, the apostrophe, ? @ + © and the arrows show in the system font until then.
+
 - 2026-11-12, Samuel Charpentier (setup): the site is Curveball (op.config.json id `curveball`, SITE_NAME, SITE_LOCALE `en`);
   the Worker's name `curveball` in wrangler.jsonc is kept. Started from scratch, from the Brief. The favicon is the
   initial C on the starter's ink until a logo is added. The description is a stand-in until the Brief says more.
