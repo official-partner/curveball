@@ -12,6 +12,9 @@ One line per decision: the date, who asked, what was decided and why. The newest
   - The directors list: « View director » at the active row's far right from a tablet up (the row is one link), a
     name not active answers a hover from 30 % to half only; the last name gives way to the black when its foot is 40 %
     down the screen (was 25 %).
+  - The directors list's « View director » is one for the whole list now: it travels from name to name as each
+    becomes active (base, ease-out) instead of fading out and in on each row, fades in on the first and out after the
+    last, and links to the active director (Sam's reply on comment 4).
   - Home's curve: its ball leaves when the lower stem is 5 % down the screen (was 35 %), later in the scroll.
   - The footer stays within one screen on a computer: the symbol is the Figma's 531 at most, smaller on a short
     screen (144 at least).

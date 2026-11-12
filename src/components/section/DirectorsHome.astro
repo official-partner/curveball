@@ -5,8 +5,9 @@
    The name that crosses the middle of the screen is the active one (Sam, Nov 11: « les noms seraient actifs au milieu
    de l'écran et non pas au over »; Nov 12: the first caught earlier, the last kept later): the whole page takes that
    director's colour (the same as their page), the active name turns black, the others black at 30 %, « View
-   director » appears at the row's far right (Sam, Nov 12), and that director's own balls, carrying their films, rise
-   through the screen. Each row is one link: the name and its « View director ». Home shows it on the page's dark; a
+   director » stands at the row's far right (Sam, Nov 12) and travels from name to name as they take their turn, and
+   that director's own balls, carrying their films, rise through the screen. Each row is one link, and « View
+   director » links to the active one. Home shows it on the page's dark; a
    director's page shows it as « Other Directors » (without them) on its own dark. */
 import { getImage } from "astro:assets";
 import ArrowLink from "@/components/content/ArrowLink.astro";
@@ -86,6 +87,7 @@ const filters = [
             </div>
           ))}
         </div>
+        <div class="directors-home_names">
         <ul class="directors-home_list text-style-h1" data-op-list="directors" data-op-source="astro:directors">
           {directors.map((d) => (
             <li
@@ -97,13 +99,15 @@ const filters = [
             >
               <a class="directors-home_name" href={`/directors/${d.id}`}>
                 <span data-op-field="name">{d.data.name}</span>
-                <span class="directors-home_view" aria-hidden="true">
-                  <ArrowLink text="View director" />
-                </span>
               </a>
             </li>
           ))}
         </ul>
+          {/* one for the list, a mouse's shortcut to the active row's own link (keyboards and readers use the row) */}
+          <a class="directors-home_view" href={directors[0] ? `/directors/${directors[0].id}` : "/directors"} tabindex="-1" aria-hidden="true">
+            <ArrowLink text="View director" />
+          </a>
+        </div>
         <p class="directors-home_empty text-style-main" hidden>
           No director here yet.
         </p>
@@ -166,6 +170,7 @@ const filters = [
       const root = document.documentElement;
       const out = curve("--ease-out", "0.23, 1, 0.32, 1");
       const leave = curve("--ease-leave", "0.5, 0, 0.75, 0");
+      const view = wrap.querySelector<HTMLAnchorElement>(".directors-home_view");
 
       /* The whole page takes the active director's colour (Sam, Nov 12: « c'est la page au complet qui devrait
          changer de couleur ... même le background du footer »): the page's theme turns to theirs, and so does every
@@ -282,6 +287,32 @@ const filters = [
         }
       };
 
+      /* « View director » (job: the way into the active director, never lost from sight): one for the whole list, at
+         its far right, level with the active name. When the next name takes over it travels there (base, ease-out,
+         taken up again from where it is when the scroll is quick) rather than leaving and coming back (Sam, Nov 12:
+         « voyage de director en director ... au lieu de disparaitre puis réapparaitre »); it fades in on the first
+         name and out after the last. With reduced motion it moves at once. */
+      let viewShown = false;
+      if (view) gsap.set(view, { yPercent: -50, autoAlpha: 0 });
+      const place = (item: HTMLElement | null) => {
+        if (!view) return;
+        if (!item) {
+          if (viewShown) gsap.to(view, { autoAlpha: 0, duration: seconds("--duration-medium"), ease: out, overwrite: "auto" });
+          viewShown = false;
+          return;
+        }
+        const y = item.offsetTop + item.offsetHeight / 2;
+        view.href = item.querySelector<HTMLAnchorElement>(".directors-home_name")?.href ?? view.href;
+        if (!viewShown || reduce.matches) {
+          gsap.killTweensOf(view, "y");
+          gsap.set(view, { y });
+          gsap.to(view, { autoAlpha: 1, duration: seconds(reduce.matches ? "--duration-faster" : "--duration-medium"), ease: out, overwrite: "auto" });
+        } else {
+          gsap.to(view, { y, autoAlpha: 1, duration: seconds("--duration-base"), ease: out, overwrite: "auto" });
+        }
+        viewShown = true;
+      };
+
       /* The active name (job: show whose colour and films these are): the one under the middle of the screen; the
          first is caught a quarter of a screen early (as its top reaches 75 % down) and the last kept a tenth late
          (until its foot rises to 40 %; Sam, Nov 12: « switch au noir un peu plus tôt pour le dernier »), so neither
@@ -294,6 +325,7 @@ const filters = [
         wrap.classList.toggle("is-coloured", !!item);
         paint(item ? (item.dataset.colour ?? "red") : null, instant);
         show(item);
+        place(item);
       };
       const check = (instant = false) => {
         const middle = innerHeight / 2;
@@ -323,6 +355,8 @@ const filters = [
         });
         if (empty) empty.hidden = shown > 0;
         check();
+        // the names moved: it follows the active one to its new line
+        place(active);
       };
       wrap.addEventListener(
         "click",
@@ -352,6 +386,7 @@ const filters = [
         () => {
           measure();
           check();
+          if (view && active) gsap.set(view, { y: active.offsetTop + active.offsetHeight / 2 });
         },
         { signal },
       );
@@ -377,6 +412,7 @@ const filters = [
           clearTimeout(idle);
           cancelAnimationFrame(frame);
           balls.forEach((b) => gsap.killTweensOf(b));
+          if (view) gsap.killTweensOf(view);
         },
         { once: true },
       );
@@ -450,9 +486,12 @@ const filters = [
         }
       }
     }
-    .directors-home_list,
+    .directors-home_names,
     .directors-home_empty {
       grid-column: margin / end;
+    }
+    .directors-home_names {
+      position: relative;
     }
     .directors-home_list {
       color: var(--heading-accent);
@@ -474,14 +513,10 @@ const filters = [
         color: var(--text);
       }
     }
-    /* The row is the link: the name, and at the far right « View director », shown on the active row from a tablet
-       up (fades in, medium, as it slides a little from the left; the arrow slides on hover). A name not active
-       answers a hover quietly, from 30 % to half (Sam, Nov 12: « hover plus subtil ») */
+    /* The row is the link, across the whole width. A name not active answers a hover quietly, from 30 % to half
+       (Sam, Nov 12: « hover plus subtil ») */
     .directors-home_name {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--space-6);
       color: inherit;
       transition: color var(--duration-medium) var(--ease-out);
       @media (hover: hover) {
@@ -493,28 +528,23 @@ const filters = [
         }
       }
     }
+    /* « View director »: one for the list, at its far right, level with the active name (src: the script moves it
+       and fades it); from a tablet up. Its arrow slides on a hover of it or of the active row */
     .directors-home_view {
-      flex: none;
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: 3;
+      color: var(--text);
       opacity: 0;
-      translate: -0.5em 0;
-      pointer-events: none;
-      transition:
-        opacity var(--duration-medium) var(--ease-out),
-        translate var(--duration-medium) var(--ease-out);
-      .is-active & {
-        opacity: 1;
-        translate: 0 0;
-        pointer-events: auto;
-      }
+      visibility: hidden;
       @media (width < 48rem) {
         display: none;
       }
-      @media (prefers-reduced-motion: reduce) {
-        translate: 0 0;
-      }
     }
     @media (hover: hover) {
-      .directors-home_name:hover .arrow-link_icon {
+      .directors-home_view:hover .arrow-link_icon,
+      .directors-home_names:has(.is-active .directors-home_name:hover) .directors-home_view .arrow-link_icon {
         translate: 0.25em 0;
       }
     }
