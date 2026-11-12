@@ -513,8 +513,8 @@ const filters = [
         color: var(--text);
       }
     }
-    /* The row is the link, across the whole width. A name not active answers a hover quietly, from 30 % to half
-       (Sam, Nov 12: « hover plus subtil ») */
+    /* The row is the link, across the whole width. A name not active answers a hover quietly, from 30 % to 40 %
+       (Sam, Nov 12: « hover plus subtil », then « réduire encore plus ») */
     .directors-home_name {
       display: flex;
       color: inherit;
@@ -523,7 +523,7 @@ const filters = [
         &:hover {
           color: var(--text);
           .is-coloured .directors-home_item:not(.is-active) & {
-            color: var(--text-2);
+            color: color-mix(in srgb, var(--text) var(--tone-hover), transparent);
           }
         }
       }

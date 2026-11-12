@@ -33,6 +33,8 @@
   --tone-strong: 100%;
   --tone-muted: 50%;
   --tone-faint: 30%;
+  /* A name not active in the directors list, hovered: just above faint (Sam, Nov 12) */
+  --tone-hover: 40%;
   /* The page's own colour (red on Home, mustard on News, teal on Contact): the footer's mark, the ball and the
      curve take it. A page sets it with .accent-* on its body (themes never reset it). */
   --page-accent: var(--red);

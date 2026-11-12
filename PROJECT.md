@@ -362,3 +362,5 @@ One line per decision: the date, who asked, what was decided and why. The newest
 - 2026-11-12, Samuel Charpentier (comment 19): less space between Home's last director and the curve below, from a
   tablet up: the band now starts 65 % of a screen below the last name's colour change instead of 80 % (about 140 px
   less on a laptop), the ball still rolling in just after the colour goes back to black.
+- 2026-11-12, Samuel Charpentier (comment 20): the directors list's names not active answer a hover even more quietly,
+  30 % to 40 % (a new tone of the Web System, `--tone-hover`) instead of half.
