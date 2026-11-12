@@ -20,6 +20,8 @@ const spots = [
   { col: "three", y: 1047 },
   { col: "two", y: 1232 },
 ];
+/* Each person's speed against the page (Sam, Nov 11: the team travels as the news do) */
+const DEPTHS = [0.12, -0.05, 0.08, 0.15, 0.02];
 ---
 
 {
@@ -35,6 +37,7 @@ const spots = [
               index={index}
               class:list={["team-list_card", index % 2 ? "is-alt" : undefined]}
               style={`--_col: ${spot.col}; --_y: ${spot.y};`}
+              depth={DEPTHS[index % DEPTHS.length]}
             />
           );
         })}
@@ -42,6 +45,13 @@ const spots = [
     </section>
   )
 }
+
+<script>
+  import { onPage } from "@/utils/page.ts";
+  import { parallax } from "@/utils/parallax.ts";
+
+  onPage((signal) => document.querySelectorAll(".team-list_wrap").forEach((wrap) => parallax(wrap, signal)));
+</script>
 
 <style is:global>
   @layer components {

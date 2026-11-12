@@ -2,6 +2,25 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-12, Sam (00:33 to 00:36, from his phone: « la boule peut sortir de l'autre bord, sur les autres pages
+  aussi », « le background couleur doit changer sur toute la page », « scale up apparaître, down disparaître en haut,
+  plus smooth », « noms plus gros, sur 2 lignes », « transition ... vidéo full screen pas smooth: plus immersif,
+  scrollytelling », « juste un fade sans masque »): second pass on the motion.
+  - Every curve's ball now runs its whole stroke: in from beyond one edge, through the Figma's rest, out beyond the
+    other (Home and News out on the left, Contact on the right, About out by the left along its lower stem). The
+    ball passes behind the directors' names and the CTA (they keep their place above it), never cut.
+  - The directors list turns the whole page to the active director's colour (the page's theme switches; on a
+    director's page « Other Directors » follows it), quickly (fast) so a quick scroll does not linger on mixed
+    colours. Its balls are born low in the list, grow in, rise, shrink to nothing near the top and are born again
+    with another film; their speed follows the scroll's, smoothed; they no longer cross any edge. Their pictures
+    are the build's own files on the staging (the optimized ones did not resolve there: Sam saw broken images).
+  - On a phone the names are 72 to 80 px, each on two lines.
+  - A director's reel is told by the scroll: from the opening's colour a ball rises carrying the film and grows to
+    fill the screen; the projects' lines scroll over it; after the last, the ball shrinks away upward into the dark
+    and the other directors follow. The colour melt and the dark fade are gone.
+  - About's title and heading fade up, no mask (it cut the descenders).
+  - The 404 in English, in the site's look; the footer's line keeps the Figma's three lines on a computer (1421 wide).
+
 - 2026-11-12, Sam (Nov 11, 23:27: the new Figma pages, « les noms seraient actifs au milieu de l'écran », « la vidéo
   reste fixe en background et va switch en fade smooth », « la balle qui va ... reveal le texte »; 00:21: « la boule
   peut voyager all the way, même sortir du cadre »): the directors' pages, About, the directors list's colours.

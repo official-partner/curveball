@@ -1,30 +1,39 @@
 ---
+/* The page for an address that leads nowhere: the site's dark, a head in the inner pages' way, the way back. */
 import Layout from "@/layouts/BaseLayout.astro";
-import Section from "@/components/wrapper/Section.astro";
-import Heading from "@/components/typography/Heading.astro";
-import Paragraph from "@/components/typography/Paragraph.astro";
-import ButtonWrapper from "@/components/wrapper/ButtonWrapper.astro";
-import Button from "@/components/Button.astro";
-import ContentWrapper from "@/components/wrapper/ContentWrapper.astro";
+import SectionHead from "@/components/content/SectionHead.astro";
+import ArrowLink from "@/components/content/ArrowLink.astro";
 ---
 
-<Layout
-  title="Page introuvable"
-  description="Cette page n’existe pas."
-  overlap={true}
->
-  <Section paddingTop="navoverlap" paddingBottom="navoverlap" class="flex-grow">
-    <ContentWrapper>
-      <Heading variant="h3" tag="h1" maxWidth={17}
-        >Cette page n’existe pas</Heading
-      >
-      <Paragraph variant="large" maxWidth={44} class="color-faded"
-        >Elle a peut-être changé d’adresse, ou le lien qui vous a mené ici n’est
-        plus à jour.</Paragraph
-      >
-      <ButtonWrapper>
-        <Button element="link" href="/">Retour à l’accueil</Button>
-      </ButtonWrapper>
-    </ContentWrapper>
-  </Section>
+<Layout title="Page not found" description="This page doesn't exist." theme="dark" accent="red" footer="plain">
+  <section class="not-found_wrap">
+    <div class="not-found_layout site-grid">
+      <SectionHead label="Page not found" heading="This page doesn't exist." as="h1" />
+      <p class="not-found_text text-style-lead" data-page-reveal>
+        It may have moved, or the link that brought you here is out of date.
+      </p>
+      <ArrowLink class="not-found_link" href="/" text="Back to the home page" />
+    </div>
+  </section>
 </Layout>
+
+<style is:global>
+  @layer components {
+    .not-found_wrap {
+      padding-top: var(--page-top);
+      padding-bottom: var(--section-space-large);
+      color: var(--heading-accent);
+    }
+    .not-found_layout {
+      row-gap: var(--space-9);
+    }
+    .not-found_text,
+    .not-found_link {
+      grid-column: margin / end;
+      justify-self: start;
+    }
+    .not-found_text {
+      max-width: 26em;
+    }
+  }
+</style>

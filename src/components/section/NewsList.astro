@@ -18,6 +18,8 @@ const columns = ["is-right", "is-left", "is-middle"].map((place, c) => ({
   place,
   items: news.map((item, index) => ({ item, index })).filter(({ index }) => index % 3 === c),
 }));
+/* Each card's speed against the page (Sam, Nov 11: each news item travels at its own speed): near and far in turn */
+const DEPTHS = [0.06, 0.14, -0.04, 0.11, 0.02, 0.16];
 ---
 
 {
@@ -29,7 +31,7 @@ const columns = ["is-right", "is-left", "is-middle"].map((place, c) => ({
           {columns.map((col) => (
             <div class:list={["news-list_col", col.place]}>
               {col.items.map(({ item, index }) => (
-                <CardNews item={item} index={index} class={index % 2 ? "is-alt" : undefined} />
+                <CardNews item={item} index={index} class={index % 2 ? "is-alt" : undefined} depth={DEPTHS[index % DEPTHS.length]} />
               ))}
             </div>
           ))}
@@ -38,6 +40,13 @@ const columns = ["is-right", "is-left", "is-middle"].map((place, c) => ({
     </section>
   )
 }
+
+<script>
+  import { onPage } from "@/utils/page.ts";
+  import { parallax } from "@/utils/parallax.ts";
+
+  onPage((signal) => document.querySelectorAll(".news-list_wrap").forEach((wrap) => parallax(wrap, signal)));
+</script>
 
 <style is:global>
   @layer components {

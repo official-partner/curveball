@@ -15,9 +15,11 @@ interface Props {
   class?: string;
   /** Custom properties a list places it with. */
   style?: string;
+  /** How much faster or slower than the page it travels (src/utils/parallax.ts). */
+  depth?: number;
 }
 
-const { render = true, person, index = 0, class: extra, style = "" } = Astro.props;
+const { render = true, person, index = 0, class: extra, style = "", depth } = Astro.props;
 const links = [
   { label: "Email", href: person.email ? `mailto:${person.email}` : "" },
   { label: "Linkedin", href: person.linkedin },
@@ -26,7 +28,7 @@ const links = [
 
 {
   render && (
-    <article class:list={["card-person", extra]} data-op-item={String(index)} style={`--_order: ${index}; ${style}`}>
+    <article class:list={["card-person", extra]} data-op-item={String(index)} data-parallax={depth || undefined} style={`--_order: ${index}; ${style}`}>
       <div class="card-person_media">
         <Img class="card-person_img" src={person.photo} alt={person.alt} variant="constrained" sizes="(min-width: 64rem) 16vw, 50vw" />
       </div>

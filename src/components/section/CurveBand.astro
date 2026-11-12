@@ -19,9 +19,10 @@ const { render = true, variant = "home" } = Astro.props;
 /* Each drawing: its height, the black shapes (a path and its offset), the ball where it rests (centre and radius, as
    the Figma renders it: the PDF export), the ground (whether the band paints the page's colour itself), how far it
    rises behind the section before it on a computer (rise) and on a tablet (riseTablet; Home's no longer does, Nov 11:
-   its directors turn to a colour, which the curve's black must not run behind), and when the ball travels: it leaves the start of its track when that
-   point is `startAt` down the screen and lands where the Figma rests it when the rest point is `endAt` down. The
-   tracks (the stroke's centre line, the ball's radius along it) come from system/curve-tracks.py. */
+   its directors turn to a colour, which the curve's black must not run behind), and when the ball travels: it
+   leaves the start of its track when that point is `startAt` down the screen, passes where the Figma rests it, and
+   has left the frame by the other edge when its exit is `endAt` down (Sam, Nov 12). The tracks (the stroke's centre
+   line, the ball's radius along it) come from system/curve-tracks.py. */
 const art = {
   home: {
     height: 1709,
@@ -37,7 +38,7 @@ const art = {
     ],
     ball: { cx: 1167, cy: 1342, r: 276 },
     startAt: 0.95,
-    endAt: 0.6,
+    endAt: 0.35,
   },
   news: {
     height: 1935.5,
@@ -52,7 +53,7 @@ const art = {
     ],
     ball: { cx: 1123.5, cy: 1610.8, r: 273 },
     startAt: 1,
-    endAt: 0.6,
+    endAt: 0.35,
   },
   contact: {
     height: 1935.5,
@@ -67,10 +68,10 @@ const art = {
     ],
     ball: { cx: 1556.5, cy: 1612.3, r: 273 },
     startAt: 1.1,
-    endAt: 0.6,
+    endAt: 0.35,
   },
 }[variant];
-const track = tracks[variant];
+const track = tracks[variant].points;
 ---
 
 {
@@ -196,10 +197,11 @@ const track = tracks[variant];
         height: 100%;
         overflow: hidden;
       }
-      /* the ball on its own layer, over the sections around: it travels all the way and may leave the frame (Sam,
-         Nov 12), never cut by a section's edge */
+      /* the ball on its own layer, free of the drawing's frame: it travels all the way and may leave it (Sam, Nov 12),
+         never cut by a section's edge. Under the directors' names it passes behind them (their section has no ground
+         of its own: the page's colour is behind both) */
       & .curve-band_layer {
-        z-index: 2;
+        z-index: 0;
         overflow: visible;
         pointer-events: none;
       }
@@ -245,6 +247,10 @@ const track = tracks[variant];
       }
       .curve-band_title {
         max-width: calc(var(--u) * 600);
+      }
+      /* inside the black stroke: taupe, whatever colour the page has turned to */
+      .curve-band_content {
+        color: var(--taupe);
       }
     }
   }

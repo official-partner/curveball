@@ -173,6 +173,8 @@ const curve =
       color: var(--heading-accent);
       @media (width >= 64rem) {
         grid-column: margin / last;
+        /* the Figma's 1421, which keeps its three lines as drawn */
+        max-width: calc(var(--_u) * 1421);
       }
     }
     .footer_legal,

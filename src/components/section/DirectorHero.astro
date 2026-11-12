@@ -19,6 +19,7 @@ interface Props {
 
 const { render = true, director, enquire } = Astro.props;
 const { name, portrait, bio, based, clients } = director.data;
+const empty = !bio && !(based ?? []).length && !(clients ?? []).length;
 ---
 
 {
@@ -33,7 +34,7 @@ const { name, portrait, bio, based, clients } = director.data;
             {name}
           </h1>
         </div>
-        <div class="director-hero_row rule-top" data-page-reveal>
+        <div class:list={["director-hero_row rule-top", empty && "is-empty"]} data-page-reveal>
           <When field="bio" value={bio} as="p" class="director-hero_bio dot-label is-plus text-style-large">
             {bio}
           </When>
@@ -86,6 +87,11 @@ const { name, portrait, bio, based, clients } = director.data;
     }
     .director-hero_row {
       grid-column: margin / end;
+      &.is-empty {
+        @media (width >= 64rem) {
+          display: none;
+        }
+      }
       display: grid;
       grid-template-columns: subgrid;
       row-gap: var(--space-7);
