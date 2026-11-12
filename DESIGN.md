@@ -51,7 +51,8 @@ it (system/gen.py).
   fading in over the last (slow, ease-out) as it settles from 104 % (twice slow, the arrive curve), the client and
   agency cross-fading (medium), the counter's digit rolling up (base, the arrive curve). The counter pauses it; a
   hover or a focus in the row, the opening off screen or the tab hidden pause it too; no turning by itself with
-  reduced motion.
+  reduced motion. Leaving it is told like a director's reel: the stills fixed behind the page, a screen-tall eased
+  gradient drawing the ground up over them as they rise 24 % of a screen and grow 6 % (a parallax, the reel's travel).
 - The directors list: the active name is the one under the middle of the screen, the first caught a quarter of a
   screen early and the last kept a tenth late; « View director » fades in at the active row's far right (medium). The page's colour follows it on the travel curve: base to or from
   the page's own ground, medium between two directors. Each director has three balls (their films), placed as the

@@ -2,6 +2,14 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-12, Sam (his comment in OP System, 11:59: « une anim similaire à la page director individuelle pour la
+  transition entre hero et contenu plus bas, visuel fixed, parallax, gradient, beaucoup plus d'espace entre Featured
+  work et Directors »): Home's stills are fixed behind the page, seen only within the opening (clip-path); after the
+  first screen a screen-tall eased gradient draws the ground up over them while they rise slower than the scroll, 24 %
+  of a screen as they grow 6 % (a parallax: the reel's own travel since comment 13, « bcp plus de parallax »), their
+  foot faded out under the ground so no edge shows and the opening keeps the design's framing; the directors follow
+  on that ground. The gradient takes the directors' colour with the page.
+
 - 2026-11-12, Sam (his ten comments in OP System, 11:27 to 11:40, handled at his ask in the conversation):
   - Home's opening: the featured row sits at the foot of the first screen, the menu's margin under it. The featured
     work turns by itself: six seconds each while the row's rule fills, the next still fading in over the last as it
