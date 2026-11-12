@@ -84,6 +84,7 @@ const track = tracks[variant].points;
     >
       {variant === "home" && (
         <div class="curve-band_content site-grid">
+          <h2 class="curve-band_heading text-style-h1">We got a curveball for ya.</h2>
           <h2 class="curve-band_title text-style-h3">Off the usual playbook? Tell us, we'll find who was made for it.</h2>
           <ArrowLink class="curve-band_link" href="/contact" text="Start a conversation" />
         </div>
@@ -222,27 +223,59 @@ const track = tracks[variant].points;
     .curve-band_ball {
       fill: var(--page-accent);
     }
+    /* Home's words laid out as About's story (Sam, Nov 12, comment 17): the big title on the « u »'s top stem (h1's
+       size, set as About sets it: sentence case, h2's line height), the call in the lower stem at its own size (h3:
+       at h1's it takes four lines, more than the stem holds), placed as About's « Let's swing », its link at the
+       stem's foot, both on the margin. Below a computer, as About: the title, the drawing, then the call */
     .curve-band_content {
-      position: relative;
-      z-index: 1;
-      row-gap: var(--space-9);
-      padding-top: var(--section-space-medium);
       color: var(--heading-accent);
     }
-    .curve-band_title {
+    .curve-band_heading,
+    .curve-band_title,
+    .curve-band_link {
+      position: relative;
+      z-index: 1;
       grid-column: margin / end;
+    }
+    .curve-band_heading {
+      line-height: var(--h2-line-height);
+      text-transform: var(--h2-text-transform);
+    }
+    .curve-band_title {
       max-width: 24ch;
     }
     .curve-band_link {
-      grid-column: margin / end;
       justify-self: start;
+    }
+    @media (width < 64rem) {
+      .curve-band_wrap.is-home {
+        display: flex;
+      }
+      .curve-band_content {
+        display: contents;
+      }
+      .curve-band_heading {
+        order: 0;
+        margin-inline: var(--site-margin);
+      }
+      .curve-band_wrap .curve-band_art {
+        order: 1;
+      }
+      .curve-band_title,
+      .curve-band_link {
+        order: 2;
+        margin-inline: var(--site-margin);
+      }
+      .curve-band_link {
+        margin-top: calc(var(--space-9) - var(--section-space-small));
+      }
     }
     /* On Home the band waits for the directors, one step after the other: the last name gives its colour back to
        the black, then the ball rolls in about a third of a screen later (Sam, Nov 12: « trop de choses en même temps
        ... séparer les 2 actions, léger overlap si nécessaire ... plus d'espace sous Yaara »). The last name gives way
        when its foot is 40 % down the screen, and the ball shows as the start of its track (67 down the drawing)
        comes in at 95 %: 80 % of a screen between that foot and that start does it, whatever the screen's shape (less
-       the list's own space under it, --space-9). On a phone the CTA comes first, in the flow: half a screen above it
+       the list's own space under it, --space-9). On a phone the title comes first, in the flow: half a screen above it
        does the same. */
     .directors-home_wrap ~ .curve-band_wrap.is-home {
       margin-top: 50svh;
@@ -250,8 +283,7 @@ const track = tracks[variant].points;
         margin-top: max(calc(var(--u) * 110), calc(80svh - var(--u) * 67 - var(--space-9)));
       }
     }
-    /* From a tablet up, the CTA sits inside the « u »'s lower stem, as the Figma draws it (its cap top 1283 down
-       the band, 600 wide), and the band rises behind the section before it. Home's never rises: it starts 110 lower,
+    /* From a tablet up, the band rises behind the section before it. Home's never rises: it starts 110 lower,
        its ball rising 218 above it as it rolls in along the top stem (after the directors, the rule above) */
     @media (width >= 48rem) {
       .curve-band_wrap {
@@ -264,17 +296,31 @@ const track = tracks[variant].points;
           margin-top: calc(var(--u) * 110);
         }
       }
+    }
+    /* On a computer, as About draws it (the same « u »): the title's cap top 35 into the band, the call 1148.1 down,
+       its link 1607.4 down */
+    @media (width >= 64rem) {
       .curve-band_content {
         position: absolute;
         inset: 0 0 auto;
-        padding-top: calc(var(--u) * 1283);
+        display: grid;
+        align-items: start;
+      }
+      .curve-band_heading,
+      .curve-band_title,
+      .curve-band_link {
+        grid-row: 1;
+      }
+      .curve-band_heading {
+        top: calc(var(--u) * 35.1);
+        max-width: calc(var(--u) * 1197);
       }
       .curve-band_title {
+        top: calc(var(--u) * 1148.1);
         max-width: calc(var(--u) * 600);
       }
-      /* inside the stroke, which is the page's ground: taupe on the dark, black on a director's colour */
-      .curve-band_content {
-        color: var(--heading-accent);
+      .curve-band_link {
+        top: calc(var(--u) * 1607.4);
       }
     }
   }

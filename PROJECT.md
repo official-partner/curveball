@@ -351,3 +351,8 @@ One line per decision: the date, who asked, what was decided and why. The newest
 - 2026-11-12, Sam (comment 16, the footer): the footer's one screen is now counted from its symbol and menu, which
   reach the screen's top with the site's margin over them, not from the footer's top: the curve's big space above
   them sits over the screen, so the symbol is larger on a computer (the Figma's 531 at most, 144 at least).
+- 2026-11-12, Samuel Charpentier (comment 17): Home's curve above the footer takes About's layout: « We got a curveball
+  for ya. » at h1's size on the « u »'s top stem (as About), the call « Off the usual playbook? ... » kept at its size
+  (h3) in the lower stem where About puts « Let's swing », its link at the stem's foot, both on the margin; below a
+  computer, as About: the title, the drawing, then the call. Read « même taille de typo » as the call's own size: at
+  h1's it takes four lines, more than the stem holds.
