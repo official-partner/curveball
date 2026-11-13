@@ -2,6 +2,8 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-12, Sam (20:06, « GO! lance ca! », the starter's checks brought to the sites made before them): Curveball takes `npm run rules`, `measure`, `widths` and `compare`, the starter's shot script (it waits for every image, whole) and the rule check in the build (it stops on a machine on a new failure, it only warns on Cloudflare). Nothing of the site changes: compared before and after, 17 pages of HTML, 34 pictures and 248 presses the same. The 26 failures the rules find today (10 raw values, 7 groups of copied rules, 5 column numbers, 2 text styles, 1 page with a style, the bids email written in four files) are accepted as the debt from before the rules, each with its reason, in `review/data/rules-baseline.json`: the list only shrinks. Not done: the system file in the starter's new form (system/curveball.json and gen.py stay), the short CLAUDE.md, a target for `measure` (no page of Curveball is tied to its Figma with `data-figma` on every element).
+
 - 2026-11-12, Sam (12:44, a screenshot of Home on Yaara Sumeruk: « trop de chose se passe en même temps ici.
   changement couleur bg, la grosse boule rouge arrive en même temps. séparer les 2 actions, léger overlap si
   nécessaire ... plus d'espace sous yaara si nécessaire »): Home's curve band waits for the directors, one step after

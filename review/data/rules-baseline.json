@@ -1,0 +1,135 @@
+{
+  "note": "Failures of npm run rules the team accepts, each with its reason and its date. The list only shrinks: a build stops on a failure that is not here.",
+  "accepted": [
+    {
+      "key": "page-css | src/pages/404.astro | a <style> block",
+      "why": "From before the rules (Nov 12, 2026): a page with its own style. It moves to a component at the health review.",
+      "date": "2026-11-12"
+    },
+    {
+      "key": "raw-value | src/styles/project.css | @media (prefers-reduced-motion: no-preference) >> [data-await] | animation: await-shown 0s 2s forwards (duration)",
+      "why": "From before the rules (Nov 12, 2026): a value written raw. It becomes a token of the system file at the health review.",
+      "date": "2026-11-12"
+    },
+    {
+      "key": "column-number | src/components/content/CardNews.astro | @layer components >> .card-news_meta >> & span:last-child | grid-column: 2 / -1",
+      "why": "From before the rules (Nov 12, 2026): a place written as a column number. It becomes a rail of the site grid at the health review.",
+      "date": "2026-11-12"
+    },
+    {
+      "key": "column-number | src/components/content/CardPerson.astro | @layer components >> .card-person_links >> @media (width >= 64rem) | grid-column: 2 / -1",
+      "why": "From before the rules (Nov 12, 2026): a place written as a column number. It becomes a rail of the site grid at the health review.",
+      "date": "2026-11-12"
+    },
+    {
+      "key": "column-number | src/components/content/CardPerson.astro | @layer components >> .card-person_links | grid-column: 3",
+      "why": "From before the rules (Nov 12, 2026): a place written as a column number. It becomes a rail of the site grid at the health review.",
+      "date": "2026-11-12"
+    },
+    {
+      "key": "raw-value | src/components/global/Nav.astro | @layer components >> .nav_wrap | z-index: 20 (z-index)",
+      "why": "From before the rules (Nov 12, 2026): a value written raw. It becomes a token of the system file at the health review.",
+      "date": "2026-11-12"
+    },
+    {
+      "key": "text-style | src/components/section/AboutStory.astro | @layer components >> .about-story_title, .about-story_swing | line-height, text-transform",
+      "why": "From before the rules (Nov 12, 2026): type properties set outside the text styles. To bring back to a text style at the health review.",
+      "date": "2026-11-12"
+    },
+    {
+      "key": "text-style | src/components/section/CurveBand.astro | @layer components >> .curve-band_heading | line-height, text-transform",
+      "why": "From before the rules (Nov 12, 2026): type properties set outside the text styles. To bring back to a text style at the health review.",
+      "date": "2026-11-12"
+    },
+    {
+      "key": "column-number | src/components/section/DirectorReel.astro | @layer components >> .director-reel_client >> @media (width >= 48rem) | grid-column: 4 / span 2",
+      "why": "From before the rules (Nov 12, 2026): a place written as a column number. It becomes a rail of the site grid at the health review.",
+      "date": "2026-11-12"
+    },
+    {
+      "key": "column-number | src/components/section/DirectorReel.astro | @layer components >> .director-reel_agency >> @media (width >= 48rem) | grid-column: 6 / span 2",
+      "why": "From before the rules (Nov 12, 2026): a place written as a column number. It becomes a rail of the site grid at the health review.",
+      "date": "2026-11-12"
+    },
+    {
+      "key": "raw-value | src/components/section/DirectorReel.astro | @layer components >> .director-reel_elapsed | height: 6px (px)",
+      "why": "From before the rules (Nov 12, 2026): a value written raw. It becomes a token of the system file at the health review.",
+      "date": "2026-11-12"
+    },
+    {
+      "key": "raw-value | src/components/section/DirectorsHome.astro | @layer components >> .directors-home_item >> &.is-active | z-index: 3 (z-index)",
+      "why": "From before the rules (Nov 12, 2026): a value written raw. It becomes a token of the system file at the health review.",
+      "date": "2026-11-12"
+    },
+    {
+      "key": "raw-value | src/components/section/DirectorsHome.astro | @layer components >> .directors-home_view | z-index: 3 (z-index)",
+      "why": "From before the rules (Nov 12, 2026): a value written raw. It becomes a token of the system file at the health review.",
+      "date": "2026-11-12"
+    },
+    {
+      "key": "raw-value | src/components/section/DirectorsHome.astro | @layer components >> .directors-home_balls | z-index: 2 (z-index)",
+      "why": "From before the rules (Nov 12, 2026): a value written raw. It becomes a token of the system file at the health review.",
+      "date": "2026-11-12"
+    },
+    {
+      "key": "raw-value | src/components/section/HeroHome.astro | @layer components >> .hero-home_media >> &::before | z-index: 2 (z-index)",
+      "why": "From before the rules (Nov 12, 2026): a value written raw. It becomes a token of the system file at the health review.",
+      "date": "2026-11-12"
+    },
+    {
+      "key": "raw-value | src/components/section/HeroHome.astro | @layer components >> .hero-home_media >> &::after | z-index: 3 (z-index)",
+      "why": "From before the rules (Nov 12, 2026): a value written raw. It becomes a token of the system file at the health review.",
+      "date": "2026-11-12"
+    },
+    {
+      "key": "raw-value | src/components/system/PageTransitions.astro | @layer components >> .page-curtain_wrap | z-index: 999 (z-index)",
+      "why": "From before the rules (Nov 12, 2026): a value written raw. It becomes a token of the system file at the health review.",
+      "date": "2026-11-12"
+    },
+    {
+      "key": "raw-value | src/components/system/TransitionCustom.astro | @layer components >> .page-veil | z-index: 999 (z-index)",
+      "why": "From before the rules (Nov 12, 2026): a value written raw. It becomes a token of the system file at the health review.",
+      "date": "2026-11-12"
+    },
+    {
+      "key": "copied-block | src/components/content/CardNews.astro | @layer components >> .card-news | 80 % or more shared with src/components/content/CardPerson.astro @layer components >> .card-person",
+      "why": "From before the rules (Nov 12, 2026): the same declarations in several rules. One global class, a variant or a token at the health review.",
+      "date": "2026-11-12"
+    },
+    {
+      "key": "copied-block | src/components/content/CardNews.astro | @layer components >> .card-news_media | 83 % or more shared with src/components/content/CardPerson.astro @layer components >> .card-person_media",
+      "why": "From before the rules (Nov 12, 2026): the same declarations in several rules. One global class, a variant or a token at the health review.",
+      "date": "2026-11-12"
+    },
+    {
+      "key": "copied-block | src/components/content/CardNews.astro | @layer components >> .card-news_img | 80 % or more shared with src/components/content/CardPerson.astro @layer components >> .card-person_img; src/components/content/CardTeam.astro .card-team_visual >> > .image; src/components/section/AboutStory.astro .about-story_art >> & svg; src/components/section/CurveBand.astro .curve-band_art >> & svg; and 3 more",
+      "why": "From before the rules (Nov 12, 2026): the same declarations in several rules. One global class, a variant or a token at the health review.",
+      "date": "2026-11-12"
+    },
+    {
+      "key": "copied-block | src/components/global/Footer.astro | @layer components >> .footer_symbol >> & svg | the same as src/components/global/Nav.astro .nav_logo >> & svg; src/components/section/HeroHome.astro @layer components >> .hero-home_wordmark",
+      "why": "From before the rules (Nov 12, 2026): the same declarations in several rules. One global class, a variant or a token at the health review.",
+      "date": "2026-11-12"
+    },
+    {
+      "key": "copied-block | src/components/section/DirectorHero.astro | @layer components >> .director-hero_row | 80 % or more shared with src/components/section/DirectorsHome.astro @layer components >> .directors-home_row; src/components/system/StyleSheet.astro @layer components >> .style-sheet_type",
+      "why": "From before the rules (Nov 12, 2026): the same declarations in several rules. One global class, a variant or a token at the health review.",
+      "date": "2026-11-12"
+    },
+    {
+      "key": "copied-block | src/components/system/StyleSheet.astro | @layer components >> .style-sheet_themes | the same as @layer components >> .style-sheet_accents",
+      "why": "From before the rules (Nov 12, 2026): the same declarations in several rules. One global class, a variant or a token at the health review.",
+      "date": "2026-11-12"
+    },
+    {
+      "key": "copied-block | src/components/system/StyleSheet.astro | @layer components >> .style-sheet_theme | 80 % or more shared with @layer components >> .style-sheet_accent-card",
+      "why": "From before the rules (Nov 12, 2026): the same declarations in several rules. One global class, a variant or a token at the health review.",
+      "date": "2026-11-12"
+    },
+    {
+      "key": "fact-twice | src/data/contact.ts | email bids@curveballfilms.com also in src/pages/composantes.astro, src/pages/contact.astro, src/pages/directors/[id].astro",
+      "why": "From before the rules (Nov 12, 2026): the same fact written in several files. It moves to one data file at the health review.",
+      "date": "2026-11-12"
+    }
+  ]
+}
