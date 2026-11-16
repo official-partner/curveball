@@ -6,7 +6,8 @@
    scroll, qui va reveal le texte ». The page opens with the title fading in and the ball rolling in along the top
    stem, behind the title, to the bend; the scroll then carries it round the bend (filling its stroke, as on every
    curve), past where the Figma rests it and out by the left edge along the lower stem (Sam, Nov 12), and each block of
-   the story simply fades in as the ball comes level with it (Sam, Nov 12: no line by line, « juste un simple fade »).
+   the story simply fades in as the ball comes level with it (Sam, Nov 12: no line by line, « juste un simple fade »);
+   on a computer its two paragraphs fade in with the opening, just after the title (Sam, Nov 13).
    On a computer the text sits in the shapes as drawn; below, it follows the drawing and each block fades in as it
    comes on screen. Reduced motion or no JS: everything in place, the ball at rest. */
 import ArrowLink from "@/components/content/ArrowLink.astro";
@@ -112,8 +113,9 @@ const START = 275;
       return [0, 1, 2].map((k) => track[a + k] + (track[a + 3 + k] - track[a + k]) * t);
     };
     const title = wrap.querySelector<HTMLElement>(".about-story_title");
-    // the story's blocks, in their order down the page: its two paragraphs, the last heading, its link
-    const blocks = [...wrap.querySelectorAll<HTMLElement>(".about-story_text > p, .about-story_swing, .about-story_link")];
+    // the story's two paragraphs, then the blocks the ball uncovers: the last heading, its link
+    const story = [...wrap.querySelectorAll<HTMLElement>(".about-story_text > p")];
+    const later = [...wrap.querySelectorAll<HTMLElement>(".about-story_swing, .about-story_link")];
     const awaiting = [...wrap.querySelectorAll<Element>("[data-await]")];
     const travel = curve("--ease-travel", "0.65, 0, 0.35, 1");
     const out = curve("--ease-out", "0.23, 1, 0.32, 1");
@@ -123,6 +125,9 @@ const START = 275;
       { motion: "(prefers-reduced-motion: no-preference)", wide: "(width >= 64rem)" },
       (context) => {
         const { motion, wide } = context.conditions as { motion: boolean; wide: boolean };
+        /* on a computer the story shows with the opening (Sam, Nov 13, comment 21: « dès le loading »); below, where
+           it sits under the drawing, it still fades in as it comes on screen */
+        const blocks = wide ? later : [...story, ...later];
         // the script has the page now: what waited for it starts from its first state, then plays
         const take = (el: Element, opacity: string) => {
           (el as HTMLElement).style.opacity = opacity;
@@ -176,6 +181,8 @@ const START = 275;
            leaves first) */
         const opening = gsap.timeline({ delay: 0.25 });
         if (title) opening.to(title, { opacity: 1, duration: seconds("--duration-base"), ease: out }, 0);
+        if (wide)
+          opening.to(story, { opacity: 1, duration: seconds("--duration-base"), ease: out, stagger: 0.07 }, 0.15);
         opening.to(
           state,
           { opening: startAt, duration: seconds("--duration-slow") * 1.5, ease: travel, onUpdate: update },
@@ -205,8 +212,8 @@ const START = 275;
           opening.kill();
           trigger.kill();
           triggers.forEach((t) => t.kill());
-          gsap.killTweensOf([title, ...blocks, ball]);
-          [title, ...blocks].forEach((el) => el && (el.style.opacity = ""));
+          gsap.killTweensOf([title, ...story, ...later, ball]);
+          [title, ...story, ...later].forEach((el) => el && (el.style.opacity = ""));
           ball.style.opacity = "";
           ball.setAttribute("cx", rest[0]);
           ball.setAttribute("cy", rest[1]);

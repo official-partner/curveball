@@ -366,3 +366,6 @@ One line per decision: the date, who asked, what was decided and why. The newest
   less on a laptop), the ball still rolling in just after the colour goes back to black.
 - 2026-11-12, Samuel Charpentier (comment 20): the directors list's names not active answer a hover even more quietly,
   30 % to 40 % (a new tone of the Web System, `--tone-hover`) instead of half.
+- 2026-11-16, Samuel Charpentier (comment 21): on a computer, About's two story paragraphs fade in with the page's
+  opening, just after the title (70 ms apart), instead of waiting for the ball to come level with them; « Let's swing »
+  and its link still wait for the ball. Below a computer, where the story sits under the drawing, unchanged.
