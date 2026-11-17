@@ -1,6 +1,7 @@
 {
   "name": "Salesforce",
   "director": "james-niebuhr",
+  "still": "../../assets/content/projects/salesforce.jpg",
   "cover": "https://dl.dropboxusercontent.com/scl/fi/khzhrphda1tkniu0ilyh2/Salesforce-Sales-Cloud-720p-with-23.98fps.mp4?rlkey=7gp69lm2gh6d2kplg0vf1wm8l&st=t9y40z0k&dl=0",
   "order": 106,
   "visible": false

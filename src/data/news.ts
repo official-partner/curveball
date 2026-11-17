@@ -47,7 +47,7 @@ export const news: NewsItem[] = [
     title: "Team Behind Five to Sixty Launches Rostered Production Company Curveball",
     href: "https://lbbonline.com/news/team-behind-five-to-sixty-launches-rostered-production-company-curveball",
     photo: photo4,
-    alt: "Photo booth strips of the team beside the Curveball logo",
+    alt: "The team squeezed into a photo booth, in black and white",
   },
   {
     source: "LBB Online",
@@ -68,13 +68,13 @@ export const news: NewsItem[] = [
     title: "Curveball Films Signs Joe Pernice and James Niebuhr",
     href: "https://www.lbbonline.com/news/directors-joe-pernice-and-james-niebuhr-sign-to-curveball-films",
     photo: photo7,
-    alt: "Two portraits side by side: a man in a grey shirt, and a man with a camera by a car",
+    alt: "Two portraits side by side: a man in a grey shirt, and a man in a beanie with a camera",
   },
   {
     source: "LBB Online",
     title: "Curveball Films Launches",
     href: "https://www.lbbonline.com/news/team-behind-five-to-sixty-launches-rostered-production-company-curveball",
     photo: photo8,
-    alt: "Photo booth strips of the team beside the Curveball logo",
+    alt: "The team squeezed into a photo booth, in black and white",
   },
 ];

@@ -1,6 +1,7 @@
 {
   "name": "Philadelphia Eagles",
   "director": "ryan-scott",
+  "still": "../../assets/content/projects/philadelphia-eagles.jpg",
   "cover": "https://dl.dropboxusercontent.com/scl/fi/fj7xs7zakju5lb584t7n3/Philadelphia-Eagles-Let-s-Fly-720p-with-23.98fps.mp4?rlkey=qdawej5h2dyosnlzw7pr7h8wn&st=dzupkh02&dl=0",
   "link": "https://player.vimeo.com/video/402756762?h=f3408506ad&app_id=122963&autoplay=1",
   "order": 1,

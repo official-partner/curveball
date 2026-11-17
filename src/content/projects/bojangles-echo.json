@@ -1,6 +1,7 @@
 {
   "name": "Bojangles Echo",
   "director": "joe-pernice",
+  "still": "../../assets/content/projects/bojangles-echo.jpg",
   "cover": "https://dl.dropboxusercontent.com/scl/fi/5cdrt1dc6wn505pd8e4z9/Bojangles-Echo-720p-with-23.98fps.mp4?rlkey=yuoezfyvd44bzldr9pqzavftp&st=hj1b35u5&dl=0",
   "link": "https://vimeo.com/941385586/d2d39f1c85?share=copy",
   "order": 106,

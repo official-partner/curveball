@@ -49,7 +49,8 @@ it (system/gen.py).
   stroke's width, from where it enters to the Figma's rest and out by the other edge, scrubbed (0.5). On Home the band
   waits for the directors: its ball rolls in about a third of a screen after the last name gives its colour back
   (the room under the list), so the colour change and the ball never come at once.
-- Home's opening: the featured work turns every six seconds while the row's rule fills (its time), the next still
+- Home's opening: six films of the collection (src/data/featured.ts), each one's cover video playing muted over its
+  still while it holds the screen. The featured work turns every six seconds while the row's rule fills (its time), the next still
   fading in over the last (slow, ease-out) as it settles from 104 % (twice slow, the arrive curve), the client and
   agency cross-fading (medium), the counter's digit rolling up (base, the arrive curve). The counter pauses it; a
   hover or a focus in the row, the opening off screen or the tab hidden pause it too; no turning by itself with

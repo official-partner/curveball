@@ -1,6 +1,7 @@
 {
   "name": "University Of Virginia",
   "director": "ryan-scott",
+  "still": "../../assets/content/projects/university-of-virginia.jpg",
   "cover": "https://dl.dropboxusercontent.com/scl/fi/v8j3o9moziqosyzydg3c5/UVA-Honor-720p-with-23.98fps.mp4?rlkey=y65etd2zu8ramzxk9ipl8xlk3&st=p4esc0a3&dl=0",
   "link": "https://player.vimeo.com/video/399743906?h=1632061ead&app_id=122963&autoplay=1",
   "order": 5,

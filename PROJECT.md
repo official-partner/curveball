@@ -2,6 +2,22 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-17, Sam (14:11: « featured work sur le hero: peux tu mettre 6 projets videos pour voir ? on changera plus
+  tard », « les images fixes des films: oui! », « News: oui tu peux changer les images. améliorer »):
+  - Home's opening shows six films of the collection, their cover video playing over their still: Perrier, PUMA,
+    Lexus, Uber, Takis, Booksy (one per director, a first choice to see it: the team's comes later).
+    src/data/featured.ts now only names the films by id; the opening reads their still, video, client and agency from
+    the collection (a film's name stands for its client until the client is written; no agency line without one).
+    The active film plays muted while the opening is on screen; the counter's pause stops it with the turning; none
+    with reduced motion. The Figma's hero still and rooftop frame are gone.
+  - Every film has a still: one frame taken from its cover video, 35 % in (Lexus and Outback 9 s in: the first frame
+    was a title card), 1600 wide at most. Stand-ins until the client supplies pictures: the directors list's balls,
+    the reel before its film loads, Home's opening.
+  - News: the three montages recut for the round frame. Joe Pernice and James Niebuhr: the two portraits recut side
+    by side in a square. The two launch cards: one photo each of the team's photo booth strip (the old logo beside it
+    is out), from the larger of the two files.
+  - Checked in a browser without reduced motion: Home's films play and turn, a director's reel plays its film.
+
 - 2026-11-17, Sam (14:05, the two hosts opened to the session: « c'est fait »): the pictures of the current site.
   - The 14 directors' portraits and the 8 news photos are Webflow's own files, brought as JPEG (1600 and 1200 wide at
     most). Jasper Soloff's portrait is now the client's, not the Figma's. Three news photos are wide montages that the

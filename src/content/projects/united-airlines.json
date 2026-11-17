@@ -1,6 +1,7 @@
 {
   "name": "United Airlines",
   "director": "ben-strang",
+  "still": "../../assets/content/projects/united-airlines.jpg",
   "cover": "https://dl.dropboxusercontent.com/scl/fi/5s4uja3o1j5p8d6ofk29p/United-_-For-Business-_40-720p-with-23.98fps.mp4?rlkey=17ptufngm20vzcp192gy75sjm&st=wesgpkq9&dl=0",
   "link": "https://player.vimeo.com/video/854151537?app_id=122963",
   "order": 3,

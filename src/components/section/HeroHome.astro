@@ -1,6 +1,6 @@
 ---
-/* Home's opening: the featured films' stills across the screen under the wordmark, darker towards the foot (30 % black,
-   then a fade to the page's ground), and the featured work's row at the foot of the first screen.
+/* Home's opening: the featured films (src/data/featured.ts names them; each one's cover video over its still) across
+   the screen under the wordmark, darker towards the foot (30 % black, then a fade to the page's ground), and the featured work's row at the foot of the first screen.
    The wordmark runs margin to margin (its own drawing measures the Figma's « curveball » exactly: 1664 x 315.6 at
    1728). The featured work turns by itself (Sam, Nov 12: « créer l'anim switch hero visuel et numéros, smooth anim
    switch counter entre les numéros »): each one holds the screen six seconds while the row's rule fills, then the next
@@ -14,7 +14,8 @@
    pace, and the directors follow on that ground. */
 import Wordmark from "@/assets/logo/logo.svg";
 import Img from "@/components/media/Img.astro";
-import { featured } from "@/data/featured.ts";
+import { featured as chosen } from "@/data/featured.ts";
+import { getItems, img } from "@/utils/content.ts";
 import { SITE_NAME } from "@/consts.ts";
 
 interface Props {
@@ -23,6 +24,14 @@ interface Props {
 }
 
 const { render = true } = Astro.props;
+/* the chosen films, in the list's order: a film's name stands for its client until the client is written */
+const films = await getItems("projects");
+const featured = chosen.flatMap(({ project }) => {
+  const film = films.find((p) => p.id === project);
+  if (!film) return [];
+  const { name, client, agency, still, cover, video } = film.data;
+  return [{ client: client || name, agency, still, film: cover || video }];
+});
 const count = featured.length;
 ---
 
@@ -32,14 +41,19 @@ const count = featured.length;
       <div class="hero-home_media" aria-hidden="true">
         <div class="hero-home_drift">
         {featured.map((f, i) => (
-          <Img
-            class:list={["hero-home_still", i === 0 && "is-active"]}
-            src={f.still}
-            alt=""
-            variant="full-width"
-            loading={i === 0 ? "eager" : "lazy"}
-            fetchPriority={i === 0 ? "high" : "low"}
-          />
+          <div class:list={["hero-home_still", i === 0 && "is-active"]}>
+            {f.still && (
+              <Img
+                class="hero-home_img"
+                {...img(f.still)}
+                alt=""
+                variant="full-width"
+                loading={i === 0 ? "eager" : "lazy"}
+                fetchPriority={i === 0 ? "high" : "low"}
+              />
+            )}
+            {f.film && <video class="hero-home_film" src={f.film} muted loop playsinline preload="none" />}
+          </div>
         ))}
         </div>
       </div>
@@ -59,11 +73,13 @@ const count = featured.length;
                   <br />
                   <span>{f.client}</span>
                 </p>
-                <p class="hero-home_agency">
-                  <span class="hero-home_key">Agency</span>
-                  <br />
-                  <span>{f.agency}</span>
-                </p>
+                {f.agency && (
+                  <p class="hero-home_agency">
+                    <span class="hero-home_key">Agency</span>
+                    <br />
+                    <span>{f.agency}</span>
+                  </p>
+                )}
               </li>
             ))}
           </ol>
@@ -97,7 +113,7 @@ const count = featured.length;
 
   onPage((signal) => {
     document.querySelectorAll<HTMLElement>(".hero-home_wrap").forEach((wrap) => {
-      const stills = [...wrap.querySelectorAll<HTMLImageElement>(".hero-home_still")];
+      const stills = [...wrap.querySelectorAll<HTMLElement>(".hero-home_still")];
       const drift = wrap.querySelector<HTMLElement>(".hero-home_drift");
       const fade = wrap.querySelector<HTMLElement>(".hero-home_fade");
       const slides = [...wrap.querySelectorAll<HTMLElement>(".hero-home_slide")];
@@ -142,6 +158,20 @@ const count = featured.length;
       const fill = time.animate([{ scale: "0 1" }, { scale: "1 1" }], { duration: HOLD, easing: "linear", fill: "both" });
       fill.pause();
 
+      /* The films (job: show the work moving): the active one plays, muted, while the opening is on screen and the
+         tab shown; the counter's pause stops it with the turning, and it never plays with reduced motion. Its still
+         shows under it until its first frame is in. */
+      const film = () => {
+        const on = !stopped && !away && !document.hidden;
+        stills.forEach((s, i) => {
+          const video = s.querySelector("video");
+          if (!video) return;
+          if (on && i === current) {
+            video.preload = "auto";
+            video.play().catch(() => {});
+          } else video.pause();
+        });
+      };
       const roll = (to: number, instant = false) => {
         digits.style.transition = instant ? "none" : "";
         digits.style.translate = `0 ${-to * 1.2}em`;
@@ -150,7 +180,8 @@ const count = featured.length;
       const show = async (next: number) => {
         const still = stills[next];
         // the next still decoded first, so it never fades in empty
-        await still?.decode().catch(() => {});
+        const picture = still?.querySelector("img");
+        await picture?.decode().catch(() => {});
         const last = stills[current];
         last?.classList.add("is-leaving");
         stills.forEach((s, i) => s.classList.toggle("is-active", i === next));
@@ -170,6 +201,7 @@ const count = featured.length;
         const play = !stopped && !held && !away && !document.hidden;
         if (play) fill.play();
         else fill.pause();
+        film();
         button.setAttribute("aria-label", stopped ? "Play the featured work" : "Pause the featured work");
         button.classList.toggle("is-stopped", stopped);
       };
@@ -241,7 +273,7 @@ const count = featured.length;
       inset: 0;
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      display: grid;
       opacity: 0;
       scale: 1.04;
       transition:
@@ -261,6 +293,15 @@ const count = featured.length;
         scale: 1;
         transition: opacity var(--duration-fast) linear;
       }
+    }
+    /* a film's still and its cover video over it, each filling the screen */
+    .hero-home_img,
+    .hero-home_film {
+      grid-area: 1 / 1;
+      min-height: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
     /* its foot fades out (the bottom 15 %, already under the ground's gradient), so as the stills rise no edge
        shows under them */
