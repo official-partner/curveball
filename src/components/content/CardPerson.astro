@@ -31,9 +31,11 @@ const links = [
 {
   render && (
     <article class:list={["card-person", extra]} data-op-item={person.id} data-parallax={depth || undefined} style={`--_order: ${index}; ${style}`}>
-      <div class="card-person_media">
-        {photo && <Img class="card-person_img cover-absolute object-fit-cover" {...img(photo)} alt={`Portrait of ${name}`} variant="constrained" sizes="(min-width: 64rem) 16vw, 50vw" />}
-      </div>
+      {photo && (
+        <div class="card-person_media">
+          <Img class="card-person_img cover-absolute object-fit-cover" {...img(photo)} alt={`Portrait of ${name}`} variant="constrained" sizes="(min-width: 64rem) 16vw, 50vw" />
+        </div>
+      )}
       <p class="card-person_name text-style-main">
         <span data-op-field="name">{name}</span>
         {role && <br />}
@@ -45,7 +47,7 @@ const links = [
         {location}
       </When>
       {links.length > 0 && (
-        <ul class="card-person_links text-style-main">
+        <ul class:list={["card-person_links text-style-main", !location && "is-first"]}>
           {links.map((l) => (
             <li>
               <a href={l.href}>{l.label}</a>
@@ -81,7 +83,10 @@ const links = [
     }
     .card-person_name {
       grid-column: 1 / -1;
-      margin-top: var(--space-media);
+      /* a person without a photo opens on the name */
+      .card-person_media + & {
+        margin-top: var(--space-media);
+      }
     }
     .card-person_role,
     .card-person_links {
@@ -101,6 +106,11 @@ const links = [
         grid-column: 2 / -1;
       }
       margin-top: var(--space-title);
+      /* without a city, the links take its place at the left */
+      &.is-first {
+        grid-column: 1 / -1;
+        grid-row: auto;
+      }
       & a {
         color: inherit;
         transition: color var(--hover-duration) var(--hover-ease);

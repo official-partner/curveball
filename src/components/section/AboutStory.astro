@@ -331,7 +331,10 @@ const START = 275;
         align-self: start;
         position: relative;
         z-index: 1;
-        margin-top: calc(var(--_au) * 775);
+        /* centred in the stem's height (1093 to 1680 of the drawing), not hung from its top (Sam, Nov 17) */
+        margin-top: calc(var(--_au) * 763);
+        min-height: calc(var(--_au) * 587);
+        align-content: center;
         /* clear of the bend's outer corner, which closes in on the stem's right as it goes down */
         max-width: calc(100% - var(--site-margin) * 2 - var(--_au) * 160);
       }

@@ -96,6 +96,13 @@ main {
   transition: color var(--paint-duration, 0s) var(--ease-travel);
 }
 
+/* A logo drawn as wide as the box that holds it (the nav's and the footer's symbol, Home's wordmark) */
+.logo-art {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 /* An element its script brings in as the page opens (About's title, ball and story): hidden from the first paint while
    motion is allowed, so it never shows before its own animation (Sam, Nov 12: « faudrait juste pas le voir avant qu'il
    soit animé »); shown after 2 s if its script never comes */

@@ -3,7 +3,6 @@
    above the black, the symbol in that colour, the menu, the line and the small print. Measured on News and Contact,
    identical on both (Home's curve sat 61 px to the right: one curve for all). Geometry in the Figma's units, scaled
    with the footer's width (cqw): 1728 wide, the symbol 290 below the top, 531 wide. */
-import Logo from "@/assets/logo/logo.svg";
 import LogoSymbol from "@/assets/logo/symbol.svg";
 import { SITE_NAME } from "@/consts.ts";
 import { social, legal } from "@/data/site.ts";
@@ -36,12 +35,8 @@ const curve =
         </svg>
       )}
       <div class="footer_layout site-grid">
-        {/* a phone's footer opens with the wordmark, margin to margin, in the symbol's place (Sam, Nov 17, comment 33) */}
-        <a class="footer_logo" href="/" aria-label={`${SITE_NAME}, home`}>
-          <Logo aria-hidden="true" />
-        </a>
         <a class="footer_symbol" href="/" aria-label={`${SITE_NAME}, home`}>
-          <LogoSymbol aria-hidden="true" />
+          <LogoSymbol class="logo-art" aria-hidden="true" />
         </a>
         <nav class="footer_menu" aria-label="Footer">
           <ul class="text-style-menu">
@@ -111,6 +106,10 @@ const curve =
       &.is-plain {
         --_rest: 24.8cqw;
         --_above: calc(-1 * var(--space-3));
+        /* its rule at the top, from one edge of the screen to the other (Sam, Nov 17: no margin at its ends) */
+        background-image: linear-gradient(var(--border), var(--border));
+        background-size: 100% var(--border-width);
+        background-repeat: no-repeat;
       }
     }
     .footer_curve {
@@ -132,46 +131,40 @@ const curve =
       padding-bottom: var(--site-margin);
       row-gap: var(--space-9);
       align-items: start;
-      /* plain: the rule margin to margin at its top, the symbol 24 under it (the Figma's director page and About) */
+      /* plain: the symbol 24 under the rule (the Figma's director page and About) */
       .is-plain & {
         padding-top: var(--space-5);
-        background: linear-gradient(var(--border), var(--border)) var(--site-margin) 0 / calc(100% - 2 * var(--site-margin))
-          var(--border-width) no-repeat;
       }
     }
-    /* On a phone (below 48rem): the wordmark margin to margin, then the pages and « contact us » one under the
-       other in the menu's big size (as big as h2 there), the social links beside them; the symbol comes back from a
-       tablet up, where the footer is as drawn. */
-    .footer_layout .footer_logo {
-      grid-column: margin / end;
-      @media (width >= 48rem) {
-        display: none;
-      }
-    }
+    /* On a phone (below 48rem): the round symbol margin to margin, then the pages and « contact us » one under the
+       other, close together and bigger than the line under them (Sam, Nov 17), the social links beside them. */
     @media (width < 48rem) {
       .footer_layout .footer_symbol {
-        display: none;
+        grid-column: margin / end;
       }
       .footer_layout .footer_menu {
         grid-column: margin / span 3;
         grid-row: 2;
         & ul {
           display: grid;
-          row-gap: var(--space-3);
+          row-gap: var(--space-2);
+        }
+        /* each page's name trimmed to its letters, so they sit as close as « news » and « contact us » */
+        & li {
+          text-box: trim-both cap alphabetic;
         }
       }
       .footer_layout .footer_contact {
         grid-column: margin / span 3;
         grid-row: 3;
-        margin-top: calc(var(--space-3) - var(--space-9));
+        margin-top: calc(var(--space-2) - var(--space-9));
       }
       .footer_layout .footer_social {
         grid-row: 2;
         margin-top: 0;
       }
     }
-    .footer_symbol,
-    .footer_logo {
+    .footer_symbol {
       grid-column: margin / span 2;
       grid-row: 1;
       display: block;
@@ -184,11 +177,6 @@ const curve =
       @media (width >= 64rem) {
         grid-column: margin / span 4;
         width: clamp(9rem, calc(100svh - var(--_rest) + var(--_above)), calc(var(--_u) * 531));
-      }
-      & svg {
-        display: block;
-        width: 100%;
-        height: auto;
       }
       /* on a red ground (the footer painted a red director's colour, data-paint), the symbol in the text's black */
       .theme-brand & {

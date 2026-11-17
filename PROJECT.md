@@ -2,6 +2,39 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-17, Sam (18:05, dictated, a list of corrections after looking at the review):
+  - Footer on a phone: the round symbol is back, margin to margin, in the page's colour (the wordmark put there
+    earlier today was a misreading of « logo »). The pages and « contact us » are bigger than the line under them
+    (text-menu on a phone 34 to 56, system/curveball.json) and closer together (each trimmed to its letters,
+    --space-2 apart), « même si c'est un peu moins accessible ».
+  - A new global class, .logo-art (project.css): a logo as wide as its box, for the nav's and the footer's symbol
+    and Home's wordmark, which each wrote the same three declarations.
+  - About, below 64rem: the story is centred in the height of the curve's black stem (1093 to 1680 of the drawing),
+    no longer hung from its top.
+  - News: each article's date from its link. Two articles read so far (LBB Online: March 4, 2024 for the launch,
+    which two cards link to; May 16, 2024 for Joe Pernice and James Niebuhr). The five others wait for Sam's
+    approval of the page reads; no date is invented. A card without a date keeps its source at the left.
+  - Layouts that rearrange when something is missing (checked on Contact, News, a director's page): a person
+    without a photo shows no empty circle and opens on the name; without a city the links take its place; Contact's
+    team, drawn as a scatter of portraits, stands in plain rows while nobody has a photo, and the scatter comes
+    back with the first one.
+  - Watching a film: a ring turns at the pointer while the film loads, between « Play » and « Close » (the word
+    « Loading » with reduced motion), and again if the film stalls; the rule is pressed or dragged to move through
+    the film (a band of --space-5 on it; the left and right arrows move five seconds); the film shows in its own
+    format, read from the file (16:9 stays 16:9, a vertical film vertical), coming in as big as its short version
+    and settling to its size (slow, the travel's ease); the address names the film (?film=<its id>, not a page of
+    its own: 61 more pages for the same content), so Back closes it where the page was, Forward opens it again,
+    and a link opens the page at that film (its sound then waits for a click, as browsers ask). Astro's router
+    reloads the page on any step to an entry that carries a state: the film's entry and the page's carry none
+    while a film is open.
+  - Over a film, one colour: the film's title was the browser's own white for a button; it now takes the stone of
+    the rule, « Play », the client and the year.
+  - The balls' loops cut again from the films: one scene of four seconds, 640 px, a much lighter compression
+    (61 files, 30 MB in public/media/films, temporary until the films leave Dropbox).
+  - Directors: under a filter with nobody, « No director here yet. » in the names' size and colour, a screen tall
+    so the footer stays out of sight; no ball rises above the foot of the filters' row; on a director's page, four
+    times the space between the other directors and the footer; the plain footer's rule runs from one edge of the
+    screen to the other.
 - 2026-11-17, Sam (17:35, dictated, with the Figma's three frames of a film being watched; his comments 33, 34, 35
   and his reply on 25, handled at his ask in the conversation):
   - Watching a film (DirectorReel; the dialog player of Nov 12 is gone). « Play » follows the pointer over the reel;

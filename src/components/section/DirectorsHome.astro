@@ -110,7 +110,7 @@ const filters = [
             <ArrowLink text="View director" />
           </a>
         </div>
-        <p class="directors-home_empty text-style-main" hidden>
+        <p class="directors-home_empty directors-home_list text-style-h1" hidden>
           No director here yet.
         </p>
       </div>
@@ -169,6 +169,7 @@ const filters = [
     document.querySelectorAll<HTMLElement>(".directors-home_wrap").forEach((wrap) => {
       const items = [...wrap.querySelectorAll<HTMLElement>(".directors-home_item")];
       const empty = wrap.querySelector<HTMLElement>(".directors-home_empty");
+      const filterRow = wrap.querySelector<HTMLElement>(".directors-home_row");
       const reduce = matchMedia("(prefers-reduced-motion: reduce)");
       const root = document.documentElement;
       const out = curve("--ease-out", "0.23, 1, 0.32, 1");
@@ -255,6 +256,8 @@ const filters = [
             rows.set(b.item, box.top + box.height / 2 - middle);
           }
         });
+        // the balls never cover the filters (Sam, Nov 17): none rises above the foot of their row
+        const floor = rows.size && filterRow ? filterRow.getBoundingClientRect().bottom : -Infinity;
         const k = 1 - Math.exp(-gsap.ticker.deltaRatio() / 6);
         balls.forEach((b) => {
           if (b.s <= 0.001) {
@@ -269,7 +272,8 @@ const filters = [
           b.at = b.at === null ? target : b.at + (target - b.at) * k;
           const r = size / 2;
           b.el.style.visibility = "visible";
-          b.el.style.transform = `translate3d(${(innerWidth * b.x - r).toFixed(1)}px, ${(b.at - r).toFixed(1)}px, 0) scale(${b.s.toFixed(3)})`;
+          const y = Math.max(b.at, floor + r * b.s);
+          b.el.style.transform = `translate3d(${(innerWidth * b.x - r).toFixed(1)}px, ${(y - r).toFixed(1)}px, 0) scale(${b.s.toFixed(3)})`;
         });
       };
       let running = false;
@@ -479,7 +483,8 @@ const filters = [
        (keyed on .is-dark, which stays: its theme changes with the page's colour) */
     .directors-home_wrap.is-dark {
       padding-top: var(--section-space-small);
-      padding-bottom: var(--section-space-medium);
+      /* four times the space it had before the footer (Sam, Nov 17) */
+      padding-bottom: calc(var(--section-space-medium) * 4);
     }
     .directors-home_wrap.is-page {
       padding-top: var(--page-top);
@@ -592,8 +597,10 @@ const filters = [
         translate: 0.25em 0;
       }
     }
+    /* no director under a filter: the line in the names' size and colour, a screen tall so the footer stays
+       out of sight (Sam, Nov 17) */
     .directors-home_empty {
-      color: var(--text-2);
+      min-height: 100svh;
     }
     /* The balls: a layer over the screen, over the other sections (the list's own stacking sits above them); the
        Figma's 238 at 1728 (13.8 % of the width), 128 at the least on a phone */

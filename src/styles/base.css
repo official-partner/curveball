@@ -127,7 +127,7 @@
   --text-large-min: 16;
   --text-large-max: 16;
   --text-menu: clamp(min(var(--text-menu-min), var(--text-menu-max)) / 16 * 1rem, ((var(--text-menu-min) - ((var(--text-menu-max) - var(--text-menu-min)) / (var(--viewport-max) - var(--viewport-min)) * var(--viewport-min))) / 16 * 1rem + ((var(--text-menu-max) - var(--text-menu-min)) / (var(--viewport-max) - var(--viewport-min))) * 100vw), max(var(--text-menu-min), var(--text-menu-max)) / 16 * 1rem);
-  --text-menu-min: 34;
+  --text-menu-min: 56;
   --text-menu-max: 16;
   --text-main: clamp(min(var(--text-main-min), var(--text-main-max)) / 16 * 1rem, ((var(--text-main-min) - ((var(--text-main-max) - var(--text-main-min)) / (var(--viewport-max) - var(--viewport-min)) * var(--viewport-min))) / 16 * 1rem + ((var(--text-main-max) - var(--text-main-min)) / (var(--viewport-max) - var(--viewport-min))) * 100vw), max(var(--text-main-min), var(--text-main-max)) / 16 * 1rem);
   --text-main-min: 16;

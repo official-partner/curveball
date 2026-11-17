@@ -1,7 +1,10 @@
 ---
 /* Contact's team: its head, then each person where the Figma scatters them (from the rule: at column 10, 238 down; at
    5, 540; at 1, 898; at 9, 1047; at 5 again, 1232), in the Figma's units scaled with the page. One after the other on
-   a tablet and a phone, every other one against the right edge. People from the collection « Team ». */
+   a tablet and a phone, every other one against the right edge. People from the collection « Team ».
+   The scatter is drawn for portraits: while nobody has a photo, the people stand in plain rows instead (two across on
+   a phone, four on a computer), and the scatter comes back with the first photo (Sam, Nov 17: a layout rearranges
+   itself when something is missing). */
 import SectionHead from "@/components/content/SectionHead.astro";
 import CardPerson from "@/components/content/CardPerson.astro";
 import { getItems } from "@/utils/content.ts";
@@ -13,6 +16,7 @@ interface Props {
 
 const { render = true } = Astro.props;
 const people = await getItems("team");
+const portraits = people.some((person) => person.data.photo);
 /* The Figma's scatter, in its order: the column a portrait starts at and how far below the rule */
 const spots = [
   { col: "aside", y: 238 },
@@ -32,18 +36,26 @@ const DEPTHS = [0.12, -0.05, 0.08, 0.15, 0.02, 0.1];
     <section class="team-list_wrap" data-op-section="TeamList">
       <div class="team-list_layout site-grid" data-op-list="team" data-op-source="astro:team">
         <SectionHead label="The team" heading="One home base, and a crew spread across the map. Nobody's ever a stranger." />
-        {people.map((person, index) => {
-          const spot = spots[index % spots.length];
-          return (
-            <CardPerson
-              person={person}
-              index={index}
-              class:list={["team-list_card", index % 2 ? "is-alt" : undefined]}
-              style={`--_col: ${spot.col}; --_y: ${spot.y};`}
-              depth={DEPTHS[index % DEPTHS.length]}
-            />
-          );
-        })}
+        {portraits ? (
+          people.map((person, index) => {
+            const spot = spots[index % spots.length];
+            return (
+              <CardPerson
+                person={person}
+                index={index}
+                class:list={["team-list_card", index % 2 ? "is-alt" : undefined]}
+                style={`--_col: ${spot.col}; --_y: ${spot.y};`}
+                depth={DEPTHS[index % DEPTHS.length]}
+              />
+            );
+          })
+        ) : (
+          <div class="team-list_rows">
+            {people.map((person, index) => (
+              <CardPerson person={person} index={index} class="team-list_person" />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   )
@@ -76,8 +88,21 @@ const DEPTHS = [0.12, -0.05, 0.08, 0.15, 0.02, 0.1];
         }
       }
     }
+    /* without portraits: plain rows on the page's own columns */
+    .team-list_rows {
+      grid-column: margin / end;
+      display: grid;
+      grid-template-columns: subgrid;
+      row-gap: var(--space-8);
+    }
+    .team-list_person {
+      grid-column: span 2;
+      @media (width >= 64rem) {
+        grid-column: span 3;
+      }
+    }
     @media (width >= 64rem) {
-      .team-list_layout {
+      .team-list_layout:not(:has(.team-list_rows)) {
         row-gap: 0;
       }
       .team-list_layout > .section-head {

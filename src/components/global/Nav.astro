@@ -30,7 +30,7 @@ const current = (href: string) => (path === href || path.startsWith(href + "/") 
     <header class="nav_wrap" data-op-section="Nav">
       <div class="nav_layout site-grid">
         <a class="nav_logo" href="/" aria-label={`${SITE_NAME}, home`}>
-          <LogoSymbol aria-hidden="true" />
+          <LogoSymbol class="logo-art" aria-hidden="true" />
         </a>
         <nav class="nav_menu" aria-label="Main">
           <ul class="nav_links text-style-large">
@@ -69,11 +69,6 @@ const current = (href: string) => (path === href || path.startsWith(href + "/") 
       display: block;
       width: max(var(--logo-size-floor), var(--logo-size));
       color: var(--text);
-      & svg {
-        display: block;
-        width: 100%;
-        height: auto;
-      }
     }
     .nav_menu {
       grid-column: half;

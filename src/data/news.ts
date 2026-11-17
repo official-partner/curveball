@@ -1,6 +1,7 @@
 /* News and awards: the cards of the News page, edited on the canvas with OP System's Modifier (data-op-list). The
    client's eight news, from the current site's CMS (Nov 17), the newest first; each card links to its article. The
-   current site has no date and no text for them, so a card shows neither; their photos are the current site's. */
+   current site has no date and no text for them: a date is the one its article gives (read from its link, Nov 17),
+   and a card without one shows none; their photos are the current site's. */
 import photo1 from "@/assets/content/news/curveball-films-signs-director-michael-chemaly.jpg";
 import photo2 from "@/assets/content/news/curveball-films-hires-jake-cameron-as-executive-producer.jpg";
 import photo3 from "@/assets/content/news/curveball-films-welcomes-directing-duo-neymarc-brothers.jpg";
@@ -45,6 +46,7 @@ export const news: NewsItem[] = [
   {
     source: "LBB Online",
     title: "Team Behind Five to Sixty Launches Rostered Production Company Curveball",
+    date: "March 4, 2024",
     href: "https://lbbonline.com/news/team-behind-five-to-sixty-launches-rostered-production-company-curveball",
     photo: photo4,
     alt: "The team squeezed into a photo booth, in black and white",
@@ -66,6 +68,7 @@ export const news: NewsItem[] = [
   {
     source: "LBB Online",
     title: "Curveball Films Signs Joe Pernice and James Niebuhr",
+    date: "May 16, 2024",
     href: "https://www.lbbonline.com/news/directors-joe-pernice-and-james-niebuhr-sign-to-curveball-films",
     photo: photo7,
     alt: "Two portraits side by side: a man in a grey shirt, and a man in a beanie with a camera",
@@ -73,6 +76,7 @@ export const news: NewsItem[] = [
   {
     source: "LBB Online",
     title: "Curveball Films Launches",
+    date: "March 4, 2024",
     href: "https://www.lbbonline.com/news/team-behind-five-to-sixty-launches-rostered-production-company-curveball",
     photo: photo8,
     alt: "The team squeezed into a photo booth, in black and white",

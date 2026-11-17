@@ -72,8 +72,9 @@ const { render = true, item, index = 0, class: extra, depth } = Astro.props;
       display: grid;
       grid-template-columns: subgrid;
       margin-top: var(--space-media);
-      & span:last-child {
-        grid-column: 2 / -1;
+      /* the date one column from the source; a news without a date keeps its source at the left */
+      & span + span {
+        grid-column: span 2;
       }
     }
     .card-news_title {

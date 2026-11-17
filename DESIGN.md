@@ -86,6 +86,7 @@ it (system/gen.py).
   inner pages' sections).
 - .dot-label: the dot before a label, centred on its capitals (« Featured work », « Directors », a director's bio:
   the plus the Figma put in that one is gone, Sam, Nov 12).
+- .logo-art: a logo drawn as wide as the box that holds it (the nav's and the footer's symbol, Home's wordmark).
 - [data-paint] (with :root[data-paints]): the grounds and named text that follow the page's colour, and how they
   change. [data-await]: hidden from the first paint until its script plays it (2 s at most).
 - main is the container of the design unit --u.
