@@ -2,6 +2,12 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-17, Sam (18:34, dictated, with a screenshot of the footer's rule):
+  - The plain footer's rule spans the columns, margin to margin, as the rules of the pages do: neither the whole
+    screen (18:05's reading) nor a margin short at each end (what it was before).
+  - « No director here yet. »: in the names' size without their capitals (Lumos's text-transform-none), on two
+    lines, in the list's own box so it starts where the first name does; the screen-tall block is gone, the section's
+    own space before what follows is enough (« too much »).
 - 2026-11-17, Sam (18:05, dictated, a list of corrections after looking at the review):
   - Footer on a phone: the round symbol is back, margin to margin, in the page's colour (the wordmark put there
     earlier today was a misreading of « logo »). The pages and « contact us » are bigger than the line under them

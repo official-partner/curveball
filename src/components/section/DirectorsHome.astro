@@ -109,10 +109,13 @@ const filters = [
           <a class="directors-home_view" href={directors[0] ? `/directors/${directors[0].id}` : "/directors"} tabindex="-1" aria-hidden="true">
             <ArrowLink text="View director" />
           </a>
+          {/* in the list's own box, so it starts where the first name does */}
+          <p class="directors-home_empty directors-home_list text-style-h1 text-transform-none" hidden>
+            No director
+            <br />
+            here yet.
+          </p>
         </div>
-        <p class="directors-home_empty directors-home_list text-style-h1" hidden>
-          No director here yet.
-        </p>
       </div>
       <div class="directors-home_balls" aria-hidden="true">
         {directors.map((d) =>
@@ -535,8 +538,7 @@ const filters = [
         }
       }
     }
-    .directors-home_names,
-    .directors-home_empty {
+    .directors-home_names {
       grid-column: margin / end;
     }
     .directors-home_names {
@@ -596,11 +598,6 @@ const filters = [
       .directors-home_names:has(.is-active .directors-home_name:hover) .directors-home_view .arrow-link_icon {
         translate: 0.25em 0;
       }
-    }
-    /* no director under a filter: the line in the names' size and colour, a screen tall so the footer stays
-       out of sight (Sam, Nov 17) */
-    .directors-home_empty {
-      min-height: 100svh;
     }
     /* The balls: a layer over the screen, over the other sections (the list's own stacking sits above them); the
        Figma's 238 at 1728 (13.8 % of the width), 128 at the least on a phone */

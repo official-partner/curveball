@@ -106,10 +106,6 @@ const curve =
       &.is-plain {
         --_rest: 24.8cqw;
         --_above: calc(-1 * var(--space-3));
-        /* its rule at the top, from one edge of the screen to the other (Sam, Nov 17: no margin at its ends) */
-        background-image: linear-gradient(var(--border), var(--border));
-        background-size: 100% var(--border-width);
-        background-repeat: no-repeat;
       }
     }
     .footer_curve {
@@ -131,9 +127,11 @@ const curve =
       padding-bottom: var(--site-margin);
       row-gap: var(--space-9);
       align-items: start;
-      /* plain: the symbol 24 under the rule (the Figma's director page and About) */
+      /* plain: the rule across the columns at its top, margin to margin and no further (Sam, Nov 17, 18:34), the
+         symbol 24 under it (the Figma's director page and About) */
       .is-plain & {
         padding-top: var(--space-5);
+        background: linear-gradient(var(--border), var(--border)) 0 0 / 100% var(--border-width) no-repeat;
       }
     }
     /* On a phone (below 48rem): the round symbol margin to margin, then the pages and « contact us » one under the
