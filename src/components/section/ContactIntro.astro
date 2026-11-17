@@ -43,7 +43,8 @@ const { render = true } = Astro.props;
       & .contact-block {
         grid-column: margin / end;
       }
-      @media (width >= 48rem) {
+      /* two columns from a phone held sideways (Sam, Nov 17, comment 22) */
+      @media (width >= 30rem) {
         & .contact-block:nth-child(odd) {
           grid-column: margin / half;
         }

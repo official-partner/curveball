@@ -33,8 +33,6 @@
   --tone-strong: 100%;
   --tone-muted: 50%;
   --tone-faint: 30%;
-  /* A name not active in the directors list, hovered: just above faint (Sam, Nov 12) */
-  --tone-hover: 40%;
   /* The page's own colour (red on Home, mustard on News, teal on Contact): the footer's mark, the ball and the
      curve take it. A page sets it with .accent-* on its body (themes never reset it). */
   --page-accent: var(--red);
@@ -179,6 +177,9 @@
   --section-space-large: clamp(var(--section-space-large-min) / 16 * 1rem, ((var(--section-space-large-min) - ((var(--section-space-large-max) - var(--section-space-large-min)) / (var(--viewport-max) - var(--viewport-min)) * var(--viewport-min))) / 16 * 1rem + ((var(--section-space-large-max) - var(--section-space-large-min)) / (var(--viewport-max) - var(--viewport-min))) * 100vw), var(--section-space-large-max) / 16 * 1rem);
   --section-space-large-min: 80;
   --section-space-large-max: 114;
+  --page-top: clamp(var(--page-top-min) / 16 * 1rem, ((var(--page-top-min) - ((var(--page-top-max) - var(--page-top-min)) / (var(--viewport-max) - var(--viewport-min)) * var(--viewport-min))) / 16 * 1rem + ((var(--page-top-max) - var(--page-top-min)) / (var(--viewport-max) - var(--viewport-min))) * 100vw), var(--page-top-max) / 16 * 1rem);
+  --page-top-min: 120;
+  --page-top-max: 120;
 
   /* Role tokens: one job each, pointing at a step of the scale (change the step, every use follows) */
   /* a rule to the cap top of the text under it (Figma 19 to 23 on the rows and the first labels) */
@@ -195,8 +196,6 @@
   --space-title: var(--space-7);
   /* a section's label to its heading (46 to 48, four times) */
   --space-label: var(--space-8);
-  /* the top of the page to the first rule of an inner page (Figma 190) */
-  --page-top: var(--section-space-large);
 
   /* Floors: reading text and small parts stop shrinking here (applied with max() where they are used) */
   --text-label-floor: 1.125rem;
@@ -352,6 +351,8 @@
     --section-space-medium-max: 144;
     --section-space-large-min: 113.778;
     --section-space-large-max: 192;
+    --page-top-min: 113.778;
+    --page-top-max: 192;
   }
 }
 /* Color themes. dark (the default: black, stone text, taupe for the big type), light (stone, black text),

@@ -3,7 +3,23 @@
   "colour": "teal",
   "portrait": "../../assets/content/directors/lu-lou.jpg",
   "bio": "LU & LOU are a French-Italian sibling directing and photography duo raised in New York City and working between New York, Los Angeles, and Paris. Fluent in English, French, and Italian, their work lives at the intersection of narrative storytelling, sportswear, and fashion, from elevated social films to campaigns with some of the world's biggest brands and talent, such as Puma, Adidas, ON running, GQ, STANLEY 1913. As an older-sister-younger-brother duo, their creative partnership comes with a lifetime of shared references, an instinctive shorthand, and two perspectives that somehow always land on the same frame. Fiona is a Cancer. Pier is a Pisces. Pier insists he's the fastest swimmer in the family. Fiona is faster.",
+  "based": [
+    "New York",
+    "Los Angeles",
+    "Paris"
+  ],
+  "clients": [
+    "Puma",
+    "Adidas",
+    "ON running",
+    "GQ",
+    "STANLEY 1913"
+  ],
   "website": "https://luandlou.co/",
   "coverVideo": "https://dl.dropboxusercontent.com/scl/fi/b7fdgxu3smu5qr4wz85nt/H226-OMNI-CaitlinClark-QuickBreak-16x9-Titled.mp4?rlkey=oyhfvm9fa8aj9zmyzivuxsxly&st=euidj7ws&dl=0",
+  "industries": [
+    "Fashion"
+  ],
+  "location": "New York",
   "order": 7
 }

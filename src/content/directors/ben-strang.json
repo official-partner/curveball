@@ -1,10 +1,25 @@
 {
   "name": "Ben Strang",
+  "shortName": "Ben",
   "colour": "mustard",
   "portrait": "../../assets/content/directors/ben-strang.jpg",
   "bio": "Ben is a commercial director and photographer known for his collaborative working style and grounded cinematic visuals. Merging articulate visual storytelling with documentary realism, Ben’s films and images have been widely praised for their ability to find indelibly human moments in the nuance of every day life. His latest branded series “A Mystery To Me” won a Cannes Lions Award and his recent scripted pilot “Beast” won the prestigious SXSW Grand Jury Award for episodic storytelling. Ben is based in Santa Monica, California and is an obsessively avid windsurfer.",
+  "based": [
+    "Santa Monica"
+  ],
+  "clients": [
+    "Central Bank",
+    "Hawaii Tourism",
+    "United Airlines",
+    "Capital One",
+    "Ocean Spray",
+    "Bayer"
+  ],
   "website": "https://benstrang.com/",
   "coverVideo": "https://dl.dropboxusercontent.com/scl/fi/5s4uja3o1j5p8d6ofk29p/United-_-For-Business-_40-720p-with-23.98fps.mp4?rlkey=17ptufngm20vzcp192gy75sjm&st=wesgpkq9&dl=0",
-  "order": 14,
-  "visible": false
+  "industries": [
+    "Docustyle"
+  ],
+  "visible": false,
+  "order": 14
 }

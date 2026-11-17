@@ -1,8 +1,17 @@
 {
   "name": "Connor Carroll",
+  "shortName": "Connor",
   "colour": "mustard",
   "portrait": "../../assets/content/directors/connor-carroll.jpg",
   "bio": "Connor's love for film was sparked at a young age. He grew up in front of the camera, acting in commercials and movies well into his teens, but it wasn't until after college that he began to hone his skills behind the camera. In order to learn the craft, he spent many years working for a production company and ad agency before making the jump. As a director, Connor aspires to tell authentic, cinematic stories that embrace the human condition and evoke real emotion. He places a lot of value in putting the right people in the right roles to achieve a common goal, and his personable nature and ability to connect with people are some of his greatest strengths on and off set.",
+  "clients": [
+    "IU Health",
+    "Colquitt",
+    "Takis",
+    "NASCAR",
+    "Verizon",
+    "Tennessee State Parks"
+  ],
   "website": "https://www.connorcarroll.tv",
   "coverVideo": "https://dl.dropboxusercontent.com/scl/fi/lvd8ltk719rl5mcxv6fx7/nascar_x_nate_bargatze___the_naytona_500_v1-2160p.mp4?rlkey=j3xx44sjz098vq8hmzxrbo6yf&st=99bs6nlg&dl=0",
   "order": 8

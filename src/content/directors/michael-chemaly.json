@@ -1,9 +1,21 @@
 {
   "name": "Michael Chemaly",
+  "shortName": "Michael",
   "colour": "red",
   "portrait": "../../assets/content/directors/michael-chemaly.jpg",
   "bio": "Michael Chemaly is a Los Angeles-based commercial director specializing in comedy, sports performance, and dynamic brand storytelling. Known for his sharp comedic timing and high-energy visual rhythm, he has built a reputation for directing marquee athletes and non-actors consistently pulling natural, deadpan, and charismatic performances out of talent within high-stakes, rapid-turnaround windows. His commercial work spans major broadcast and digital campaigns directing icons including Mike Trout, Ken Griffey Jr., Bryce Harper, Clayton Kershaw, and Paul Skenes, as well as cult-classic talent like Patrick Renna. Combining technical precision with an instinct for comedic rapport, Michael combines tight technical execution with a relaxed set demeanor, empowering elite talent to deliver on limited clocks.",
+  "based": [
+    "Los Angeles"
+  ],
+  "clients": [
+    "MLB",
+    "Summoners War"
+  ],
   "website": "https://www.michaelryanfagan.com/",
   "coverVideo": "https://dl.dropboxusercontent.com/scl/fi/p9jv452nju4liy46u75p9/MLB9I23_EasyOut_30A-1-_1.mp4?rlkey=z77b9be5lpbavg0e6rqbnsut6&st=rgv9ssw0&dl=0",
+  "industries": [
+    "Comedy"
+  ],
+  "location": "Los Angeles",
   "order": 6
 }

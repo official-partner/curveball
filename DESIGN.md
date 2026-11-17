@@ -34,7 +34,8 @@ it (system/gen.py).
   Brothers ») fits a phone's width on one line at 44; the directors list sets the names bigger on a phone, on two
   lines (Sam, Nov 12).
 - Spacing: 8, 12, 16, 20, 24, 32, 40, 48, 64; sections 112, 144, 192 (roles in base.css: --space-rule, --space-dot,
-  --space-media, --space-meta, --space-action, --space-title, --space-label, --page-top).
+  --space-media, --space-meta, --space-action, --space-title, --space-label); --page-top, the top of an inner page to
+  its first rule: 192 at 1728, 120 on a tablet and a phone (Sam, Nov 17).
 
 ## Motion
 - The contract (base.css): faster 150 ms (press, a hover leaving), fast 250 ms (hover, focus, the page's colour on

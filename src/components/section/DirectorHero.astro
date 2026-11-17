@@ -70,12 +70,14 @@ const empty = !bio && !(based ?? []).length && !(clients ?? []).length;
     .director-hero_title {
       grid-column: margin / end;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: var(--space-6);
       min-width: 0;
     }
+    /* centred on the name's first line, so it stays there when a long name takes two (Sam, Nov 17, comment 24) */
     .director-hero_portrait {
       flex: none;
+      margin-top: calc((var(--display-line-height) - 0.8) / 2 * var(--display));
       /* the Figma's 168 for type 210: 0.8 of the name's size, centred on its capitals */
       width: calc(0.8 * var(--display));
       aspect-ratio: 1;

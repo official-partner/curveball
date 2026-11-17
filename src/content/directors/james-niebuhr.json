@@ -1,8 +1,21 @@
 {
   "name": "James Niebuhr",
+  "shortName": "James",
   "colour": "red",
   "portrait": "../../assets/content/directors/james-niebuhr.jpg",
   "bio": "James Niebuhr is a director specializing in character-driven, visual storytelling, often exploring the slightly offbeat or unexpected. His sensibility is informed by his background in design/VFX and documentary filmmaking where he also works as Director of Photography — creating a unique combination of elevated cinematic visuals balanced with authentic character details. His work has been featured on Vimeo Staff Picks, New York Times OpDocs, Booooooom.com, and Pitchfork. Recent projects includes lensing the award-winning documentary feature \"Q ball,\" directing the song cycle film \"Songs For Murdered Sisters\" with poetry by Canadian poet and novelist Margaret Atwood and music by American composer Jake Heggie, and the live performance film \"Tell The Truth\" by Jon Batiste. His commercial work has taken him around the world, collaborating with brands including Google, Nike, Salesforce, Dolby, and Facebook/Meta. When he’s not on set you can find him taking photo walks with his dog, Bird, digging for vinyl, or enjoying an opera performance by his partner, mezzo-soprano Laura Krumm. James is based in San Francisco Bay Area/Los Angeles.",
+  "based": [
+    "San Francisco Bay Area",
+    "Los Angeles"
+  ],
+  "clients": [
+    "Google",
+    "Nike",
+    "Salesforce",
+    "Dolby",
+    "Facebook/Meta"
+  ],
   "coverVideo": "https://dl.dropboxusercontent.com/scl/fi/bj1klxypmf24zibqyjqm8/petlibro_brand_30_fa_extra_purr.mp4?rlkey=vk34pos95hj67m97libh5br1n&st=o65tcl3j&dl=0",
+  "location": "Los Angeles",
   "order": 3
 }

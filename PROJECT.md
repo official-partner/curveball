@@ -2,6 +2,24 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-17, Sam (14:51, « fill out le CMS le plus possible avec les infos que tu peux trouver », and his comments
+  22, 24, 28 and 30 in OP System, handled at his ask in the conversation):
+  - Directors: « Based », « Clients », the Location filter and a short name, from each bio and from the films'
+    names in the current site's CMS; nothing taken from elsewhere. Clients: the brands a bio names, else the
+    director's own films (six at most). Left empty, the bio not saying it: where Connor Carroll, Dylan Mulick, Joe
+    Pernice, Ryan Scott and the Neymarc Brothers are based (the web gives the brothers both New York and Hoboken),
+    Kevin Douglas's clients. Industries only where the bio uses the filter's own word (Michael Chemaly: Comedy; LU &
+    LOU: Fashion; Baz & Wilder and Ben Strang: Docustyle). Jasper Soloff's are still the Figma's. « ABS » in Krista
+    Liney's bio kept as written (ABC?). The short name is the first name (« Enquire about Michael »): the full name
+    ran into « contact us » in the menu at 1254.
+  - Comment 28: more space at the top of every page below a computer. `--page-top` is its own value of the Web
+    System now (120 on a phone and a tablet, was 80 to 114; 192 at 1728 as before), no longer the large section space.
+  - Comment 22: Contact's four blocks are in two columns from 480 wide (was 768).
+  - Comment 24: a director's portrait sits on the first line of the name when a long name takes two (was centred
+    on both).
+  - Comment 30: the directors list's names are a little bigger on a phone (76 at 390, 92 at 478; was 72 and 80).
+  - Not done yet: comments 23, 25, 26, 27, 29, 31, 32.
+
 - 2026-11-17, Sam (14:24, dictated: « starter les vidéos un peu plus tôt ... que l'utilisateur voit la vidéo déjà en
   train de jouer », « même chose pour les images », « remplacer le projet Lexus sur la homepage », « pour les bulles
   ... faire jouer des petits thumbnails, des vidéos, 2 scènes de 3-4 secondes en loop ... les héberger à un endroit

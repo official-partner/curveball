@@ -175,6 +175,11 @@
       80,
       114,
       192
+    ],
+    "page-top": [
+      120,
+      120,
+      192
     ]
   },
   "floors": {
@@ -214,10 +219,6 @@
     "space-label": {
       "ref": "space-8",
       "job": "a section's label to its heading (46 to 48, four times)"
-    },
-    "page-top": {
-      "ref": "section-space-large",
-      "job": "the top of the page to the first rule of an inner page (Figma 190)"
     }
   },
   "text": {
