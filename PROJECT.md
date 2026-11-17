@@ -2,6 +2,16 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-17, Sam (14:05, the two hosts opened to the session: « c'est fait »): the pictures of the current site.
+  - The 14 directors' portraits and the 8 news photos are Webflow's own files, brought as JPEG (1600 and 1200 wide at
+    most). Jasper Soloff's portrait is now the client's, not the Figma's. Three news photos are wide montages that the
+    round frame cuts (the two launch cards, which also carry the old logo, and Joe Pernice with James Niebuhr): to
+    recrop or replace, a choice for the team.
+  - Every video address was asked for: 129 of 130 answer with a film. « Daytona Double Dose »'s two big files are
+    gone from Dropbox (404): its player uses its cover. The eleven addresses on www.dropbox.com are written on
+    Dropbox's file host, the form that was tested. Not checked: the films playing in a browser on the preview.
+  - Still not done: a still per film (the directors list's balls stay empty).
+
 - 2026-11-17, Sam (13:56, « webflow sert uniquement au contenu. commence la migration vers astro pour le contenu »;
   « tout ce qui est design: garder les règles du nouveau site »): the content of the current site's CMS (Webflow's
   three exports of Nov 17: Directors 14, Works 116, News 8) replaces the placeholders; nothing of the design changes.
