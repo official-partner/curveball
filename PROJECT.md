@@ -2,6 +2,34 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-17, Sam (13:56, « webflow sert uniquement au contenu. commence la migration vers astro pour le contenu »;
+  « tout ce qui est design: garder les règles du nouveau site »): the content of the current site's CMS (Webflow's
+  three exports of Nov 17: Directors 14, Works 116, News 8) replaces the placeholders; nothing of the design changes.
+  - Directors (collection): the 14, their name and bio word for word, their website and cover video (two new fields,
+    shown nowhere yet). Their order is Webflow's (ties by name), written 1 to 14. Their colour stays the site's rule,
+    teal, mustard, red in turn down the list (Webflow's own colours are not used). Visible: the 11 with a film to
+    show; Ryan Scott, Krista Liney and Ben Strang are hidden (every film of theirs is hidden in Webflow). Jasper
+    Soloff is a draft in Webflow and kept visible (the design's model page; his cities, clients and portrait stay the
+    Figma's): to confirm. No « Based », « Clients », industries or location in Webflow: empty, the filters too.
+  - Films (collection `projects`): the 116 under their Webflow slug; the 24 copies of Factor are gone. `cover` (new:
+    Webflow's Cover Video) plays behind the reel, `video` (the Dropbox « Big Display » file) opens in the player, the
+    cover when a film has no other file; `link` (new) keeps a Vimeo page. A director's reel is Webflow's own list of
+    their projects, in its order; a director with no list (Kevin Douglas, Joe Pernice) shows their films not hidden.
+    Hidden: Webflow's drafts and hidden films, and those outside their director's list (3 of Connor Carroll's): 61
+    visible. No client, agency, year or still in Webflow: a line shows its title alone, the balls of the directors
+    list and the reel's still wait for pictures. Not brought: a second video (4 films), the GIFs (51).
+  - News (block, src/data/news.ts): the 8, newest first (Webflow's order reversed), each « Read » to its article. The
+    source is named from the link (LBB Online, The Howler); no date and no text in Webflow, so a card shows neither
+    (CardNews: date, text and photo optional). « Curveball Films Launches » and « Team Behind Five to Sixty… » are the
+    same article twice, kept as the client has them.
+  - Errors fixed in the client's data: « This is Baseballl » is « This is Baseball »; Lexus's video address had a
+    second address pasted in it, Kevin Douglas's cover two addresses end to end (the first kept); LU & LOU's website
+    without its tracking. Noted, not changed: the film « ESPNW » has the slug `nissan`.
+  - Not done: no picture could be fetched (Webflow's and Dropbox's hosts are closed to the session): no portrait but
+    Jasper's, no news photo (the round frame stays empty), no still. The Dropbox links were not played. Home's six
+    featured works and Contact's team are not in the exports: unchanged. The six old news portraits stay in the
+    repository: Contact's team uses them.
+
 - 2026-11-12, Sam (20:06, « GO! lance ca! », the starter's checks brought to the sites made before them): Curveball takes `npm run rules`, `measure`, `widths` and `compare`, the starter's shot script (it waits for every image, whole) and the rule check in the build (it stops on a machine on a new failure, it only warns on Cloudflare). Nothing of the site changes: compared before and after, 17 pages of HTML, 34 pictures and 248 presses the same. The 26 failures the rules find today (10 raw values, 7 groups of copied rules, 5 column numbers, 2 text styles, 1 page with a style, the bids email written in four files) are accepted as the debt from before the rules, each with its reason, in `review/data/rules-baseline.json`: the list only shrinks. Not done: the system file in the starter's new form (system/curveball.json and gen.py stay), the short CLAUDE.md, a target for `measure` (no page of Curveball is tied to its Figma with `data-figma` on every element).
 
 - 2026-11-12, Sam (12:44, a screenshot of Home on Yaara Sumeruk: « trop de chose se passe en même temps ici.

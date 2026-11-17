@@ -1,5 +1,7 @@
 {
   "name": "Baz & Wilder",
-  "colour": "teal",
-  "order": 1
+  "colour": "mustard",
+  "bio": "Baz & Wilder are an award winning commercial directing duo (and IRL married couple) based out of New Orleans, LA, where together they built the video-first creative agency FatHappy. Their work blends the colorful design of visual artist Amber “Baz” Vogts with Matthew Wilder’s honest, documentary-style approach and commitment to working with real people, crafting a cinematic world that pushes audiences to laugh, cry…or both.",
+  "coverVideo": "https://dl.dropboxusercontent.com/scl/fi/eer34392du5t7t55ptmw6/booksy-short-cover.mp4?rlkey=07w9cb3yhbklig2i9cissf7qw&st=r1meignk&dl=0",
+  "order": 2
 }

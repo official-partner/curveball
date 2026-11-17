@@ -1,7 +1,7 @@
 {
   "name": "Jasper Soloff",
   "shortName": "Jasper",
-  "colour": "mustard",
+  "colour": "teal",
   "portrait": "../../assets/content/directors/jasper-soloff.jpg",
   "bio": "Jasper Soloff is a New York and Los Angeles based photographer and director whose work has previously appeared in GQ, Vogue Magazine, Paper Magazine, Dazed, and Nylon Magazine to name a few. He was also awarded FILES Photographer of the Year in 2018. Soloff has directed global campaigns for Maybelline, Amazon Fashion, Fenty Beauty and Dropbox. He has also directed music videos for Dove Cameron, Billy Porter, Tinashe, and Tate McRae to name a few.",
   "based": [
@@ -15,5 +15,7 @@
     "Dazed",
     "Nylon Magazine"
   ],
-  "order": 5
+  "website": "https://curveball.gosimian.com/sp/r/N1/0/mGLtwdtx2_9sfRcEKEBeVQ/",
+  "coverVideo": "https://dl.dropboxusercontent.com/scl/fi/5ruspmar6elfrms6hq5wr/Maybelline-Breakfree.mp4?rlkey=qm4rgbrf2vz1fa82cumiz8dqk&st=7rzpoolw&dl=0",
+  "order": 10
 }

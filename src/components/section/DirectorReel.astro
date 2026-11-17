@@ -42,7 +42,17 @@ const { render = true, projects, colour = "red", alone = false } = Astro.props;
               {p.data.still && (
                 <Img {...img(p.data.still)} alt="" variant="full-width" loading={i === 0 ? "eager" : "lazy"} />
               )}
-              {p.data.video && <video class="director-reel_video" src={p.data.video} muted loop playsinline preload="none" />}
+              {(p.data.cover || p.data.video) && (
+                <video
+                  class="director-reel_video"
+                  src={p.data.cover || p.data.video}
+                  data-film={p.data.video || p.data.cover}
+                  muted
+                  loop
+                  playsinline
+                  preload="none"
+                />
+              )}
             </div>
           ))}
         </div>
@@ -54,7 +64,7 @@ const { render = true, projects, colour = "red", alone = false } = Astro.props;
         {projects.map((p, i) => (
           <li class="director-reel_slot" data-op-item={p.id} data-index={i} data-vertical={p.data.vertical ? "true" : undefined}>
             <div class="director-reel_line site-grid rule-top text-style-main">
-              {p.data.video ? (
+              {p.data.video || p.data.cover ? (
                 <button class="director-reel_title" type="button" data-play={i} aria-label={`Play ${p.data.name}`}>
                   <svg class="director-reel_icon" viewBox="0 0 22 24" aria-hidden="true">
                     <path d="M0 0l22 12L0 24z" />
@@ -206,7 +216,7 @@ const { render = true, projects, colour = "red", alone = false } = Astro.props;
           const i = Number(button.dataset.play);
           const source = media[i]?.querySelector<HTMLVideoElement>("video");
           if (!source) return;
-          movie.src = source.currentSrc || source.src;
+          movie.src = source.dataset.film || source.currentSrc || source.src;
           movie.classList.toggle("is-vertical", slots[i]?.dataset.vertical === "true");
           if (now) now.textContent = button.textContent?.trim() ?? "";
           dialog.showModal();

@@ -39,6 +39,8 @@ const directors = defineCollection({
         bio: z.string().optional().describe("Bio"),
         based: z.array(z.string()).optional().describe("Based in"),
         clients: z.array(z.string()).optional().describe("Clients"),
+        website: z.string().optional().describe("Website"),
+        coverVideo: z.string().optional().describe("Cover video (MP4 link)"),
         industries: z
           .array(z.enum(["Docustyle", "Comedy", "Story", "Spectacle", "Fashion"]))
           .default([])
@@ -54,7 +56,8 @@ const directors = defineCollection({
 });
 
 /* The films: each belongs to a director, shows on their page (the reel, in its order) and in the balls that rise on
-   Home while their name is active. A still stands in for the film until its file is in (MP4 or WebM, a link). */
+   Home while their name is active. The cover video plays behind the reel (the film itself when it has none) and the
+   film opens in the player; a still stands in until a file is in (MP4 or WebM, a link). */
 const projects = defineCollection({
   loader: glob({ pattern: "*.json", base: "./src/content/projects" }),
   schema: ({ image }) =>
@@ -66,7 +69,9 @@ const projects = defineCollection({
         agency: z.string().optional().describe("Agency"),
         year: z.number().optional().describe("Year"),
         still: image().optional().describe("Still"),
+        cover: z.string().optional().describe("Cover video, behind the page (MP4 link)"),
         video: z.string().optional().describe("Film (MP4 or WebM link)"),
+        link: z.string().optional().describe("Film page (Vimeo)"),
         vertical: z.boolean().optional().describe("Vertical film"),
         visible: z.boolean().default(true).describe("Visible on the site"),
         order: z.number().optional().describe("Order"),

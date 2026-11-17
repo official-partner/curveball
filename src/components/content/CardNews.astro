@@ -26,18 +26,22 @@ const { render = true, item, index = 0, class: extra, depth } = Astro.props;
   render && (
     <article class:list={["card-news", extra]} data-op-item={String(index)} data-parallax={depth || undefined} style={`--_order: ${index}`}>
       <div class="card-news_media">
-        <Img class="card-news_img" src={item.photo} alt={item.alt} variant="constrained" sizes="(min-width: 64rem) 24vw, (min-width: 48rem) 38vw, 75vw" />
+        {item.photo && (
+          <Img class="card-news_img" src={item.photo} alt={item.alt ?? ""} variant="constrained" sizes="(min-width: 64rem) 24vw, (min-width: 48rem) 38vw, 75vw" />
+        )}
       </div>
       <p class="card-news_meta text-style-main">
         <span data-op-field="source">{item.source}</span>
-        <span data-op-field="date">{item.date}</span>
+        {item.date && <span data-op-field="date">{item.date}</span>}
       </p>
       <h2 class="card-news_title text-style-h3" data-op-field="title">
         {item.title}
       </h2>
-      <p class="card-news_text text-style-main" data-op-field="text">
-        {item.text}
-      </p>
+      {item.text && (
+        <p class="card-news_text text-style-main" data-op-field="text">
+          {item.text}
+        </p>
+      )}
       <ArrowLink class="card-news_link" href={item.href} text="Read" />
     </article>
   )
