@@ -2,6 +2,8 @@
   "name": "Avast",
   "director": "james-niebuhr",
   "still": "../../assets/content/projects/avast.jpg",
+  "loop": "/media/films/avast-loop.mp4",
+  "preview": "/media/films/avast-preview.mp4",
   "cover": "https://dl.dropboxusercontent.com/scl/fi/75h9mypkotwb3xo6aqeso/avast____scams.mp4?rlkey=nl6pe5hajfikv2rwu81u5nvf8&st=nyudxbw8&dl=0",
   "video": "https://dl.dropboxusercontent.com/scl/fi/75h9mypkotwb3xo6aqeso/avast____scams.mp4?rlkey=nl6pe5hajfikv2rwu81u5nvf8&st=nyudxbw8&dl=0",
   "order": 4

@@ -2,6 +2,8 @@
   "name": "Bank of America",
   "director": "baz-wilder",
   "still": "../../assets/content/projects/bank-of-america.jpg",
+  "loop": "/media/films/bank-of-america-loop.mp4",
+  "preview": "/media/films/bank-of-america-preview.mp4",
   "cover": "https://dl.dropboxusercontent.com/scl/fi/x5hn6djphrqym1nak29vv/BoA_ALEXANDRA_4x3_DC_FA-copy_1.mp4?rlkey=48br092g88q49ybnof14zx6ns&st=j50eskd8&dl=0",
   "video": "https://dl.dropboxusercontent.com/scl/fi/x5hn6djphrqym1nak29vv/BoA_ALEXANDRA_4x3_DC_FA-copy_1.mp4?rlkey=48br092g88q49ybnof14zx6ns&st=j50eskd8&dl=0",
   "order": 2

@@ -2,6 +2,25 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-17, Sam (14:24, dictated: « starter les vidéos un peu plus tôt ... que l'utilisateur voit la vidéo déjà en
+  train de jouer », « même chose pour les images », « remplacer le projet Lexus sur la homepage », « pour les bulles
+  ... faire jouer des petits thumbnails, des vidéos, 2 scènes de 3-4 secondes en loop ... les héberger à un endroit
+  temporaire », « une version plus courte des vidéos »):
+  - Each of the 61 visible films has two short files cut from its cover video, silent, in the repository
+    (public/media/films/, 75 MB: 9 of loops, 66 of short versions), a temporary home until the films have a video
+    host: a loop for the balls (two scenes of 3 s, 25 % and 60 % in, 400 px square) and a short version (three
+    scenes of 4 s, 15 %, 45 % and 72 % in, 1280 wide). Two new fields of « Films »: `loop` and `preview`.
+  - The balls of the directors list play their film's loop over its still while they are out.
+  - Home's opening and a director's reel play the short version behind the page (else the cover, else the film);
+    the player still opens the whole film from Dropbox.
+  - Loading ahead: Home's first film loads with the page and the next one while the current plays, so a film is
+    already moving as it fades in; a reel's first film loads with the page and starts half a screen before the reel
+    shows, the next one loads while the current plays; the balls' stills and loops of the first two names load a
+    screen and a half before the list, then two names ahead of the active one (was one).
+  - Home's featured work: Volvo / Jimmy Chin takes Lexus's place (its film did not hold the full screen well).
+  - Checked in a browser without reduced motion (1440): Home's films, the balls' loops and a reel load ahead and
+    play. Not checked: a real phone, Safari.
+
 - 2026-11-17, Sam (14:11: « featured work sur le hero: peux tu mettre 6 projets videos pour voir ? on changera plus
   tard », « les images fixes des films: oui! », « News: oui tu peux changer les images. améliorer »):
   - Home's opening shows six films of the collection, their cover video playing over their still: Perrier, PUMA,

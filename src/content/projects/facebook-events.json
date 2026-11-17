@@ -2,6 +2,8 @@
   "name": "Facebook / Events",
   "director": "james-niebuhr",
   "still": "../../assets/content/projects/facebook-events.jpg",
+  "loop": "/media/films/facebook-events-loop.mp4",
+  "preview": "/media/films/facebook-events-preview.mp4",
   "cover": "https://dl.dropboxusercontent.com/scl/fi/8m5x7yidry9jvw2pirt1m/facebook____events-1080p.mp4?rlkey=13h8sx4ddd3eqq1z5be24u6g8&st=s8knay8q&dl=0",
   "video": "https://dl.dropboxusercontent.com/scl/fi/8m5x7yidry9jvw2pirt1m/facebook____events-1080p.mp4?rlkey=13h8sx4ddd3eqq1z5be24u6g8&st=s8knay8q&dl=0",
   "order": 3

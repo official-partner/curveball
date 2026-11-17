@@ -29,8 +29,9 @@ interface Props {
 const { render = true, label = "Directors", exclude, dark = false, as: Heading = "h2" } = Astro.props;
 const directors = (await getItems("directors")).filter((d) => d.id !== exclude);
 const projects = await getItems("projects");
-/* Each director's film stills, as small pictures for the balls (480 wide, twice a ball's size on a computer); on the
-   live staging, whose images pass through untouched, the build's own file (an optimized URL would not resolve there) */
+/* Each director's films for the balls: a small still (480 wide, twice a ball's size on a computer; on the live
+   staging, whose images pass through untouched, the build's own file: an optimized URL would not resolve there) and
+   the film's short loop, which plays over it */
 const stills = Object.fromEntries(
   await Promise.all(
     directors.map(async (d) => {
@@ -38,8 +39,9 @@ const stills = Object.fromEntries(
       const urls = await Promise.all(
         own.map(async (p) => {
           const pic = p.data.still!;
-          if (!("format" in pic)) return pic.src;
-          return LIVE ? pic.src : (await getImage({ src: pic, width: 480, format: "webp" })).src;
+          const loop = p.data.loop;
+          if (!("format" in pic)) return { src: pic.src, loop };
+          return { src: LIVE ? pic.src : (await getImage({ src: pic, width: 480, format: "webp" })).src, loop };
         }),
       );
       return [d.id, urls] as const;
@@ -114,9 +116,10 @@ const filters = [
       </div>
       <div class="directors-home_balls" aria-hidden="true">
         {directors.map((d) =>
-          (stills[d.id] ?? []).slice(0, 3).map((src) => (
+          (stills[d.id] ?? []).slice(0, 3).map(({ src, loop }) => (
             <span class="directors-home_ball" data-for={d.id}>
               <img class="directors-home_film" alt="" decoding="async" data-src={src} />
+              {loop && <video class="directors-home_film" data-src={loop} muted loop playsinline preload="none" />}
             </span>
           )),
         )}
@@ -209,20 +212,27 @@ const filters = [
          (its pace), a little behind it (a quick catch-up gives it weight), so they travel from the foot of the screen
          to its top as the names go by. A director's balls grow in when their name becomes active (base, ease-out, 80
          ms apart) and shrink away when it gives way (medium, the leave curve), still rising. They move only with the
-         scroll: at rest, they rest. None with reduced motion. */
-      type Ball = { el: HTMLElement; img: HTMLImageElement | null; item: HTMLElement; x: number; y: number; pace: number; s: number; at: number | null };
+         scroll: at rest, they rest. None with reduced motion. Each plays its film's short loop over its still while
+         it is out (Sam, Nov 17: « faire jouer des petits thumbnails, des vidéos »); the loops of the first names load
+         as the list nears the screen, a neighbour's ahead of its turn. */
+      type Ball = { el: HTMLElement; img: HTMLImageElement | null; video: HTMLVideoElement | null; item: HTMLElement; x: number; y: number; pace: number; s: number; at: number | null };
       const balls: Ball[] = [];
       items.forEach((item, k) => {
         const layout = LAYOUTS[k % LAYOUTS.length];
         const mirror = Math.floor(k / LAYOUTS.length) % 2 === 1;
         wrap.querySelectorAll<HTMLElement>(`.directors-home_ball[data-for="${item.dataset.opItem}"]`).forEach((el, i) => {
           const [x, y, pace] = layout[i % layout.length];
-          balls.push({ el, img: el.querySelector("img"), item, x: mirror ? 1 - x : x, y, pace, s: 0, at: null });
+          balls.push({ el, img: el.querySelector("img"), video: el.querySelector("video"), item, x: mirror ? 1 - x : x, y, pace, s: 0, at: null });
         });
       });
       const load = (item: HTMLElement | undefined) =>
         balls.forEach((b) => {
-          if (b.item === item && b.img && !b.img.getAttribute("src") && b.img.dataset.src) b.img.src = b.img.dataset.src;
+          if (b.item !== item) return;
+          if (b.img && !b.img.getAttribute("src") && b.img.dataset.src) b.img.src = b.img.dataset.src;
+          if (b.video && !b.video.getAttribute("src") && b.video.dataset.src) {
+            b.video.preload = "auto";
+            b.video.src = b.video.dataset.src;
+          }
         });
       let size = 0;
       const measure = () => {
@@ -242,7 +252,10 @@ const filters = [
         balls.forEach((b) => {
           if (b.s <= 0.001) {
             b.at = null;
-            if (b.el.style.visibility !== "hidden") b.el.style.visibility = "hidden";
+            if (b.el.style.visibility !== "hidden") {
+              b.el.style.visibility = "hidden";
+              b.video?.pause();
+            }
             return;
           }
           const target = innerHeight * b.y + (rows.get(b.item) ?? 0) * b.pace;
@@ -278,7 +291,8 @@ const filters = [
         if (item) {
           // its films, and the neighbours' ahead of their turn
           const k = items.indexOf(item);
-          [k, k + 1, k - 1].forEach((n) => load(items[n]));
+          [k, k + 1, k - 1, k + 2].forEach((n) => load(items[n]));
+          balls.forEach((b) => b.item === item && b.video?.play().catch(() => {}));
           clearTimeout(idle);
           start();
         } else {
@@ -373,6 +387,19 @@ const filters = [
         { signal },
       );
 
+      // the first names' films, a screen and a half before the list shows
+      if (!reduce.matches) {
+        const near = new IntersectionObserver(
+          ([entry]) => {
+            if (!entry.isIntersecting) return;
+            [0, 1].forEach((n) => load(items[n]));
+            near.disconnect();
+          },
+          { rootMargin: "150% 0px" },
+        );
+        near.observe(wrap);
+        signal.addEventListener("abort", () => near.disconnect(), { once: true });
+      }
       // the page as it opens: its colour at once (a page change's veil still covers it)
       check(true);
       let frame = 0;

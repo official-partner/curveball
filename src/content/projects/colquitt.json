@@ -2,6 +2,8 @@
   "name": "Colquitt",
   "director": "connor-carroll",
   "still": "../../assets/content/projects/colquitt.jpg",
+  "loop": "/media/films/colquitt-loop.mp4",
+  "preview": "/media/films/colquitt-preview.mp4",
   "cover": "https://dl.dropboxusercontent.com/scl/fi/tjddx7cukdp7izynvvlfh/Colquitt_ExceptionalAwaits_30_Final_2398_1080p2.mp4?rlkey=hwrprbagerr35bulqwzu2i828&st=snwoqst8&dl=0",
   "video": "https://dl.dropboxusercontent.com/scl/fi/tjddx7cukdp7izynvvlfh/Colquitt_ExceptionalAwaits_30_Final_2398_1080p2.mp4?rlkey=hwrprbagerr35bulqwzu2i828&st=snwoqst8&dl=0",
   "order": 2

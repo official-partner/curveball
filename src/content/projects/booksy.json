@@ -2,6 +2,8 @@
   "name": "Booksy",
   "director": "baz-wilder",
   "still": "../../assets/content/projects/booksy.jpg",
+  "loop": "/media/films/booksy-loop.mp4",
+  "preview": "/media/films/booksy-preview.mp4",
   "cover": "https://dl.dropboxusercontent.com/scl/fi/e84b2t47otla8fuz3m6kx/25-BOOK-001-Booksy_Joel_16x9_ENG_FULL_WEB_FA1_1.mp4?rlkey=17ektval46r2a5xbkuaay0fkj&st=4vo25s44&dl=0",
   "video": "https://dl.dropboxusercontent.com/scl/fi/e84b2t47otla8fuz3m6kx/25-BOOK-001-Booksy_Joel_16x9_ENG_FULL_WEB_FA1_1.mp4?rlkey=17ektval46r2a5xbkuaay0fkj&st=4vo25s44&dl=0",
   "order": 1

@@ -29,8 +29,8 @@ const films = await getItems("projects");
 const featured = chosen.flatMap(({ project }) => {
   const film = films.find((p) => p.id === project);
   if (!film) return [];
-  const { name, client, agency, still, cover, video } = film.data;
-  return [{ client: client || name, agency, still, film: cover || video }];
+  const { name, client, agency, still, preview, cover, video } = film.data;
+  return [{ client: client || name, agency, still, film: preview || cover || video }];
 });
 const count = featured.length;
 ---
@@ -52,7 +52,7 @@ const count = featured.length;
                 fetchPriority={i === 0 ? "high" : "low"}
               />
             )}
-            {f.film && <video class="hero-home_film" src={f.film} muted loop playsinline preload="none" />}
+            {f.film && <video class="hero-home_film" src={f.film} muted loop playsinline preload={i === 0 ? "auto" : "none"} />}
           </div>
         ))}
         </div>
@@ -160,7 +160,9 @@ const count = featured.length;
 
       /* The films (job: show the work moving): the active one plays, muted, while the opening is on screen and the
          tab shown; the counter's pause stops it with the turning, and it never plays with reduced motion. Its still
-         shows under it until its first frame is in. */
+         shows under it until its first frame is in. The first loads with the page and the next one while the
+         current plays (Sam, Nov 17: « starter les vidéos un peu plus tôt »), so a film is already moving as it
+         fades in. */
       const film = () => {
         const on = !stopped && !away && !document.hidden;
         stills.forEach((s, i) => {
@@ -169,7 +171,10 @@ const count = featured.length;
           if (on && i === current) {
             video.preload = "auto";
             video.play().catch(() => {});
-          } else video.pause();
+          } else {
+            video.pause();
+            if (on && i === (current + 1) % n) video.preload = "auto";
+          }
         });
       };
       const roll = (to: number, instant = false) => {
@@ -181,6 +186,8 @@ const count = featured.length;
         const still = stills[next];
         // the next still decoded first, so it never fades in empty
         const picture = still?.querySelector("img");
+        // its film starts under the last one, so it is moving when it fades in
+        if (!stopped) still?.querySelector("video")?.play().catch(() => {});
         await picture?.decode().catch(() => {});
         const last = stills[current];
         last?.classList.add("is-leaving");

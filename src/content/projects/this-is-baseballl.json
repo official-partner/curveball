@@ -2,6 +2,8 @@
   "name": "This is Baseball",
   "director": "michael-chemaly",
   "still": "../../assets/content/projects/this-is-baseballl.jpg",
+  "loop": "/media/films/this-is-baseballl-loop.mp4",
+  "preview": "/media/films/this-is-baseballl-preview.mp4",
   "cover": "https://dl.dropboxusercontent.com/scl/fi/cu1qnbt0d1et0cmv5hmtp/MLBHP_ThisIsBaseball_60_1.mp4?rlkey=dy1kxom87r9izkhmt5td9o68j&st=w6j0fsvw&dl=0",
   "video": "https://dl.dropboxusercontent.com/scl/fi/cu1qnbt0d1et0cmv5hmtp/MLBHP_ThisIsBaseball_60_1.mp4?rlkey=dy1kxom87r9izkhmt5td9o68j&st=w6j0fsvw&dl=0",
   "order": 3

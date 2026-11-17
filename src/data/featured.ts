@@ -7,7 +7,7 @@ export type Featured = { project: string };
 export const featured: Featured[] = [
   { project: "perrier" },
   { project: "puma" },
-  { project: "lexus" },
+  { project: "volvo---jimmy-chin" },
   { project: "uber" },
   { project: "takis" },
   { project: "booksy" },

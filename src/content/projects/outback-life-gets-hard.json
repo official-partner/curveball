@@ -2,6 +2,8 @@
   "name": "Outback Life Gets Hard",
   "director": "joe-pernice",
   "still": "../../assets/content/projects/outback-life-gets-hard.jpg",
+  "loop": "/media/films/outback-life-gets-hard-loop.mp4",
+  "preview": "/media/films/outback-life-gets-hard-preview.mp4",
   "cover": "https://dl.dropboxusercontent.com/scl/fi/hljo158n21zmua6vp0t1z/Outback-When-Life-Gets-Hard-Director.mp4?rlkey=cttup0cpsgbzx1yyoc5qd1lls&st=boad1wef&dl=0",
   "video": "https://dl.dropboxusercontent.com/scl/fi/ncibmw503xbx78503q8gk/Outback-When-Life-Gets-Hard-Director.mp4?rlkey=moae0vpr2lyywxs1z1o3me70g&st=ssdxj9xt&dl=0"
 }

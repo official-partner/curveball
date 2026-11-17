@@ -2,6 +2,8 @@
   "name": "Paper Magazine / Pete Davidson",
   "director": "jasper-soloff",
   "still": "../../assets/content/projects/paper-magazine-pete-davidson.jpg",
+  "loop": "/media/films/paper-magazine-pete-davidson-loop.mp4",
+  "preview": "/media/films/paper-magazine-pete-davidson-preview.mp4",
   "cover": "https://dl.dropboxusercontent.com/scl/fi/jn8wfe3xyo4dxq8f5wtq1/PAPER-Magazine-Pete-Davidson-720p-with-24fps.mp4?rlkey=ccin0969bmtfm50ick5mrfk77&st=pz5bhv47&dl=0",
   "video": "https://dl.dropboxusercontent.com/scl/fi/jn8wfe3xyo4dxq8f5wtq1/PAPER-Magazine-Pete-Davidson-720p-with-24fps.mp4?rlkey=ccin0969bmtfm50ick5mrfk77&st=pz5bhv47&dl=0",
   "order": 7

@@ -49,8 +49,8 @@ it (system/gen.py).
   stroke's width, from where it enters to the Figma's rest and out by the other edge, scrubbed (0.5). On Home the band
   waits for the directors: its ball rolls in about a third of a screen after the last name gives its colour back
   (the room under the list), so the colour change and the ball never come at once.
-- Home's opening: six films of the collection (src/data/featured.ts), each one's cover video playing muted over its
-  still while it holds the screen. The featured work turns every six seconds while the row's rule fills (its time), the next still
+- Home's opening: six films of the collection (src/data/featured.ts), each one's short version playing muted over its
+  still while it holds the screen, the next one loaded while it plays. The featured work turns every six seconds while the row's rule fills (its time), the next still
   fading in over the last (slow, ease-out) as it settles from 104 % (twice slow, the arrive curve), the client and
   agency cross-fading (medium), the counter's digit rolling up (base, the arrive curve). The counter pauses it; a
   hover or a focus in the row, the opening off screen or the tab hidden pause it too; no turning by itself with
@@ -60,7 +60,7 @@ it (system/gen.py).
   screen early and the last kept a tenth late; « View director » fades in at the active row's far right (medium). The page's colour follows it on the travel curve: base to or from
   the page's own ground, medium between two directors. Each director has three balls (their films), placed as the
   Figma's hover frames place them (238 at 1728, 128 at least), two to four on screen: they grow in (base, ease-out,
-  80 ms apart) when the name becomes active and shrink away (medium, the leave curve) when it gives way, rising with
+  80 ms apart), each playing its film's short loop, when the name becomes active and shrink away (medium, the leave curve) when it gives way, rising with
   the scroll 1.45 to 1.85 times faster than the names, a tenth of a second behind; at rest they rest.
 - A director's reel: the film is fixed behind the page (its stage sticks from a screen under the opening to a screen
   under the other directors). The opening's colour dissolves into it through an eased gradient 90 % of a screen

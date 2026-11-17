@@ -2,6 +2,8 @@
   "name": "Maybelline Press Play",
   "director": "jasper-soloff",
   "still": "../../assets/content/projects/maybelline-press-play.jpg",
+  "loop": "/media/films/maybelline-press-play-loop.mp4",
+  "preview": "/media/films/maybelline-press-play-preview.mp4",
   "cover": "https://dl.dropboxusercontent.com/scl/fi/2fwkck3o49zg4rbrkfmrz/Maybelline-Press-Play-1080p-with-25fps.mp4?rlkey=8oikd8fcronehufqwnefgaaoe&st=lqygtclx&dl=0",
   "video": "https://dl.dropboxusercontent.com/scl/fi/2fwkck3o49zg4rbrkfmrz/Maybelline-Press-Play-1080p-with-25fps.mp4?rlkey=8oikd8fcronehufqwnefgaaoe&st=lqygtclx&dl=0",
   "order": 4

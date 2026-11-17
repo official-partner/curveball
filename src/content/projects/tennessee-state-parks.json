@@ -2,6 +2,8 @@
   "name": "Tennessee State Parks",
   "director": "connor-carroll",
   "still": "../../assets/content/projects/tennessee-state-parks.jpg",
+  "loop": "/media/films/tennessee-state-parks-loop.mp4",
+  "preview": "/media/films/tennessee-state-parks-preview.mp4",
   "cover": "https://dl.dropboxusercontent.com/scl/fi/1j6bm19vdoey4vzmo04jl/Tennessee-State-Parks-Open-the-Door-to-Adventure-720p-with-23.98fps.mp4?rlkey=vlr4llywj8xhggpvrza0ri8b7&st=uw1iq57c&dl=0",
   "link": "https://vimeo.com/1005943913/05fd9a6fe7",
   "order": 6

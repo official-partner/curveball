@@ -2,6 +2,8 @@
   "name": "Zimmer Biomet",
   "director": "baz-wilder",
   "still": "../../assets/content/projects/zimmer-biomet.jpg",
+  "loop": "/media/films/zimmer-biomet-loop.mp4",
+  "preview": "/media/films/zimmer-biomet-preview.mp4",
   "cover": "https://dl.dropboxusercontent.com/scl/fi/7i22n097wqhgo1usps4ut/TYCD_Director-s-Cut_FA.mp4?rlkey=v07wl8lzzrprg9x4nnrkbr72e&st=76qdbub2&dl=0",
   "video": "https://dl.dropboxusercontent.com/scl/fi/7i22n097wqhgo1usps4ut/TYCD_Director-s-Cut_FA.mp4?rlkey=v07wl8lzzrprg9x4nnrkbr72e&st=76qdbub2&dl=0",
   "order": 3

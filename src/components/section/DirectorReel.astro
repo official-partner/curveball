@@ -45,12 +45,12 @@ const { render = true, projects, colour = "red", alone = false } = Astro.props;
               {(p.data.cover || p.data.video) && (
                 <video
                   class="director-reel_video"
-                  src={p.data.cover || p.data.video}
+                  src={p.data.preview || p.data.cover || p.data.video}
                   data-film={p.data.video || p.data.cover}
                   muted
                   loop
                   playsinline
-                  preload="none"
+                  preload={i === 0 ? "auto" : "none"}
                 />
               )}
             </div>
@@ -142,7 +142,10 @@ const { render = true, projects, colour = "red", alone = false } = Astro.props;
       if (!film || !fadeIn || !end) return;
 
       /* The film behind (job: show the project whose line is on screen): the last line wholly in from the bottom wins;
-         its layer fades in over the others (slow); its film plays while the reel shows, the others pause */
+         its layer fades in over the others (slow); its film plays while the reel shows, the others pause. The first
+         film loads with the page and starts half a screen before the reel shows; the next one loads while the
+         current plays (Sam, Nov 17: « starter les vidéos un peu plus tôt »), so none is seen waiting on its first
+         frame. */
       let active = -1;
       let shown = false;
       const play = () => {
@@ -153,7 +156,10 @@ const { render = true, projects, colour = "red", alone = false } = Astro.props;
           if (k === active && shown && !reduce.matches) {
             video.preload = "auto";
             video.play().catch(() => {});
-          } else video.pause();
+          } else {
+            video.pause();
+            if (k === active + 1 && shown && !reduce.matches) video.preload = "auto";
+          }
         });
       };
 
@@ -174,7 +180,7 @@ const { render = true, projects, colour = "red", alone = false } = Astro.props;
         const fade = fadeIn.getBoundingClientRect();
         // seen from the gradient's top coming in to the screen under the other directors (alone: the section's foot)
         const tail = end.offsetParent ? end.getBoundingClientRect().top : wrap.getBoundingClientRect().bottom;
-        const visible = fade.top < innerHeight && tail > 0;
+        const visible = fade.top < innerHeight * 1.5 && tail > 0;
         const settle = clamp((innerHeight - fade.top) / (innerHeight + fade.height));
         const drift = clamp(-fade.bottom / Math.max(1, tail - fade.bottom));
         const rise = 24 * settle + 12 * drift;

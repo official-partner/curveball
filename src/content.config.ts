@@ -56,8 +56,8 @@ const directors = defineCollection({
 });
 
 /* The films: each belongs to a director, shows on their page (the reel, in its order) and in the balls that rise on
-   Home while their name is active. The cover video plays behind the reel (the film itself when it has none) and the
-   film opens in the player; a still stands in until a file is in (MP4 or WebM, a link). */
+   Home while their name is active (a short loop in each ball). A short version plays behind the reel and Home's
+   opening (else the cover video, else the film) and the film opens in the player; a still stands in until a file is in (MP4 or WebM, a link). */
 const projects = defineCollection({
   loader: glob({ pattern: "*.json", base: "./src/content/projects" }),
   schema: ({ image }) =>
@@ -69,7 +69,9 @@ const projects = defineCollection({
         agency: z.string().optional().describe("Agency"),
         year: z.number().optional().describe("Year"),
         still: image().optional().describe("Still"),
-        cover: z.string().optional().describe("Cover video, behind the page (MP4 link)"),
+        loop: z.string().optional().describe("Loop for the balls (short MP4)"),
+        preview: z.string().optional().describe("Short version, behind the page (MP4)"),
+        cover: z.string().optional().describe("Cover video (MP4 link)"),
         video: z.string().optional().describe("Film (MP4 or WebM link)"),
         link: z.string().optional().describe("Film page (Vimeo)"),
         vertical: z.boolean().optional().describe("Vertical film"),

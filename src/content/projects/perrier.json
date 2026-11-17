@@ -2,6 +2,8 @@
   "name": "Perrier",
   "director": "neymarc-brothers",
   "still": "../../assets/content/projects/perrier.jpg",
+  "loop": "/media/films/perrier-loop.mp4",
+  "preview": "/media/films/perrier-preview.mp4",
   "cover": "https://dl.dropboxusercontent.com/scl/fi/fpuzkbcbhfwkiayinfli0/perrier___neymarc_commercial-Original.mp4?rlkey=1jmbcmnqyiabax0mwjh3y4s5t&st=ihtp8m07&dl=0",
   "video": "https://dl.dropboxusercontent.com/scl/fi/fpuzkbcbhfwkiayinfli0/perrier___neymarc_commercial-Original.mp4?rlkey=1jmbcmnqyiabax0mwjh3y4s5t&st=ihtp8m07&dl=0",
   "order": 1

@@ -2,6 +2,8 @@
   "name": "Dropbox / Allure",
   "director": "jasper-soloff",
   "still": "../../assets/content/projects/dropbox-allure.jpg",
+  "loop": "/media/films/dropbox-allure-loop.mp4",
+  "preview": "/media/films/dropbox-allure-preview.mp4",
   "cover": "https://dl.dropboxusercontent.com/scl/fi/nk0pdd52ta58xanz1tk0p/Video-Nov-27-2023-7-25-19-PM.mp4?rlkey=rcaxxi18jz64jv55s20qbxy3b&st=ib2zewxp&dl=0",
   "video": "https://dl.dropboxusercontent.com/scl/fi/nk0pdd52ta58xanz1tk0p/Video-Nov-27-2023-7-25-19-PM.mp4?rlkey=rcaxxi18jz64jv55s20qbxy3b&st=ib2zewxp&dl=0",
   "order": 6

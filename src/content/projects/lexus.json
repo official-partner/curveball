@@ -2,6 +2,8 @@
   "name": "Lexus",
   "director": "dylan-mulick",
   "still": "../../assets/content/projects/lexus.jpg",
+  "loop": "/media/films/lexus-loop.mp4",
+  "preview": "/media/films/lexus-preview.mp4",
   "cover": "https://dl.dropboxusercontent.com/scl/fi/apn6ve8xex1w1ayr2qziq/Lexus_x_Human_Element_x_Laurie_Frick.mp4?rlkey=j5jjdfw7007wltuwvylejyqxq&dl=0",
   "video": "https://dl.dropboxusercontent.com/scl/fi/apn6ve8xex1w1ayr2qziq/Lexus_x_Human_Element_x_Laurie_Frick.mp4?rlkey=j5jjdfw7007wltuwvylejyqxq&dl=0",
   "order": 5
