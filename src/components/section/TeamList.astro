@@ -1,10 +1,10 @@
 ---
 /* Contact's team: its head, then each person where the Figma scatters them (from the rule: at column 10, 238 down; at
    5, 540; at 1, 898; at 9, 1047; at 5 again, 1232), in the Figma's units scaled with the page. One after the other on
-   a tablet and a phone, every other one against the right edge. People from src/data/contact.ts. */
+   a tablet and a phone, every other one against the right edge. People from the collection « Team ». */
 import SectionHead from "@/components/content/SectionHead.astro";
 import CardPerson from "@/components/content/CardPerson.astro";
-import { people } from "@/data/contact.ts";
+import { getItems } from "@/utils/content.ts";
 
 interface Props {
   /** Set to `false` to omit the component. */
@@ -12,6 +12,7 @@ interface Props {
 }
 
 const { render = true } = Astro.props;
+const people = await getItems("team");
 /* The Figma's scatter, in its order: the column a portrait starts at and how far below the rule */
 const spots = [
   { col: "aside", y: 238 },
@@ -19,15 +20,17 @@ const spots = [
   { col: "margin", y: 898 },
   { col: "three", y: 1047 },
   { col: "two", y: 1232 },
+  // a sixth, the current site's team being six: under the third, continuing the scatter (not in the Figma)
+  { col: "margin", y: 1650 },
 ];
 /* Each person's speed against the page (Sam, Nov 11: the team travels as the news do) */
-const DEPTHS = [0.12, -0.05, 0.08, 0.15, 0.02];
+const DEPTHS = [0.12, -0.05, 0.08, 0.15, 0.02, 0.1];
 ---
 
 {
   render && (
     <section class="team-list_wrap" data-op-section="TeamList">
-      <div class="team-list_layout site-grid" data-op-list="team" data-op-source="src/data/contact.ts">
+      <div class="team-list_layout site-grid" data-op-list="team" data-op-source="astro:team">
         <SectionHead label="The team" heading="One home base, and a crew spread across the map. Nobody's ever a stranger." />
         {people.map((person, index) => {
           const spot = spots[index % spots.length];

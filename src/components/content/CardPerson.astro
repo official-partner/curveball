@@ -2,14 +2,15 @@
 /* A person of the team: the round portrait over two columns, the name and the role (the role at 30 %), the city with
    Email and LinkedIn a column over, then a few lines in large. */
 import Img from "@/components/media/Img.astro";
-import type { Person } from "@/data/contact.ts";
+import When from "@/components/system/When.astro";
+import { img, type Item } from "@/utils/content.ts";
 
 interface Props {
   /** Set to `false` to omit the component. */
   render?: boolean;
-  /** The person. */
-  person: Person;
-  /** Its place in the list, for OP System's Modifier. */
+  /** The person, from the collection « Team ». */
+  person: Item<"team">;
+  /** Its place in the list, for where the list sets it. */
   index?: number;
   /** More classes, for where a list places it. */
   class?: string;
@@ -20,36 +21,41 @@ interface Props {
 }
 
 const { render = true, person, index = 0, class: extra, style = "", depth } = Astro.props;
+const { name, role, location, email, linkedin, bio, photo } = person.data;
 const links = [
-  { label: "Email", href: person.email ? `mailto:${person.email}` : "" },
-  { label: "Linkedin", href: person.linkedin },
-];
+  { label: "Email", href: email ? `mailto:${email}` : "" },
+  { label: "Linkedin", href: linkedin ?? "" },
+].filter((l) => l.href);
 ---
 
 {
   render && (
-    <article class:list={["card-person", extra]} data-op-item={String(index)} data-parallax={depth || undefined} style={`--_order: ${index}; ${style}`}>
+    <article class:list={["card-person", extra]} data-op-item={person.id} data-parallax={depth || undefined} style={`--_order: ${index}; ${style}`}>
       <div class="card-person_media">
-        <Img class="card-person_img" src={person.photo} alt={person.alt} variant="constrained" sizes="(min-width: 64rem) 16vw, 50vw" />
+        {photo && <Img class="card-person_img" {...img(photo)} alt={`Portrait of ${name}`} variant="constrained" sizes="(min-width: 64rem) 16vw, 50vw" />}
       </div>
       <p class="card-person_name text-style-main">
-        <span data-op-field="name">{person.name}</span>
-        <br />
-        <span class="card-person_role" data-op-field="role">
-          {person.role}
-        </span>
+        <span data-op-field="name">{name}</span>
+        {role && <br />}
+        <When field="role" value={role} as="span" class="card-person_role">
+          {role}
+        </When>
       </p>
-      <p class="card-person_location text-style-main" data-op-field="location">
-        {person.location}
-      </p>
-      <ul class="card-person_links text-style-main">
-        {links.map((l) => (
-          <li>{l.href ? <a href={l.href}>{l.label}</a> : <span>{l.label}</span>}</li>
-        ))}
-      </ul>
-      <p class="card-person_bio text-style-large" data-op-field="bio">
-        {person.bio}
-      </p>
+      <When field="location" value={location} as="p" class="card-person_location text-style-main">
+        {location}
+      </When>
+      {links.length > 0 && (
+        <ul class="card-person_links text-style-main">
+          {links.map((l) => (
+            <li>
+              <a href={l.href}>{l.label}</a>
+            </li>
+          ))}
+        </ul>
+      )}
+      <When field="bio" value={bio} as="p" class="card-person_bio text-style-large">
+        {bio}
+      </When>
     </article>
   )
 }

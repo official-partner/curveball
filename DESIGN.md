@@ -68,6 +68,10 @@ it (system/gen.py).
   tall that the scroll draws up, the film rising 14 % of a screen at its own pace as it settles from 116 % (a
   parallax); the first line comes half a screen early; each project's line scrolls over it and the films cross-fade
   (slow); after the last, the dark rises over it the same way.
+- Below a computer the curves' drawings are enlarged (1.9 times on a phone, 1.3 on a tablet) and cut by the screen's
+  left edge, the title on the top stem as on a computer (Sam, Nov 17). A ball leaves when its exit nears the screen's
+  top (News, Contact: 5 % down; Home: 10 % above).
+- While the page changes colour, every link turns with it, on the page's duration (`data-painting`).
 - Parallax: the news cards, the team's portraits and About's two lists drift at their own pace (fine pointer, 48rem
   and up, scrub 0.6).
 - Reduced motion: no travel, scale, parallax or smooth scroll; the balls sit at their Figma rest, the reel's film

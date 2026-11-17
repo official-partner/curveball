@@ -2,9 +2,6 @@
 import Layout from "@/layouts/BaseLayout.astro";
 import ComponentList from "@/components/system/ComponentList.astro";
 import ComponentSample from "@/components/system/ComponentSample.astro";
-import Grid from "@/components/wrapper/Grid.astro";
-import CardTeam from "@/components/content/CardTeam.astro";
-import photo from "@/assets/content/team/lea-photo.webp";
 import ArrowLink from "@/components/content/ArrowLink.astro";
 import HeroHome from "@/components/section/HeroHome.astro";
 import DirectorsHome from "@/components/section/DirectorsHome.astro";
@@ -23,8 +20,9 @@ import AboutStory from "@/components/section/AboutStory.astro";
 import AboutLists from "@/components/section/AboutLists.astro";
 import { getItem, getItems } from "@/utils/content.ts";
 import { news } from "@/data/news.ts";
-import { blocks, people } from "@/data/contact.ts";
+import { blocks } from "@/data/contact.ts";
 const jasper = await getItem("directors", "jasper-soloff");
+const people = await getItems("team");
 const reel = (await getItems("projects")).filter((p) => p.data.director?.id === "jasper-soloff");
 ---
 
@@ -67,7 +65,7 @@ const reel = (await getItems("projects")).filter((p) => p.data.director?.id === 
     </ComponentSample>
     <ComponentSample file="content/CardPerson.astro" note="A person of the team.">
       <div class="site-grid theme-teal">
-        <div style="grid-column: margin / span 3"><CardPerson person={people[0]} /></div>
+        <div style="grid-column: margin / span 3">{people[0] && <CardPerson person={people[0]} />}</div>
       </div>
     </ComponentSample>
     <ComponentSample file="section/NewsList.astro" note="News: the head and the cards in three staggered columns.">
@@ -95,25 +93,6 @@ const reel = (await getItems("projects")).filter((p) => p.data.director?.id === 
     </ComponentSample>
     <ComponentSample file="section/AboutLists.astro" note="About's call sheet and schedule.">
       <AboutLists />
-    </ComponentSample>
-    <ComponentSample
-      file="content/CardTeam.astro"
-      note="Une personne de l’équipe : complète, puis avec son nom seulement."
-    >
-      <div class="container">
-        <Grid small={2} medium={3}>
-          <CardTeam
-            person={{
-              name: "Léa Tremblay",
-              role: "Direction",
-              bio: "Elle a fondé le studio en 2014 et suit chaque projet du premier appel jusqu’à la mise en ligne.",
-              photo,
-              specialties: ["Stratégie", "Identité", "Direction artistique"],
-            }}
-          />
-          <CardTeam person={{ name: "Sophie Roy" }} />
-        </Grid>
-      </div>
     </ComponentSample>
   </ComponentList>
 </Layout>

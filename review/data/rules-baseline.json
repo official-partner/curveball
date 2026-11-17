@@ -102,8 +102,8 @@
       "date": "2026-11-12"
     },
     {
-      "key": "copied-block | src/components/content/CardNews.astro | @layer components >> .card-news_img | 80 % or more shared with src/components/content/CardPerson.astro @layer components >> .card-person_img; src/components/content/CardTeam.astro .card-team_visual >> > .image; src/components/section/AboutStory.astro .about-story_art >> & svg; src/components/section/CurveBand.astro .curve-band_art >> & svg; and 3 more",
-      "why": "From before the rules (Nov 12, 2026): the same declarations in several rules. One global class, a variant or a token at the health review.",
+      "key": "copied-block | src/components/content/CardNews.astro | @layer components >> .card-news_img | 80 % or more shared with src/components/content/CardPerson.astro @layer components >> .card-person_img; src/components/section/AboutStory.astro .about-story_art >> & svg; src/components/section/CurveBand.astro .curve-band_art >> & svg; src/components/section/DirectorReel.astro .director-reel_media >> & img, & video; and 2 more",
+      "why": "From before the rules (Nov 12, 2026): the same declarations in several rules. One global class, a variant or a token at the health review. The group lost a member on Nov 17 (the starter's CardTeam removed): the same debt, shorter.",
       "date": "2026-11-12"
     },
     {

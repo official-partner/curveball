@@ -2,6 +2,34 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-17, Sam (15:27, « go pour tout »: his comments 23, 25, 26, 27, 29, 31, 32; 15:28 and 15:29, two captures:
+  « alignement du cercle est pas centré avec le texte », « enquire n'est pas aligné non plus »):
+  - A director's portrait is centred on the capitals of the name's first line (its foot on that line's baseline,
+    then down by half of what it has over the cap height, `--cap-height`); it was centred in the line's box, lower
+    than the capitals. Measured at 478, 1254 and 1440: 0 to 0.3 px between the two centres.
+  - ArrowLink: its words are a flex item, so a text box of their own, and now trimmed to their capitals as every
+    other text: « Enquire about … » lines up with « contact us » in the menu (top and foot the same). Every arrow
+    link follows (« Read », « Start a conversation », « View director »): each sits about 3 px higher in its box.
+  - Comment 25: while the page changes colour, the links that have a colour transition of their own (menu, footer,
+    the directors list's names and filter options) take the page's duration and curve (`data-painting` on <html>
+    for the time of the change, project.css); they changed in 250 ms while the grounds took 450 to 800.
+  - Comment 23: every curve's ball leaves later. News and Contact: when its exit is 5 % down the screen (was 35 %);
+    Home: 10 % above the screen's top (was 5 % down). About not changed: its ball follows the whole page's scroll.
+  - Comments 29, 31, 32, below a computer: the curve's drawing (CurveBand, AboutStory) is enlarged, 1.9 times on a
+    phone and 1.3 on a tablet, and cut by the screen's left edge, its bend and its ball kept; the title « We got a
+    curveball for ya. » sits on the top stem, its foot just above the bend's opening, as on a computer; on Home
+    the call and its link stand in the lower stem. The title is bigger on a phone: h1 is 56 at 390 (was 44; the
+    directors list sets its own size there). On a phone the ball at rest is left out of Home's band with reduced
+    motion (it would sit under the call).
+  - Comment 27: News and Contact's bands rise behind the section before them below a computer too (1100 of the
+    drawing's units; their upper 1320 are empty there), so the empty stretch under the last section is gone.
+  - Comment 26: the team is the collection « Team » with the six people of the current site's contact page (name,
+    role, email, as written there), in place of the starter's sample (its four people, CardTeam, the page
+    « Test du contenu » and the Figma's five copies of Nic Weinfeld are gone). Sam asked for a collection; the rule
+    of Oct 28 would have made it a block of Contact. No portrait, city or bio on the current site: the round frame
+    stays empty, the rest is not shown. A sixth place in the scatter, which the Figma does not draw: column 1,
+    1650 down. The accepted rule failure on the copied « cover » block lost CardTeam: the same debt, its key updated.
+
 - 2026-11-17, Sam (14:51, « fill out le CMS le plus possible avec les infos que tu peux trouver », and his comments
   22, 24, 28 and 30 in OP System, handled at his ask in the conversation):
   - Directors: « Based », « Clients », the Location filter and a short name, from each bio and from the films'

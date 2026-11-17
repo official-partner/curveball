@@ -188,6 +188,7 @@ const filters = [
         own: (el.dataset.paint ?? "").split(" ").filter(Boolean),
       }));
       let paintedAs: string | null = null;
+      let painting = 0;
       root.dataset.paints = "";
       const paint = (colour: string | null, instant = false) => {
         const theme = colour ? (THEMES[colour] ?? "theme-brand") : null;
@@ -199,6 +200,12 @@ const filters = [
             : seconds(theme && paintedAs ? "--duration-medium" : "--duration-base");
         paintedAs = theme;
         root.style.setProperty("--paint-duration", `${duration}s`);
+        // while it turns, the links' own colour transitions take the page's timing (project.css, data-painting)
+        clearTimeout(painting);
+        if (duration) {
+          root.dataset.painting = "";
+          painting = window.setTimeout(() => delete root.dataset.painting, duration * 1000 + 50);
+        } else delete root.dataset.painting;
         root.classList.remove(...ALL, ...pageThemes);
         root.classList.add(...(theme ? [theme] : pageThemes));
         painted.forEach(({ el, own }) => {

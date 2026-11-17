@@ -28,7 +28,7 @@ const empty = !bio && !(based ?? []).length && !(clients ?? []).length;
   render && (
     <section class="director-hero_wrap" data-op-section="DirectorHero">
       <div class="director-hero_layout site-grid">
-        <div class="director-hero_title" data-page-reveal>
+        <div class="director-hero_title text-style-display" data-page-reveal>
           <When field="portrait" value={portrait} class="director-hero_portrait">
             {portrait && <Img {...img(portrait)} alt={`Portrait of ${name}`} variant="constrained" loading="eager" />}
           </When>
@@ -70,16 +70,18 @@ const empty = !bio && !(based ?? []).length && !(clients ?? []).length;
     .director-hero_title {
       grid-column: margin / end;
       display: flex;
-      align-items: flex-start;
+      align-items: baseline;
       gap: var(--space-6);
       min-width: 0;
     }
-    /* centred on the name's first line, so it stays there when a long name takes two (Sam, Nov 17, comment 24) */
+    /* centred on the capitals of the name's first line, so it stays there when a long name takes two (Sam, Nov 17,
+       comment 24, then « pas centré avec le texte »): its foot sits on that line's baseline, then it comes down by
+       half of what it has over the capitals' height (the row wears the name's text style, so an em is its size) */
     .director-hero_portrait {
       flex: none;
-      margin-top: calc((var(--display-line-height) - 0.8) / 2 * var(--display));
+      translate: 0 calc((0.8em - var(--cap-height)) / 2);
       /* the Figma's 168 for type 210: 0.8 of the name's size, centred on its capitals */
-      width: calc(0.8 * var(--display));
+      width: 0.8em;
       aspect-ratio: 1;
       overflow: hidden;
       border-radius: var(--radius-round);

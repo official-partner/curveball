@@ -288,13 +288,25 @@ const START = 275;
       justify-self: start;
     }
     /* Below a computer the drawing sits between the title and the story */
+    /* The drawing enlarged and cut by the screen's left edge, as the curve band's (CurveBand: --_s, --_au), and the
+       title on its top stem, its foot just above the bend's opening, as on a computer (Sam, Nov 17, comment 29:
+       « garder ça aligné en bas en mobile comme sur desktop ») */
     @media (width < 64rem) {
       .about-story_wrap {
         display: flex;
         flex-direction: column;
+        --_s: 1.9;
+        --_au: calc(var(--u) * var(--_s));
+        overflow-x: clip;
+        @media (width >= 48rem) {
+          --_s: 1.3;
+        }
       }
       .about-story_art {
         order: 1;
+        width: calc(100% * var(--_s));
+        margin-left: calc(100% * (1 - var(--_s)));
+        margin-top: calc(var(--_au) * -330);
       }
       .about-story_layout {
         display: contents;

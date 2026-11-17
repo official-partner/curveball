@@ -8,20 +8,24 @@ import { z } from "astro/zod";
    but the name; `visible` hides an item everywhere, `order` sorts them (src/utils/content.ts). Keep this form: one
    defineCollection per collection, a glob() loader, its z.object(); nothing else goes here (CLAUDE.md, Content). */
 
+/* The team: the people of Contact, from the current site's contact page (Sam, Nov 17, comment 26), in place of the
+   starter's sample. Their city, a few lines and their portrait are to supply. */
 const team = defineCollection({
   loader: glob({ pattern: "*.json", base: "./src/content/team" }),
   schema: ({ image }) =>
     z
       .object({
-        name: z.string().describe("Nom"),
-        role: z.string().optional().describe("Rôle"),
-        bio: z.string().optional().describe("Présentation"),
-        photo: image().optional().describe("Photo"),
-        specialties: z.array(z.string()).optional().describe("Spécialités"),
-        visible: z.boolean().default(true).describe("Visible sur le site"),
-        order: z.number().optional().describe("Ordre"),
+        name: z.string().describe("Name"),
+        role: z.string().optional().describe("Role"),
+        location: z.string().optional().describe("City"),
+        email: z.string().optional().describe("Email"),
+        linkedin: z.string().optional().describe("LinkedIn (link)"),
+        bio: z.string().optional().describe("A few lines"),
+        photo: image().optional().describe("Portrait"),
+        visible: z.boolean().default(true).describe("Visible on the site"),
+        order: z.number().optional().describe("Order"),
       })
-      .describe("Équipe"),
+      .describe("Team"),
 });
 
 /* The directors: each has a page of their own (their reel), and Home lists them all with the filters Industry and
