@@ -2,6 +2,14 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-17, Sam (18:38 and 18:39, dictated, with a screenshot of About's story):
+  - A filter's change on the directors list is one movement instead of a jump: the active name lets go (its balls
+    shrink where they are, held in place while the list changes), the list fades out (fast), changes while nothing
+    of it shows, then the names that stay, or « No director here yet. », rise in one after the other (medium,
+    ease-out, 300 ms of stagger at most) and the name under the middle of the screen takes the colour and the
+    balls. Reduced motion: the list changes at once, as before.
+  - About's story, below 64rem: really centred in the black stem this time. Its box is a column, which the
+    property used at 18:05 does not centre; measured since, 72 px above and below at 535 wide, 16 and 16 at 390.
 - 2026-11-17, Sam (18:34, dictated, with a screenshot of the footer's rule):
   - The plain footer's rule spans the columns, margin to margin, as the rules of the pages do: neither the whole
     screen (18:05's reading) nor a margin short at each end (what it was before).

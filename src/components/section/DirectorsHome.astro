@@ -135,6 +135,7 @@ const filters = [
   import { gsap } from "gsap";
   import { CustomEase } from "gsap/CustomEase";
   import { onPage } from "@/utils/page.ts";
+  import { pageLenis } from "@/utils/smooth-scroll.ts";
 
   gsap.registerPlugin(CustomEase);
   const THEMES: Record<string, string> = { red: "theme-brand", mustard: "theme-mustard", teal: "theme-teal" };
@@ -226,7 +227,7 @@ const filters = [
          scroll: at rest, they rest. None with reduced motion. Each plays its film's short loop over its still while
          it is out (Sam, Nov 17: « faire jouer des petits thumbnails, des vidéos »); the loops of the first names load
          as the list nears the screen, a neighbour's ahead of its turn. */
-      type Ball = { el: HTMLElement; img: HTMLImageElement | null; video: HTMLVideoElement | null; item: HTMLElement; x: number; y: number; pace: number; s: number; at: number | null };
+      type Ball = { el: HTMLElement; img: HTMLImageElement | null; video: HTMLVideoElement | null; item: HTMLElement; x: number; y: number; pace: number; s: number; at: number | null; hold?: boolean };
       const balls: Ball[] = [];
       items.forEach((item, k) => {
         const layout = LAYOUTS[k % LAYOUTS.length];
@@ -265,17 +266,22 @@ const filters = [
         balls.forEach((b) => {
           if (b.s <= 0.001) {
             b.at = null;
+            b.hold = false;
             if (b.el.style.visibility !== "hidden") {
               b.el.style.visibility = "hidden";
               b.video?.pause();
             }
             return;
           }
-          const target = innerHeight * b.y + (rows.get(b.item) ?? 0) * b.pace;
-          b.at = b.at === null ? target : b.at + (target - b.at) * k;
+          // a ball going out while the filter changes the list stays where it was: its row is moving or gone
+          if (!b.hold || b.at === null) {
+            const target = innerHeight * b.y + (rows.get(b.item) ?? 0) * b.pace;
+            b.at = b.at === null ? target : b.at + (target - b.at) * k;
+          }
           const r = size / 2;
           b.el.style.visibility = "visible";
-          const y = Math.max(b.at, floor + r * b.s);
+          // by its full size, whatever its scale: a ball growing in or out does not slide along the filters
+          const y = Math.max(b.at, floor + r);
           b.el.style.transform = `translate3d(${(innerWidth * b.x - r).toFixed(1)}px, ${(y - r).toFixed(1)}px, 0) scale(${b.s.toFixed(3)})`;
         });
       };
@@ -297,6 +303,7 @@ const filters = [
         let i = 0;
         balls.forEach((b) => {
           const on = b.item === item;
+          if (on) b.hold = false;
           if (!on && b.s === 0) return;
           gsap.to(b, on
             ? { s: 1, duration: seconds("--duration-base"), ease: out, delay: i++ * 0.08, overwrite: true }
@@ -355,7 +362,10 @@ const filters = [
         show(item);
         place(item);
       };
+      let changing = false;
       const check = (instant = false) => {
+        // while a filter changes the list, no name is active: it is chosen again once the new list is in
+        if (changing) return;
         const middle = innerHeight / 2;
         const shown = items.filter((i) => !i.hidden);
         let found: HTMLElement | null = null;
@@ -382,9 +392,61 @@ const filters = [
           if (ok) shown++;
         });
         if (empty) empty.hidden = shown > 0;
+      };
+      /* A filter's change (job: say the list changed, without anything jumping; Sam, Nov 17: « les balles ... un peu
+         glitchées ... tout le bloc resize »). The active name lets go first (its balls shrink where they are, the
+         colour goes back to the page's), and the list fades out (fast, the leave curve); the list changes while
+         nothing of it shows, so the page's new height is never seen moving; then the names that stay, or « No
+         director here yet. », rise in one after the other (medium, ease-out, 300 ms of stagger at most), and the name
+         under the middle of the screen takes over with its balls. A second click on the way starts again from where
+         it is. Opacity and transform only. Reduced motion: the list changes at once. */
+      const names = wrap.querySelector<HTMLElement>(".directors-home_names");
+      let change: gsap.core.Timeline | null = null;
+      const settle = () => {
+        changing = false;
         check();
         // the names moved: it follows the active one to its new line
         place(active);
+      };
+      const filter = () => {
+        if (reduce.matches || !names) {
+          apply();
+          settle();
+          return;
+        }
+        change?.kill();
+        changing = true;
+        balls.forEach((b) => (b.hold = b.s > 0.001));
+        setActive(null);
+        const lines = () => {
+          const shown = items.filter((i) => !i.hidden).map((i) => i.querySelector<HTMLElement>(".directors-home_name") ?? i);
+          return shown.length ? shown : empty ? [empty] : [];
+        };
+        change = gsap
+          .timeline()
+          .to(names, { opacity: 0, duration: seconds("--duration-fast"), ease: leave })
+          .add(() => {
+            gsap.set(wrap.querySelectorAll(".directors-home_name, .directors-home_empty"), { clearProps: "transform,opacity" });
+            apply();
+            pageLenis()?.resize();
+            const next = lines();
+            gsap.set(names, { opacity: 1 });
+            gsap.fromTo(
+              next,
+              { yPercent: 35, opacity: 0 },
+              {
+                yPercent: 0,
+                opacity: 1,
+                duration: seconds("--duration-medium"),
+                ease: out,
+                stagger: Math.min(0.05, 0.3 / Math.max(1, next.length)),
+                clearProps: "transform,opacity",
+                overwrite: true,
+              },
+            );
+          })
+          // the new list's first names are in: one of them may take the colour and the balls
+          .add(settle, `+=${seconds("--duration-fast")}`);
       };
       wrap.addEventListener(
         "click",
@@ -392,11 +454,12 @@ const filters = [
           const button = (event.target as HTMLElement).closest<HTMLButtonElement>(".directors-home_option");
           if (!button) return;
           const key = button.dataset.filter ?? "";
+          if (chosen[key] === (button.dataset.value ?? "")) return;
           chosen[key] = button.dataset.value ?? "";
           wrap.querySelectorAll<HTMLButtonElement>(`.directors-home_option[data-filter="${key}"]`).forEach((b) => {
             b.setAttribute("aria-pressed", String(b === button));
           });
-          apply();
+          filter();
         },
         { signal },
       );
