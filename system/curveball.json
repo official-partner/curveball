@@ -71,6 +71,11 @@
       34,
       57
     ],
+    "h4": [
+      24,
+      30,
+      40
+    ],
     "text-label": [
       18,
       18,
@@ -83,6 +88,11 @@
     ],
     "text-large": [
       16,
+      16,
+      18
+    ],
+    "text-menu": [
+      34,
       16,
       18
     ],
@@ -189,7 +199,8 @@
     "text-small": 12,
     "dot": 14,
     "logo-size": 36,
-    "text-lead": 18
+    "text-lead": 18,
+    "text-menu": 16
   },
   "roles": {
     "space-rule": {
@@ -250,6 +261,13 @@
       "tt": "none",
       "from": "the cards' and blocks' titles: Bold 57 / 91 % (10 uses; the specimen and the Home CTA say 105 %)"
     },
+    "h4": {
+      "weight": 700,
+      "lh": "0.95",
+      "ls": "-0.03em",
+      "tt": "none",
+      "from": "the news cards' titles (Sam, Nov 17, comment 35: h3 was crowded in three columns): Bold 40 / 95 % / -3 %, not in the Figma"
+    },
     "text-label": {
       "weight": 400,
       "lh": "1.08",
@@ -270,6 +288,13 @@
       "ls": "-0.03em",
       "tt": "none",
       "from": "Figma specimen Large: Bold 18 / 110 % / -3 % (the menu, the links, the bios)"
+    },
+    "text-menu": {
+      "weight": 700,
+      "lh": "1.1",
+      "ls": "-0.03em",
+      "tt": "none",
+      "from": "the footer's page links: Large on a computer (Bold 18 / 110 % / -3 %), as big as h2 on a phone (34; Sam, Nov 17, comment 33)"
     },
     "text-main": {
       "weight": 500,

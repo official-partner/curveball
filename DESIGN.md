@@ -72,6 +72,9 @@ it (system/gen.py).
   left edge, the title on the top stem as on a computer (Sam, Nov 17). A ball leaves when its exit nears the screen's
   top (News, Contact: 5 % down; Home: 10 % above).
 - While the page changes colour, every link turns with it, on the page's duration (`data-painting`).
+- Watching a film: « Play » follows the pointer over a reel; the film plays whole with its sound in place, the page
+  held, its line where it was, the line's rule its progress, « Close » at the pointer; the line and the label fade
+  out after two seconds without a move (Sam, Nov 17).
 - Parallax: the news cards, the team's portraits and About's two lists drift at their own pace (fine pointer, 48rem
   and up, scrub 0.6).
 - Reduced motion: no travel, scale, parallax or smooth scroll; the balls sit at their Figma rest, the reel's film

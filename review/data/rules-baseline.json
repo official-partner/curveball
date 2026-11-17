@@ -107,8 +107,8 @@
       "date": "2026-11-12"
     },
     {
-      "key": "copied-block | src/components/global/Footer.astro | @layer components >> .footer_symbol >> & svg | the same as src/components/global/Nav.astro .nav_logo >> & svg; src/components/section/HeroHome.astro @layer components >> .hero-home_wordmark",
-      "why": "From before the rules (Nov 12, 2026): the same declarations in several rules. One global class, a variant or a token at the health review.",
+      "key": "copied-block | src/components/global/Footer.astro | @layer components >> .footer_symbol, .footer_logo >> & svg | the same as src/components/global/Nav.astro .nav_logo >> & svg; src/components/section/HeroHome.astro @layer components >> .hero-home_wordmark",
+      "why": "From before the rules (Nov 12, 2026): the same declarations in several rules. One global class, a variant or a token at the health review. Its selector was renamed on Nov 17 (the footer's wordmark shares the symbol's rule): the same debt.",
       "date": "2026-11-12"
     },
     {

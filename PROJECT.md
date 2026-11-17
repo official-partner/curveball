@@ -2,6 +2,40 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-17, Sam (17:35, dictated, with the Figma's three frames of a film being watched; his comments 33, 34, 35
+  and his reply on 25, handled at his ask in the conversation):
+  - Watching a film (DirectorReel; the dialog player of Nov 12 is gone). « Play » follows the pointer over the reel;
+    a click there, or on a line's title, plays that film whole, with its sound, in place: the film itself loads over
+    its short version and fades in once it plays (medium); the page is held (wheel, touch, the scroll keys; Lenis
+    stopped), so the film's line stays where it was; the other lines and the colour's gradient fade out; the line's
+    rule fills with the film's time (six times its weight) and its triangle is a pause (the title pauses and plays,
+    the space bar too). « Close » follows the pointer: a click anywhere else, Escape or the film's end leaves. Two
+    seconds without the pointer moving while it plays: the line, the label and the pointer fade out; a move, a key
+    or a pause brings them back. A vertical film shows whole on black (read from the file, no field to fill). The
+    label is text at the system pointer, not the Figma's pixel hand (Sam, Nov 11: « pas ces curseurs-là »); fine
+    pointers only. A touch screen and the keyboard get a « Close » button (top right). No way to mute yet (Sam:
+    later). Checked in a browser at 1440: play, the line unmoved (793 before and after), the wheel held, idle at
+    2 s, pause, space, Escape. Not checked: a touch screen, Safari, a vertical film.
+  - Comment 25, again (« je vois encore le même problème »): the rule of Nov 17 sat in project.css, the patterns
+    layer, and lost to each component's own transition: nothing had changed. It is in DirectorsHome's styles now
+    (the components layer). Measured frame by frame on a director's page: the ground, the labels, the filter's
+    options, the names and « View director » all end between 800 and 900 ms (before: options 250, names 450, the
+    menu's mark and « View director » at once).
+  - Comment 33, the footer below 48rem: the wordmark margin to margin in the symbol's place, then the pages and
+    « contact us » one under the other in a new text style of the Web System, `text-menu` (Large on a computer, 34
+    on a phone, as h2; it shrinks from 34 to 16 between 390 and 1023, so a tablet's links are a little bigger than
+    before, 23 at 768). system/gen.py now writes a fluid value's bounds in either order.
+  - Comment 34, About below a computer: the story sits in the curve's lower stem. The enlarged drawing is the same
+    size on every phone (968 wide, one unit 0.035rem; it was 1.9 times the screen), so the stem holds the story at
+    any width; About's is 230 units further right on a phone, its bend cut more, so its outer corner clears the
+    text; what follows comes up over the second curve's black. At 360 wide the story's last two lines still touch
+    the red. The ball at rest is left out there with reduced motion. CurveBand takes the same fixed size.
+  - Comment 35: the news cards' titles are a new text style, h4 (Bold 40 / 95 % / -3 % at 1728, 30 on a tablet, 24
+    on a phone), in place of h3 (57). Not in the Figma.
+  - Health: the « fills its frame » rules six components each wrote are Lumos's own classes now (`cover-absolute`,
+    `object-fit-cover`): 2 accepted failures are fixed, 24 remain (review/data/rules-baseline.json still lists the
+    2: to take out with `npm run rules -- --accept`).
+
 - 2026-11-17, Sam (15:27, « go pour tout »: his comments 23, 25, 26, 27, 29, 31, 32; 15:28 and 15:29, two captures:
   « alignement du cercle est pas centré avec le texte », « enquire n'est pas aligné non plus »):
   - A director's portrait is centred on the capitals of the name's first line (its foot on that line's baseline,

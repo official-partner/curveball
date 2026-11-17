@@ -35,14 +35,14 @@ const START = 275;
   render && (
     <section class="about-story_wrap" data-op-section="AboutStory">
       <div class="about-story_art" aria-hidden="true">
-        <svg class="about-story_drawing" viewBox={`0 0 1728 ${HEIGHT}`} focusable="false">
+        <svg class="about-story_drawing cover-absolute" viewBox={`0 0 1728 ${HEIGHT}`} focusable="false">
           <rect class="about-story_ground" width="1728" height={HEIGHT} />
           <path class="about-story_shape" d={u1} />
           <path class="about-story_shape" d={u2} />
           <rect class="about-story_shape" x="1159.2" y="0" width="568.8" height="443.4" />
         </svg>
         <svg
-          class="about-story_layer"
+          class="about-story_layer cover-absolute"
           viewBox={`0 0 1728 ${HEIGHT}`}
           focusable="false"
           data-track={JSON.stringify(tracks.about.points)}
@@ -237,10 +237,6 @@ const START = 275;
       aspect-ratio: 1728 / 2193;
       margin-block: var(--section-space-small);
       & svg {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
         overflow: hidden;
       }
       /* the ball on its own layer: it comes in from beyond the frame and may leave it, under the text */
@@ -288,41 +284,69 @@ const START = 275;
       justify-self: start;
     }
     /* Below a computer the drawing sits between the title and the story */
-    /* The drawing enlarged and cut by the screen's left edge, as the curve band's (CurveBand: --_s, --_au), and the
+    /* The drawing enlarged and cut by the screen's left edge, as the curve band's (CurveBand: --_au), and the
        title on its top stem, its foot just above the bend's opening, as on a computer (Sam, Nov 17, comment 29:
        « garder ça aligné en bas en mobile comme sur desktop ») */
     @media (width < 64rem) {
       .about-story_wrap {
-        display: flex;
-        flex-direction: column;
-        --_s: 1.9;
-        --_au: calc(var(--u) * var(--_s));
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        /* one unit of the enlarged drawing: the same on every phone (the drawing 968 wide, so its lower stem holds
+           the story whatever the screen's width), 1.3 times the page's on a tablet */
+        --_au: 0.035rem;
         overflow-x: clip;
         @media (width >= 48rem) {
-          --_s: 1.3;
+          --_au: calc(var(--u) * 1.3);
         }
       }
+      /* its second curve (from 1740 down) is black across what the screen shows: what follows comes up over it */
       .about-story_art {
-        order: 1;
-        width: calc(100% * var(--_s));
-        margin-left: calc(100% * (1 - var(--_s)));
+        grid-area: 2 / 1;
+        width: calc(var(--_au) * 1728);
+        /* on a phone 230 further right, the bend cut a little more, so its outer corner clears the story */
+        margin-left: calc(100% - var(--_au) * (1728 - 230));
         margin-top: calc(var(--_au) * -330);
+        @media (width >= 48rem) {
+          margin-left: calc(100% - var(--_au) * 1728);
+        }
+        margin-bottom: calc(var(--_au) * -453);
       }
       .about-story_layout {
         display: contents;
       }
       .about-story_title {
-        order: 0;
+        grid-area: 1 / 1;
         padding-inline: var(--site-margin);
       }
       .about-story_text,
       .about-story_swing,
       .about-story_link {
-        order: 2;
+        grid-column: 1;
         margin-inline: var(--site-margin);
       }
+      /* the story in the curve's lower stem (Sam, Nov 17, comment 34: « trop d'espace avant ce texte. possible de le
+         mettre dans la courbe aussi? »): 1110 down the drawing, which starts 330 above this row */
+      .about-story_text {
+        grid-row: 2;
+        align-self: start;
+        position: relative;
+        z-index: 1;
+        margin-top: calc(var(--_au) * 775);
+        /* clear of the bend's outer corner, which closes in on the stem's right as it goes down */
+        max-width: calc(100% - var(--site-margin) * 2 - var(--_au) * 160);
+      }
+      /* the ball at rest would sit under the story: with reduced motion (the only time it rests) it is left out */
+      @media (prefers-reduced-motion: reduce) {
+        .about-story_ball {
+          display: none;
+        }
+      }
       .about-story_swing {
+        grid-row: 3;
         margin-top: var(--section-space-small);
+      }
+      .about-story_link {
+        grid-row: 4;
       }
       .about-story_link {
         margin-top: var(--space-9);

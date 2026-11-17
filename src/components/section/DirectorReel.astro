@@ -7,7 +7,14 @@
    into the film through a long eased gradient the scroll draws up; the film holds the screen while each project's
    line (play, title, client, agency, year) scrolls up over it, cross-fading to that project's as its line comes in;
    after the last, the dark rises over the film the same way, and the other directors follow on it. A project with a
-   film file plays it (muted, looping) and its line opens the player; until the files are in, its still stands in. */
+   film file plays its short version (muted, looping); until the files are in, its still stands in.
+   Watching a film (Sam, Nov 17, the Figma's three frames: « un bouton play qui follow le curseur ... la ligne
+   principale va servir aussi de progress bar ... garde la ligne au même endroit du scroll ... si l'utilisateur bouge
+   pas la souris pendant 2 secondes, on fait disparaître cette barre-là ... fais jouer avec le son »): a click on the
+   reel, where « Play » follows the pointer, or on a line's title, plays that film whole, with its sound, in place:
+   the page holds still, the other lines and the colour leave, the film's line stays where it was and its rule fills
+   as the film plays, its triangle now a pause. « Close » follows the pointer: a click, Escape or the film's end
+   leaves. Two seconds without the pointer moving and the line and the label fade out; they come back when it moves. */
 import Img from "@/components/media/Img.astro";
 import { img, type Item } from "@/utils/content.ts";
 
@@ -40,11 +47,11 @@ const { render = true, projects, colour = "red", alone = false } = Astro.props;
           {projects.map((p, i) => (
             <div class:list={["director-reel_media", i === 0 && "is-active"]} data-index={i}>
               {p.data.still && (
-                <Img {...img(p.data.still)} alt="" variant="full-width" loading={i === 0 ? "eager" : "lazy"} />
+                <Img class="director-reel_still cover-absolute object-fit-cover" {...img(p.data.still)} alt="" variant="full-width" loading={i === 0 ? "eager" : "lazy"} />
               )}
               {(p.data.cover || p.data.video) && (
                 <video
-                  class="director-reel_video"
+                  class="director-reel_video cover-absolute object-fit-cover"
                   src={p.data.preview || p.data.cover || p.data.video}
                   data-film={p.data.video || p.data.cover}
                   muted
@@ -56,6 +63,10 @@ const { render = true, projects, colour = "red", alone = false } = Astro.props;
             </div>
           ))}
         </div>
+        {/* the film itself, whole, over its short version while it is watched (the script gives it its file) */}
+        <div class="director-reel_media is-movie">
+          <video class="director-reel_movie cover-absolute" playsinline preload="none" />
+        </div>
         <div class="director-reel_shade" />
       </div>
       <ol class="director-reel_list">
@@ -64,10 +75,12 @@ const { render = true, projects, colour = "red", alone = false } = Astro.props;
         {projects.map((p, i) => (
           <li class="director-reel_slot" data-op-item={p.id} data-index={i} data-vertical={p.data.vertical ? "true" : undefined}>
             <div class="director-reel_line site-grid rule-top text-style-main">
+              <span class="director-reel_elapsed" aria-hidden="true" />
               {p.data.video || p.data.cover ? (
                 <button class="director-reel_title" type="button" data-play={i} aria-label={`Play ${p.data.name}`}>
                   <svg class="director-reel_icon" viewBox="0 0 22 24" aria-hidden="true">
-                    <path d="M0 0l22 12L0 24z" />
+                    <path class="is-play" d="M0 0l22 12L0 24z" />
+                    <path class="is-pause" d="M1 0h7v24H1zM14 0h7v24h-7z" />
                   </svg>
                   <span data-op-field="name">{p.data.name}</span>
                 </button>
@@ -106,28 +119,17 @@ const { render = true, projects, colour = "red", alone = false } = Astro.props;
         <li class="director-reel_fade is-out" aria-hidden="true" />
         <li class="director-reel_space is-end" aria-hidden="true" />
       </ol>
-      <dialog class="director-reel_player theme-dark" aria-label="Film">
-        <video class="director-reel_movie" playsinline />
-        <button class="director-reel_close text-style-large" type="button">Close</button>
-        <div class="director-reel_bar site-grid text-style-main">
-          <div class="director-reel_progress" aria-hidden="true">
-            <span class="director-reel_elapsed" />
-          </div>
-          <button class="director-reel_toggle" type="button" aria-label="Pause">
-            <svg viewBox="0 0 16 22" aria-hidden="true">
-              <path class="is-pause" d="M0 0h5v22H0zM11 0h5v22h-5z" />
-              <path class="is-play" d="M0 0l16 11L0 22z" />
-            </svg>
-            <span class="director-reel_now" />
-          </button>
-        </div>
-      </dialog>
+      <button class="director-reel_close text-style-large" type="button">
+        Close
+      </button>
+      <span class="director-reel_cursor text-style-main" aria-hidden="true" />
     </section>
   )
 }
 
 <script>
   import { onPage } from "@/utils/page.ts";
+  import { pageLenis } from "@/utils/smooth-scroll.ts";
 
   const clamp = (t: number) => Math.min(1, Math.max(0, t));
 
@@ -136,7 +138,7 @@ const { render = true, projects, colour = "red", alone = false } = Astro.props;
       const film = wrap.querySelector<HTMLElement>(".director-reel_film");
       const fadeIn = wrap.querySelector<HTMLElement>(".director-reel_fade.is-in");
       const end = wrap.querySelector<HTMLElement>(".director-reel_space.is-end");
-      const media = [...wrap.querySelectorAll<HTMLElement>(".director-reel_media")];
+      const media = [...wrap.querySelectorAll<HTMLElement>(".director-reel_media[data-index]")];
       const slots = [...wrap.querySelectorAll<HTMLElement>(".director-reel_slot")];
       const reduce = matchMedia("(prefers-reduced-motion: reduce)");
       if (!film || !fadeIn || !end) return;
@@ -148,12 +150,14 @@ const { render = true, projects, colour = "red", alone = false } = Astro.props;
          frame. */
       let active = -1;
       let shown = false;
+      let watching = -1;
+      const movieBox = wrap.querySelector<HTMLElement>(".director-reel_media.is-movie");
       const play = () => {
         media.forEach((m, k) => {
           m.classList.toggle("is-active", k === active);
           const video = m.querySelector<HTMLVideoElement>("video");
           if (!video) return;
-          if (k === active && shown && !reduce.matches) {
+          if (k === active && shown && !reduce.matches && !(watching === k && movieBox?.classList.contains("is-active"))) {
             video.preload = "auto";
             video.play().catch(() => {});
           } else {
@@ -187,6 +191,8 @@ const { render = true, projects, colour = "red", alone = false } = Astro.props;
         film.style.transform = reduce.matches
           ? ""
           : `translate3d(0, ${(-rise).toFixed(2)}svh, 0) scale(${(1 + 0.08 * (1 - settle)).toFixed(4)})`;
+        // a film being watched keeps the screen, whatever a resize makes of the lines
+        if (watching >= 0) return;
         if (found !== active || visible !== shown) {
           active = found;
           shown = visible;
@@ -202,59 +208,185 @@ const { render = true, projects, colour = "red", alone = false } = Astro.props;
       window.addEventListener("scroll", tick, { passive: true, signal });
       window.addEventListener("resize", tick, { signal });
       reduce.addEventListener("change", tick, { signal });
-      /* The player (job: watch a film whole): its line opens it over everything, the film plays with its sound, the
-         rule fills as it plays, a click or the button pauses, Close or Escape leaves */
-      const dialog = wrap.querySelector<HTMLDialogElement>(".director-reel_player");
-      const movie = dialog?.querySelector<HTMLVideoElement>(".director-reel_movie");
-      const toggle = dialog?.querySelector<HTMLButtonElement>(".director-reel_toggle");
-      const now = dialog?.querySelector<HTMLElement>(".director-reel_now");
-      const elapsed = dialog?.querySelector<HTMLElement>(".director-reel_elapsed");
-      const sync = () => {
-        if (!movie || !toggle) return;
-        toggle.classList.toggle("is-paused", movie.paused);
-        toggle.setAttribute("aria-label", movie.paused ? "Play" : "Pause");
+      /* Watching a film (job: watch it whole, with its sound, without leaving the reel). The film itself loads over
+         its short version and fades in once it plays (medium), so nothing jumps; the page is held (wheel, touch and
+         the scroll keys; Lenis stopped) so the film's line stays where it was; its rule fills with the film's time.
+         The label at the pointer says what a click does (« Play », then « Close »): fine pointers only, never over a
+         button or a link. Idle for two seconds while it plays (Sam's two seconds): the line and the label fade out,
+         and the pointer with them; any move, key or pause brings them back. Reduced motion: the same, the fades
+         shorter. */
+      const IDLE = 2000;
+      const root = document.documentElement;
+      const movie = movieBox?.querySelector<HTMLVideoElement>("video") ?? null;
+      const cursor = wrap.querySelector<HTMLElement>(".director-reel_cursor");
+      const closer = wrap.querySelector<HTMLButtonElement>(".director-reel_close");
+      const ms = (name: string) => {
+        const v = getComputedStyle(root).getPropertyValue(name).trim();
+        return (parseFloat(v) || 0) * (v.endsWith("ms") ? 1 : 1000);
       };
+      const film$ = (i: number) => media[i]?.querySelector<HTMLVideoElement>("video") ?? null;
+      const button$ = (i: number) => slots[i]?.querySelector<HTMLButtonElement>("[data-play]") ?? null;
+      const elapsed$ = (i: number) => slots[i]?.querySelector<HTMLElement>(".director-reel_elapsed") ?? null;
+      let over: EventTarget | null = null;
+      let idle = 0;
+      let bar = 0;
+      let held: AbortController | null = null;
+      const label = () => {
+        if (!cursor) return;
+        const on = over instanceof Element && !over.closest("button, a");
+        const text = !on ? "" : watching >= 0 ? "Close" : shown && film$(active) ? "Play" : "";
+        if (text) cursor.textContent = text;
+        cursor.classList.toggle("is-on", Boolean(text));
+      };
+      const wake = () => {
+        wrap.classList.remove("is-idle");
+        clearTimeout(idle);
+        if (watching >= 0 && movie && !movie.paused) idle = window.setTimeout(() => wrap.classList.add("is-idle"), IDLE);
+      };
+      const fill = () => {
+        cancelAnimationFrame(bar);
+        const line = elapsed$(watching);
+        if (!movie || !line) return;
+        if (movie.duration) line.style.scale = `${Math.min(1, movie.currentTime / movie.duration)} 1`;
+        if (!movie.paused) bar = requestAnimationFrame(fill);
+      };
+      const state = () => {
+        if (watching < 0 || !movie) return;
+        const name = button$(watching)?.textContent?.trim() ?? "";
+        slots[watching]?.classList.toggle("is-playing", !movie.paused);
+        button$(watching)?.setAttribute("aria-label", `${movie.paused ? "Play" : "Pause"} ${name}`);
+        fill();
+        wake();
+      };
+      const leave = () => {
+        const i = watching;
+        if (i < 0 || !movie) return;
+        watching = -1;
+        held?.abort();
+        held = null;
+        clearTimeout(idle);
+        cancelAnimationFrame(bar);
+        movieBox?.classList.remove("is-active");
+        wrap.classList.remove("is-watching", "is-idle");
+        slots[i]?.classList.remove("is-current", "is-playing");
+        button$(i)?.setAttribute("aria-label", `Play ${button$(i)?.textContent?.trim() ?? ""}`);
+        delete root.dataset.watching;
+        pageLenis()?.start();
+        play();
+        label();
+        // the film leaves once it has faded out, its line's rule empty again
+        window.setTimeout(() => {
+          if (watching >= 0) return;
+          movie.pause();
+          movie.removeAttribute("src");
+          movie.load();
+          const line = elapsed$(i);
+          if (line) line.style.scale = "";
+        }, ms("--duration-medium"));
+      };
+      const watch = (i: number) => {
+        const source = film$(i);
+        if (!source || !movie || !movieBox) return;
+        watching = i;
+        if (active !== i) {
+          active = i;
+          play();
+        }
+        wrap.classList.add("is-watching");
+        slots[i]?.classList.add("is-current");
+        root.dataset.watching = "";
+        // the page holds still: the line stays where it was
+        held = new AbortController();
+        const hold = { signal: held.signal, passive: false } as const;
+        const stay = (event: Event) => event.preventDefault();
+        window.addEventListener("wheel", stay, hold);
+        window.addEventListener("touchmove", stay, hold);
+        window.addEventListener("pointermove", wake, { signal: held.signal });
+        window.addEventListener(
+          "keydown",
+          (event) => {
+            const onButton = event.target instanceof Element && event.target.closest("button, a");
+            if (event.key === "Escape") leave();
+            else if (event.key === " " && !onButton) {
+              event.preventDefault();
+              if (movie.paused) movie.play().catch(() => {});
+              else movie.pause();
+            } else if (["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End"].includes(event.key)) event.preventDefault();
+            wake();
+          },
+          { signal: held.signal },
+        );
+        pageLenis()?.stop();
+        movieBox.classList.remove("is-vertical");
+        movie.src = source.dataset.film || source.currentSrc || source.src;
+        movie.muted = false;
+        movie.play().catch(() => state());
+        label();
+      };
+      movie?.addEventListener(
+        "loadedmetadata",
+        () => movieBox?.classList.toggle("is-vertical", movie.videoHeight > movie.videoWidth),
+        { signal },
+      );
+      movie?.addEventListener(
+        "playing",
+        () => {
+          if (watching < 0) return;
+          movieBox?.classList.add("is-active");
+          // its short version rests once the film covers it
+          const k = watching;
+          window.setTimeout(() => watching === k && film$(k)?.pause(), ms("--duration-medium"));
+        },
+        { signal },
+      );
+      movie?.addEventListener("play", state, { signal });
+      movie?.addEventListener("pause", state, { signal });
+      movie?.addEventListener("ended", leave, { signal });
+      wrap.addEventListener(
+        "pointermove",
+        (event) => {
+          if (event.pointerType !== "mouse" || !cursor) return;
+          over = event.target;
+          cursor.style.setProperty("--_x", `${event.clientX}px`);
+          cursor.style.setProperty("--_y", `${event.clientY}px`);
+          label();
+        },
+        { signal },
+      );
+      wrap.addEventListener(
+        "pointerleave",
+        () => {
+          over = null;
+          label();
+        },
+        { signal },
+      );
       wrap.addEventListener(
         "click",
         (event) => {
-          const button = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-play]");
-          if (!button || !dialog || !movie) return;
-          const i = Number(button.dataset.play);
-          const source = media[i]?.querySelector<HTMLVideoElement>("video");
-          if (!source) return;
-          movie.src = source.dataset.film || source.currentSrc || source.src;
-          movie.classList.toggle("is-vertical", slots[i]?.dataset.vertical === "true");
-          if (now) now.textContent = button.textContent?.trim() ?? "";
-          dialog.showModal();
-          movie.play().catch(() => {});
+          const target = event.target as Element;
+          if (target.closest("a")) return;
+          const button = target.closest<HTMLButtonElement>("[data-play]");
+          if (watching >= 0) {
+            // the film's own line pauses and plays; anything else leaves
+            if (button && Number(button.dataset.play) === watching && movie) {
+              if (movie.paused) movie.play().catch(() => {});
+              else movie.pause();
+            } else leave();
+            return;
+          }
+          if (button) watch(Number(button.dataset.play));
+          else if (shown && !target.closest(".director-reel_space")) watch(active);
         },
         { signal },
       );
-      movie?.addEventListener("click", () => (movie.paused ? movie.play() : movie.pause()), { signal });
-      toggle?.addEventListener("click", () => movie && (movie.paused ? movie.play() : movie.pause()), { signal });
-      movie?.addEventListener("play", sync, { signal });
-      movie?.addEventListener("pause", sync, { signal });
-      movie?.addEventListener(
-        "timeupdate",
-        () => {
-          if (movie && elapsed && movie.duration) elapsed.style.scale = `${movie.currentTime / movie.duration} 1`;
-        },
-        { signal },
-      );
-      dialog?.querySelector(".director-reel_close")?.addEventListener("click", () => dialog.close(), { signal });
-      dialog?.addEventListener(
-        "close",
-        () => {
-          movie?.pause();
-          movie?.removeAttribute("src");
-          movie?.load();
-        },
-        { signal },
-      );
+      closer?.addEventListener("click", leave, { signal });
       signal.addEventListener(
         "abort",
         () => {
           cancelAnimationFrame(frame);
+          leave();
+          movie?.pause();
           media.forEach((m) => m.querySelector("video")?.pause());
         },
         { once: true },
@@ -309,14 +441,6 @@ const { render = true, projects, colour = "red", alone = false } = Astro.props;
       &.is-active {
         opacity: 1;
       }
-      & img,
-      & video {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
       @media (prefers-reduced-motion: reduce) {
         transition-duration: var(--duration-fast);
       }
@@ -354,12 +478,15 @@ const { render = true, projects, colour = "red", alone = false } = Astro.props;
         height: 65svh;
         background-color: var(--_colour);
         mask-image: linear-gradient(to bottom, var(--_eased));
+        transition: opacity var(--duration-medium) var(--ease-out);
       }
       &.is-out {
         margin-top: 30svh;
         background-color: var(--background);
         mask-image: linear-gradient(to top, var(--_eased));
-        transition: background-color var(--paint-duration, 0s) var(--ease-travel);
+        transition:
+          background-color var(--paint-duration, 0s) var(--ease-travel),
+          opacity var(--duration-medium) var(--ease-out);
       }
     }
     .director-reel_slot {
@@ -437,85 +564,106 @@ const { render = true, projects, colour = "red", alone = false } = Astro.props;
     .director-reel_key {
       color: var(--text-2);
     }
-    /* The player */
-    .director-reel_player {
-      width: 100%;
-      max-width: none;
-      height: 100%;
-      max-height: none;
-      margin: 0;
-      padding: 0;
-      border: 0;
+    /* Watching a film: the film itself over the short versions, not moved by the parallax (it sits in the stage); a
+       vertical one whole on the black (the Figma's frame), any other filling the screen */
+    .director-reel_media.is-movie {
       background-color: var(--black);
-      color: var(--text);
-      &::backdrop {
-        background-color: var(--black);
+      transition-duration: var(--duration-medium);
+      & video {
+        object-fit: cover;
       }
-      &[open] {
-        animation: director-reel-in var(--duration-medium) var(--ease-out);
-      }
-    }
-    @keyframes director-reel-in {
-      from {
-        opacity: 0;
-      }
-    }
-    .director-reel_movie {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      &.is-vertical {
+      &.is-vertical video {
         object-fit: contain;
       }
     }
-    .director-reel_close {
-      position: absolute;
-      top: var(--site-margin);
-      right: var(--site-margin);
-      color: var(--text);
+    .director-reel_slot {
+      transition: opacity var(--duration-medium) var(--ease-out);
     }
-    .director-reel_bar {
-      position: absolute;
-      inset: auto 0 0;
-      padding-bottom: var(--space-7);
-      row-gap: var(--space-rule);
+    .director-reel_shade {
+      transition: opacity var(--duration-medium) var(--ease-out);
     }
-    .director-reel_progress {
-      grid-column: margin / end;
+    .director-reel_wrap.is-watching {
+      & .director-reel_slot:not(.is-current),
+      & .director-reel_fade {
+        opacity: 0;
+        pointer-events: none;
+      }
+      & .director-reel_shade {
+        opacity: 0.5;
+      }
+      &.is-idle {
+        cursor: none;
+        & .director-reel_slot,
+        & .director-reel_cursor {
+          opacity: 0;
+        }
+      }
+    }
+    /* the rule's filled part, on the rule and six times its weight (the Figma's bar), growing from the left */
+    .director-reel_line {
       position: relative;
-      height: var(--border-width);
-      background-color: color-mix(in srgb, var(--text) var(--tone-muted), transparent);
     }
     .director-reel_elapsed {
       position: absolute;
-      inset: auto 0 0;
-      height: 6px;
+      inset: auto 0 100%;
+      height: calc(var(--border-width) * 6);
       background-color: var(--text);
       transform-origin: left;
       scale: 0 1;
+      opacity: 0;
+      .is-current & {
+        opacity: 1;
+      }
     }
-    .director-reel_toggle {
-      grid-column: margin / end;
-      display: flex;
-      align-items: center;
-      gap: var(--space-4);
-      justify-self: start;
+    .director-reel_icon .is-pause,
+    .is-playing .director-reel_icon .is-play {
+      display: none;
+    }
+    .is-playing .director-reel_icon .is-pause {
+      display: inline;
+    }
+    /* what a click does, at the pointer (fine pointers); it follows it from the script's two values */
+    .director-reel_cursor {
+      position: fixed;
+      top: 0;
+      left: 0;
+      margin: var(--space-5) 0 0 var(--space-6);
       color: var(--text);
-      & svg {
-        width: 1em;
-        height: 1.3em;
-        fill: currentColor;
+      pointer-events: none;
+      translate: var(--_x, 0) var(--_y, 0);
+      opacity: 0;
+      transition: opacity var(--hover-duration) var(--hover-ease);
+      &.is-on {
+        opacity: 1;
       }
-      & .is-play {
+      @media not ((hover: hover) and (pointer: fine)) {
         display: none;
       }
-      &.is-paused .is-play {
-        display: inline;
+    }
+    /* Close as a button: for the keyboard (shown when focused) and for a touch screen, which has no pointer label */
+    .director-reel_close {
+      position: fixed;
+      top: var(--site-margin);
+      right: var(--site-margin);
+      color: var(--text);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--hover-duration) var(--hover-ease);
+      .is-watching &:focus-visible {
+        opacity: 1;
       }
-      &.is-paused .is-pause {
-        display: none;
+      @media (hover: none) {
+        .is-watching & {
+          opacity: 1;
+          pointer-events: auto;
+        }
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .director-reel_slot,
+      .director-reel_shade,
+      .director-reel_media.is-movie {
+        transition-duration: var(--duration-fast);
       }
     }
   }

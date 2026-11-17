@@ -96,14 +96,6 @@ main {
   transition: color var(--paint-duration, 0s) var(--ease-travel);
 }
 
-/* While the page's colour changes (data-painting, set by the same script for the time it takes), the links that have a
-   colour transition of their own for their hover take the page's duration and curve too, so everything turns together
-   (Sam, Nov 17, comment 25: they changed in a quarter of a second, the grounds in up to 0.8 s); their own timing comes
-   back for the hovers once the page has turned. */
-:root[data-painting] :is(.nav_link, .footer_link, .directors-home_option, .directors-home_name) {
-  transition: color var(--paint-duration, 0s) var(--ease-travel);
-}
-
 /* An element its script brings in as the page opens (About's title, ball and story): hidden from the first paint while
    motion is allowed, so it never shows before its own animation (Sam, Nov 12: « faudrait juste pas le voir avant qu'il
    soit animé »); shown after 2 s if its script never comes */

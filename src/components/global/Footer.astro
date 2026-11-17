@@ -3,6 +3,7 @@
    above the black, the symbol in that colour, the menu, the line and the small print. Measured on News and Contact,
    identical on both (Home's curve sat 61 px to the right: one curve for all). Geometry in the Figma's units, scaled
    with the footer's width (cqw): 1728 wide, the symbol 290 below the top, 531 wide. */
+import Logo from "@/assets/logo/logo.svg";
 import LogoSymbol from "@/assets/logo/symbol.svg";
 import { SITE_NAME } from "@/consts.ts";
 import { social, legal } from "@/data/site.ts";
@@ -35,11 +36,15 @@ const curve =
         </svg>
       )}
       <div class="footer_layout site-grid">
+        {/* a phone's footer opens with the wordmark, margin to margin, in the symbol's place (Sam, Nov 17, comment 33) */}
+        <a class="footer_logo" href="/" aria-label={`${SITE_NAME}, home`}>
+          <Logo aria-hidden="true" />
+        </a>
         <a class="footer_symbol" href="/" aria-label={`${SITE_NAME}, home`}>
           <LogoSymbol aria-hidden="true" />
         </a>
         <nav class="footer_menu" aria-label="Footer">
-          <ul class="text-style-large">
+          <ul class="text-style-menu">
             {menu.map((l) => (
               <li>
                 <a class="footer_link" href={l.href}>
@@ -49,7 +54,7 @@ const curve =
             ))}
           </ul>
         </nav>
-        <a class="footer_contact footer_link text-style-large" href="/contact">
+        <a class="footer_contact footer_link text-style-menu" href="/contact">
           contact us
         </a>
         <p class="footer_social text-style-large" data-op-list="social" data-op-source="src/data/site.ts">
@@ -134,7 +139,39 @@ const curve =
           var(--border-width) no-repeat;
       }
     }
-    .footer_symbol {
+    /* On a phone (below 48rem): the wordmark margin to margin, then the pages and « contact us » one under the
+       other in the menu's big size (as big as h2 there), the social links beside them; the symbol comes back from a
+       tablet up, where the footer is as drawn. */
+    .footer_layout .footer_logo {
+      grid-column: margin / end;
+      @media (width >= 48rem) {
+        display: none;
+      }
+    }
+    @media (width < 48rem) {
+      .footer_layout .footer_symbol {
+        display: none;
+      }
+      .footer_layout .footer_menu {
+        grid-column: margin / span 3;
+        grid-row: 2;
+        & ul {
+          display: grid;
+          row-gap: var(--space-3);
+        }
+      }
+      .footer_layout .footer_contact {
+        grid-column: margin / span 3;
+        grid-row: 3;
+        margin-top: calc(var(--space-3) - var(--space-9));
+      }
+      .footer_layout .footer_social {
+        grid-row: 2;
+        margin-top: 0;
+      }
+    }
+    .footer_symbol,
+    .footer_logo {
       grid-column: margin / span 2;
       grid-row: 1;
       display: block;

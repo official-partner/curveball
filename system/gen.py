@@ -12,9 +12,10 @@ def num(x):
 
 
 def formula(n):
-    return (f"clamp(var(--{n}-min) / 16 * 1rem, ((var(--{n}-min) - ((var(--{n}-max) - var(--{n}-min)) / "
+    # the bounds in either order, so a value may also shrink as the screen widens (the footer's links, Nov 17)
+    return (f"clamp(min(var(--{n}-min), var(--{n}-max)) / 16 * 1rem, ((var(--{n}-min) - ((var(--{n}-max) - var(--{n}-min)) / "
             f"(var(--viewport-max) - var(--viewport-min)) * var(--viewport-min))) / 16 * 1rem + ((var(--{n}-max) - "
-            f"var(--{n}-min)) / (var(--viewport-max) - var(--viewport-min))) * 100vw), var(--{n}-max) / 16 * 1rem)")
+            f"var(--{n}-min)) / (var(--viewport-max) - var(--viewport-min))) * 100vw), max(var(--{n}-min), var(--{n}-max)) / 16 * 1rem)")
 
 
 NOWRAP = ()

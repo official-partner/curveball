@@ -118,8 +118,8 @@ const filters = [
         {directors.map((d) =>
           (stills[d.id] ?? []).slice(0, 3).map(({ src, loop }) => (
             <span class="directors-home_ball" data-for={d.id}>
-              <img class="directors-home_film" alt="" decoding="async" data-src={src} />
-              {loop && <video class="directors-home_film" data-src={loop} muted loop playsinline preload="none" />}
+              <img class="directors-home_film cover-absolute object-fit-cover" alt="" decoding="async" data-src={src} />
+              {loop && <video class="directors-home_film cover-absolute object-fit-cover" data-src={loop} muted loop playsinline preload="none" />}
             </span>
           )),
         )}
@@ -456,6 +456,16 @@ const filters = [
 
 <style is:global>
   @layer components {
+    /* While the page's colour changes (data-painting on <html>, set by the script for the time it takes), the links
+       that have a colour transition of their own for their hover take the page's duration and curve, so everything
+       turns together (Sam, Nov 17, comment 25: measured, the filter's options turned in 250 ms and the names in 450
+       while the ground took 800). Here, in the components' layer: a rule of project.css loses to their own. Their own
+       timing comes back for the hovers once the page has turned. The menu's mark and « View director », which set
+       their own colour and had no transition, turned at once: they are in the list too. */
+    :root[data-painting]
+      :is(.nav_wrap, .nav_logo, .nav_link, .footer_link, .directors-home_option, .directors-home_name, .directors-home_view) {
+      transition: color var(--paint-duration, 0s) var(--ease-travel);
+    }
     /* On Home, above the curve that follows it, with no ground of its own: the page's ground shows through, dark, or
        the active director's colour (the page's theme turns to it, src: the script; the change: project.css) */
     .directors-home_wrap {
@@ -610,11 +620,6 @@ const filters = [
       will-change: transform;
     }
     .directors-home_film {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
       &:not([src]) {
         visibility: hidden;
       }
