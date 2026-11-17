@@ -21,5 +21,6 @@
     "Fashion"
   ],
   "location": "New York",
-  "order": 7
+  "order": 7,
+  "visible": false
 }
