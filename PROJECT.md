@@ -2,6 +2,14 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-17, Sam (18:41, dictated, two messages):
+  - Watching a film: it settles into its own format as it fades in, not after (base, 800 ms, the travel's ease, an
+    ease in-out; it was slow, 1200 ms, and started 450 ms late). Around a film that does not fill the screen: pure
+    black, not the brand's black (« on va tricher le background »).
+  - The short versions that play behind a director's list of films (the reel) were 1280 px at a strong compression,
+    which showed on a full screen: cut again from the films at up to 1920 px (1080 for a vertical one, never above
+    the film's own size), capped at 2.5 Mbps, the same three scenes of four seconds. 61 files, 183 MB in
+    public/media/films (they were 64): temporary, until the films leave Dropbox for a video host.
 - 2026-11-17, Sam (18:38 and 18:39, dictated, with a screenshot of About's story):
   - A filter's change on the directors list is one movement instead of a jump: the active name lets go (its balls
     shrink where they are, held in place while the list changes), the list fades out (fast), changes while nothing

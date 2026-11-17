@@ -407,14 +407,11 @@ const { render = true, projects, colour = "red", alone = false } = Astro.props;
           wake();
           if (movieBox?.classList.contains("is-active")) return;
           fit();
-          movieBox?.classList.add("is-active");
-          // once it covers its short version, that one rests and the film settles into its own format
+          // it fades in and settles into its own format in the same movement (Sam, Nov 17: later was too late)
+          movieBox?.classList.add("is-active", "is-whole");
+          // its short version rests once the film covers it
           const k = watching;
-          window.setTimeout(() => {
-            if (watching !== k) return;
-            film$(k)?.pause();
-            movieBox?.classList.add("is-whole");
-          }, ms("--duration-medium"));
+          window.setTimeout(() => watching === k && film$(k)?.pause(), ms("--duration-medium"));
         },
         { signal },
       );
@@ -729,10 +726,12 @@ const { render = true, projects, colour = "red", alone = false } = Astro.props;
     /* Watching a film: the film itself over the short versions, not moved by the parallax (it sits in the stage); a
        vertical one whole on the black (the Figma's frame), any other filling the screen */
     .director-reel_media.is-movie {
-      background-color: var(--black);
+      /* pure black around a film that does not fill the screen, not the brand's (Sam, Nov 17: « on va tricher ») */
+      background-color: black;
       transition-duration: var(--duration-medium);
       /* whole in its own format (16:9 stays 16:9, a vertical film vertical): it comes in as big as its short
-         version, filling the screen (--_cover, the script), then settles to its size (slow, the travel's ease) */
+         version, filling the screen (--_cover, the script), and settles to its size as it fades in (base, the
+         travel's ease, an ease in-out) */
       & video {
         scale: var(--_cover, 1);
         @media (prefers-reduced-motion: reduce) {
@@ -741,7 +740,7 @@ const { render = true, projects, colour = "red", alone = false } = Astro.props;
       }
       &.is-whole video {
         scale: 1;
-        transition: scale var(--duration-slow) var(--ease-travel);
+        transition: scale var(--duration-base) var(--ease-travel);
         @media (prefers-reduced-motion: reduce) {
           transition: none;
         }
