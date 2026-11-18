@@ -2,6 +2,15 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-17, Sam (19:40, dictated: a filter's change still felt like a lag, « deux ou trois switches » of colour in a
+  second or two; he asked to think of a few ways first and to take the best):
+  - Three ways weighed. Slowing or staggering each part: the same number of changes, only longer. Holding the page's
+    own colour while a filter is in use: one change less, and the colour no longer follows the name on screen.
+    Taken: work out at the click who will be active in the new list, and move each part once, to where it ends.
+  - So: the same director still active after the filter, the colour and the balls do not move, only the names
+    change; another one or nobody, the colour goes straight from the old one to the new one as the new names rise
+    in (it went by the page's black on the way before), the old balls shrink where they are and the new ones grow
+    in with the names. Measured over five changes: one change of colour each, none when the director stays.
 - 2026-11-17, Sam (18:41, dictated, two messages):
   - Watching a film: it settles into its own format as it fades in, not after (base, 800 ms, the travel's ease, an
     ease in-out; it was slow, 1200 ms, and started 450 ms late). Around a film that does not fill the screen: pure

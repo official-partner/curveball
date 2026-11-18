@@ -227,7 +227,7 @@ const filters = [
          scroll: at rest, they rest. None with reduced motion. Each plays its film's short loop over its still while
          it is out (Sam, Nov 17: « faire jouer des petits thumbnails, des vidéos »); the loops of the first names load
          as the list nears the screen, a neighbour's ahead of its turn. */
-      type Ball = { el: HTMLElement; img: HTMLImageElement | null; video: HTMLVideoElement | null; item: HTMLElement; x: number; y: number; pace: number; s: number; at: number | null; hold?: boolean };
+      type Ball = { el: HTMLElement; img: HTMLImageElement | null; video: HTMLVideoElement | null; item: HTMLElement; x: number; y: number; pace: number; s: number; at: number | null; hold?: boolean; leaving?: boolean };
       const balls: Ball[] = [];
       items.forEach((item, k) => {
         const layout = LAYOUTS[k % LAYOUTS.length];
@@ -267,6 +267,7 @@ const filters = [
           if (b.s <= 0.001) {
             b.at = null;
             b.hold = false;
+            b.leaving = false;
             if (b.el.style.visibility !== "hidden") {
               b.el.style.visibility = "hidden";
               b.video?.pause();
@@ -303,8 +304,9 @@ const filters = [
         let i = 0;
         balls.forEach((b) => {
           const on = b.item === item;
-          if (on) b.hold = false;
-          if (!on && b.s === 0) return;
+          if (on) b.hold = b.leaving = false;
+          // already on its way out since the filter's click: its tween is left alone
+          if (!on && (b.s === 0 || b.leaving)) return;
           gsap.to(b, on
             ? { s: 1, duration: seconds("--duration-base"), ease: out, delay: i++ * 0.08, overwrite: true }
             : { s: 0, duration: seconds("--duration-medium"), ease: leave, overwrite: true });
@@ -363,9 +365,7 @@ const filters = [
         place(item);
       };
       let changing = false;
-      const check = (instant = false) => {
-        // while a filter changes the list, no name is active: it is chosen again once the new list is in
-        if (changing) return;
+      const find = () => {
         const middle = innerHeight / 2;
         const shown = items.filter((i) => !i.hidden);
         let found: HTMLElement | null = null;
@@ -376,30 +376,54 @@ const filters = [
           const until = k === shown.length - 1 ? middle - innerHeight * 0.1 : middle;
           if (box.top <= from && box.bottom > until) found = item;
         });
-        setActive(found, instant);
+        return found as HTMLElement | null;
+      };
+      const check = (instant = false) => {
+        // while a filter changes the list, the active name is left as it is: it is chosen once, when the list changes
+        if (changing) return;
+        setActive(find(), instant);
       };
 
       /* Filters: Industry and Location keep the names that match; « All » shows everyone */
       const chosen: Record<string, string> = { industry: "", location: "" };
+      const matches = (item: HTMLElement) => {
+        const industries = (item.dataset.industry ?? "").split("|").filter(Boolean);
+        return (
+          (!chosen.industry || industries.includes(chosen.industry)) &&
+          (!chosen.location || item.dataset.location === chosen.location)
+        );
+      };
       const apply = () => {
         let shown = 0;
         items.forEach((item) => {
-          const industries = (item.dataset.industry ?? "").split("|").filter(Boolean);
-          const ok =
-            (!chosen.industry || industries.includes(chosen.industry)) &&
-            (!chosen.location || item.dataset.location === chosen.location);
+          const ok = matches(item);
           item.hidden = !ok;
           if (ok) shown++;
         });
         if (empty) empty.hidden = shown > 0;
       };
-      /* A filter's change (job: say the list changed, without anything jumping; Sam, Nov 17: « les balles ... un peu
-         glitchées ... tout le bloc resize »). The active name lets go first (its balls shrink where they are, the
-         colour goes back to the page's), and the list fades out (fast, the leave curve); the list changes while
-         nothing of it shows, so the page's new height is never seen moving; then the names that stay, or « No
-         director here yet. », rise in one after the other (medium, ease-out, 300 ms of stagger at most), and the name
-         under the middle of the screen takes over with its balls. A second click on the way starts again from where
-         it is. Opacity and transform only. Reduced motion: the list changes at once. */
+      /* A filter's change (job: say the list changed, in one movement; Sam, Nov 17: « les balles ... un peu
+         glitchées ... tout le bloc resize », then « deux ou trois switches dans l'espace de à peine 1 ou 2 secondes
+         ... plus seamless »). Who will be active in the new list is worked out first (the list is laid out as it
+         will be, read, and put back, within the click: nothing of it is painted), so every part moves once, to where
+         it ends:
+         - the same director stays active: the colour and the balls do not move at all, only the names change;
+         - another one, or nobody: the old one's balls shrink where they are while the list fades out (fast, the leave
+           curve), the list changes while nothing of it shows (the page's new height is never seen moving), then, in
+           the same beat, the colour goes straight from the old one to the new one (never by the page's own on the
+           way), the names that stay, or « No director here yet. », rise in one after the other (medium, ease-out,
+           300 ms of stagger at most) and the new balls grow in.
+         A second click on the way starts again from where it is. Opacity and transform only. Reduced motion: the list
+         changes at once. */
+      const ahead = () => {
+        const y = scrollY;
+        const was = items.map((item) => item.hidden);
+        items.forEach((item) => (item.hidden = !matches(item)));
+        const found = find();
+        items.forEach((item, k) => (item.hidden = was[k]));
+        if (scrollY !== y) scrollTo(0, y);
+        return found;
+      };
       const names = wrap.querySelector<HTMLElement>(".directors-home_names");
       let change: gsap.core.Timeline | null = null;
       const settle = () => {
@@ -416,8 +440,15 @@ const filters = [
         }
         change?.kill();
         changing = true;
-        balls.forEach((b) => (b.hold = b.s > 0.001));
-        setActive(null);
+        if (ahead() !== active) {
+          balls.forEach((b) => {
+            if (b.s <= 0.001) return;
+            b.hold = b.leaving = true;
+            gsap.to(b, { s: 0, duration: seconds("--duration-medium"), ease: leave, overwrite: true });
+          });
+          if (view && viewShown) gsap.to(view, { autoAlpha: 0, duration: seconds("--duration-fast"), ease: leave, overwrite: "auto" });
+          viewShown = false;
+        }
         const lines = () => {
           const shown = items.filter((i) => !i.hidden).map((i) => i.querySelector<HTMLElement>(".directors-home_name") ?? i);
           return shown.length ? shown : empty ? [empty] : [];
@@ -445,8 +476,8 @@ const filters = [
               },
             );
           })
-          // the new list's first names are in: one of them may take the colour and the balls
-          .add(settle, `+=${seconds("--duration-fast")}`);
+          // with the list's change: the colour and the balls go straight to the new list's active name
+          .add(settle);
       };
       wrap.addEventListener(
         "click",
