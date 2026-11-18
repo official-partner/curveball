@@ -2,6 +2,8 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-17, Sam (22:11): from one filter with no director to another with none, « No director here yet. » stays as
+  it is: no fade out and in of the same line.
 - 2026-11-17, Sam (22:06, dictated: the colour changes and the filters' changes « un peu plus snappy », and lighter
   for the browser, « étape par étape »; and « tu peux toujours pousser au même tes changements », read as: each
   change goes to main as well as review from now on, until he says otherwise):

@@ -468,6 +468,11 @@ const filters = [
           settle();
           return;
         }
+        // from one filter with nobody to another with nobody: the same line stays, nothing to play (Sam, Nov 17)
+        if (!change?.isActive() && items.every((item) => item.hidden) && !items.some(matches)) {
+          apply();
+          return;
+        }
         change?.kill();
         changing = true;
         if (ahead() !== active) {
