@@ -204,6 +204,8 @@ const curve =
     .footer_social {
       grid-column: last;
       align-self: start;
+      /* against the right of its column, the page's right margin (Sam, Nov 17) */
+      justify-self: end;
       margin-top: calc(var(--text-large) * 2);
       @media (width >= 48rem) {
         margin-top: 0;

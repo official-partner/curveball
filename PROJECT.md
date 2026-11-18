@@ -2,6 +2,28 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-17, Sam (21:40, dictated):
+  - Filters: no transition of their own on the hover any more (it ran on another clock than the page's colour when a
+    filter changes it; during that change they take the page's). A chosen filter has a dot at its left and moves
+    over to make room; pressed again it lets go, back to « All ». « All » has no dot: it is the state with no filter.
+  - The balls of the curves (About, Home, News, Contact) seemed to stop in the bend, then leave again. Not a pause in
+    the code: they ran at a steady pace along their track, and where the track goes down the page they travelled
+    with the scroll, so on screen they slowed to half (93 px per 100 scrolled against 190, Home). Their pace is now
+    steady on the screen (src/utils/ball-pace.ts): measured since, 165 to 171 px per 100 scrolled all the way.
+  - About's ball stays longer: it is gone when the lower stem is 5 % down the screen, as Contact's and News's (it was
+    35 %). At 1440 by 900 it leaves around 1300 px of scroll, where it left around 1010.
+  - A director's page, after the last film: the breath before the film dissolves goes from 30 % of a screen to 8 %,
+    the dissolve from 90 % to 60 % (612 px from the last film's line to the other directors at 900 high).
+  - Closing a film: the opening played the other way. The film stops, grows back to the full screen (base, the
+    travel's ease) while the list's lines return, and dissolves into its short version over the end of it; the page
+    can be scrolled again when that is over. Chosen over a fade to black: it answers the opening and never leaves
+    the screen empty.
+  - Footer: IG, FB, LN against the right of their column. Their addresses are not on the current site (Webflow,
+    read only: its footer holds only the logo, its nav only « contact us »; a web search found none either): they
+    stay text until Curveball gives them. Nothing invented.
+  - News: three more dates, from LBB Online's own list of Curveball's news (September 5, 2025 for the Neymarc
+    Brothers, July 31, 2025 for CLR, September 12, 2024 for Connor Carroll). Still without a date: Jake Cameron
+    (LBB) and Michael Chemaly (The Howler).
 - 2026-11-17, Sam (19:40, dictated: a filter's change still felt like a lag, « deux ou trois switches » of colour in a
   second or two; he asked to think of a few ways first and to take the best):
   - Three ways weighed. Slowing or staggering each part: the same number of changes, only longer. Holding the page's

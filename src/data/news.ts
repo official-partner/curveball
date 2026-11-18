@@ -39,6 +39,7 @@ export const news: NewsItem[] = [
   {
     source: "LBB Online",
     title: "Curveball Films Welcomes Directing Duo Neymarc Brothers",
+    date: "September 5, 2025",
     href: "https://lbbonline.com/news/Curveball-Films-Directing-Duo-Neymarc-Brothers",
     photo: photo3,
     alt: "Two men beside a film camera on set, in black and white",
@@ -54,6 +55,7 @@ export const news: NewsItem[] = [
   {
     source: "LBB Online",
     title: "Connor Carroll Signs with Curveball Films",
+    date: "September 12, 2024",
     href: "https://lbbonline.com/news/connor-carroll-signs-with-curveball-films",
     photo: photo5,
     alt: "A bearded man in a rust beanie, facing the camera",
@@ -61,6 +63,7 @@ export const news: NewsItem[] = [
   {
     source: "LBB Online",
     title: "CLR Cranks the Heat with 'So Hot, So Clean' Sequel",
+    date: "July 31, 2025",
     href: "https://lbbonline.com/news/CLR-So-Hot-So-Clean-Betty-Curveball-Films",
     photo: photo6,
     alt: "A still from the film: a man in a towel in a blue tiled bathroom",

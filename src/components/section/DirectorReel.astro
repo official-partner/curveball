@@ -318,28 +318,47 @@ const { render = true, projects, colour = "red", alone = false } = Astro.props;
             restore();
           }
         }
-        held?.abort();
-        held = null;
         clearTimeout(idle);
         cancelAnimationFrame(bar);
-        movieBox?.classList.remove("is-active");
+        /* The way back (Sam, Nov 17: « pas clair qu'on est revenu à la liste »): the opening played the other way.
+           The film stops, and its sound with it; it grows back to the full screen (base, the travel's ease) while the
+           list's lines come back, and over the end of that movement it dissolves into its short version (medium).
+           The page is let go when it is over, not before: that is when the list can be scrolled again. Reduced
+           motion, or the page leaving: no growing, the film fades and the page is let go at once. */
+        const still = how === "gone" || reduce.matches;
+        const back = still ? 0 : ms("--duration-base");
+        const fade = ms("--duration-medium");
+        movie.pause();
+        if (!still) movieBox?.classList.add("is-closing");
+        movieBox?.classList.remove("is-whole");
         wrap.classList.remove("is-watching", "is-idle");
         slots[i]?.classList.remove("is-current", "is-playing");
         button$(i)?.setAttribute("aria-label", `Play ${button$(i)?.textContent?.trim() ?? ""}`);
         delete root.dataset.watching;
-        pageLenis()?.start();
         play();
         label();
+        const free = () => {
+          held?.abort();
+          held = null;
+          pageLenis()?.start();
+        };
+        if (still) free();
+        // the dissolve starts once most of the way back is seen (60 %), and ends a little after it
+        const from = back * 0.6;
+        window.setTimeout(() => watching < 0 && movieBox?.classList.remove("is-active"), from);
         // the film leaves once it has faded out, its line's rule empty again
-        window.setTimeout(() => {
-          if (watching >= 0) return;
-          movie.pause();
-          movieBox?.classList.remove("is-whole");
-          movie.removeAttribute("src");
-          movie.load();
-          const line = elapsed$(i);
-          if (line) line.style.scale = "";
-        }, ms("--duration-medium"));
+        window.setTimeout(
+          () => {
+            if (watching >= 0) return;
+            if (!still) free();
+            movieBox?.classList.remove("is-closing", "is-active");
+            movie.removeAttribute("src");
+            movie.load();
+            const line = elapsed$(i);
+            if (line) line.style.scale = "";
+          },
+          from + fade,
+        );
       };
       const watch = (i: number, push = true) => {
         const source = film$(i);
@@ -359,7 +378,9 @@ const { render = true, projects, colour = "red", alone = false } = Astro.props;
         wrap.classList.add("is-watching");
         slots[i]?.classList.add("is-current");
         root.dataset.watching = "";
-        // the page holds still: the line stays where it was
+        // the page holds still: the line stays where it was (a film opened while another closes takes its hold over)
+        held?.abort();
+        movieBox.classList.remove("is-closing");
         held = new AbortController();
         const hold = { signal: held.signal, passive: false } as const;
         const stay = (event: Event) => event.preventDefault();
@@ -627,8 +648,9 @@ const { render = true, projects, colour = "red", alone = false } = Astro.props;
     /* The gradients the scroll draws over the film: the opening's colour into the film, 65 % of a screen (the
        colour's own ground through an eased mask; shorter than the other since Sam's comment 15, Nov 12: « reduire un
        peu le gradient pour voir un peu plus du video en arrivant sur la page »), and after the last project's line and
-       a breath (the last film's third of a screen), the film into the section's ground, dark, or the colour the
-       directors list paints it, 90 % of a screen */
+       a short breath (8 % of a screen; it was 30 %), the film into the section's ground, dark, or the colour the
+       directors list paints it, 60 % of a screen (it was 90 %: Sam, Nov 17, « je scroll trop longtemps avant
+       d'arriver à la liste des directors ») */
     .director-reel_fade {
       height: 90svh;
       &.is-in {
@@ -638,7 +660,8 @@ const { render = true, projects, colour = "red", alone = false } = Astro.props;
         transition: opacity var(--duration-medium) var(--ease-out);
       }
       &.is-out {
-        margin-top: 30svh;
+        height: 60svh;
+        margin-top: 8svh;
         background-color: var(--background);
         mask-image: linear-gradient(to top, var(--_eased));
         transition:
@@ -740,6 +763,10 @@ const { render = true, projects, colour = "red", alone = false } = Astro.props;
       }
       &.is-whole video {
         scale: 1;
+      }
+      /* settling into its format as it opens, growing back to the full screen as it closes */
+      &.is-whole video,
+      &.is-closing video {
         transition: scale var(--duration-base) var(--ease-travel);
         @media (prefers-reduced-motion: reduce) {
           transition: none;

@@ -83,6 +83,7 @@ const START = 275;
   import { ScrollTrigger } from "gsap/ScrollTrigger";
   import { CustomEase } from "gsap/CustomEase";
   import { onPage } from "@/utils/page.ts";
+  import { pace } from "@/utils/ball-pace.ts";
   import { scrollTriggerWithLenis } from "@/utils/smooth-scroll.ts";
 
   gsap.registerPlugin(ScrollTrigger, CustomEase);
@@ -139,7 +140,9 @@ const START = 275;
         }
         awaiting.forEach((el) => take(el, "0"));
         const state = { opening: 0, scroll: 0 };
-        const progress = () => Math.min(1, state.opening + state.scroll * (1 - startAt));
+        // the scroll's share at a steady pace on screen (src/utils/ball-pace.ts), set again when the page is measured
+        let steady = (q: number) => q;
+        const progress = () => Math.min(1, state.opening + steady(state.scroll) * (1 - startAt));
 
         /* The story (job: let the ball uncover it): each block fades in once (base, ease-out, opacity only) as the
            ball's centre comes level with its top, on a computer, where the text sits in the ball's path; below, as
@@ -190,7 +193,8 @@ const START = 275;
         );
 
         /* Then the scroll carries it (scrubbed, a little smoothing on top of Lenis): from the page's top, past the
-           Figma's rest, out by the left edge along the lower stem, gone when that stem is 35 % down the screen; on a
+           Figma's rest, out by the left edge along the lower stem, gone when that stem is 5 % down the screen (it was
+           35 %: Sam, Nov 17, « la balle exit trop tôt », as Contact's and News's now); on a
            tablet or a phone, where the drawing is smaller and the stem in the first screen, 10 %: the ball then runs
            about one and a half times the scroll's pace instead of three, gone in a swipe, not a flick */
         const trigger = ScrollTrigger.create({
@@ -198,11 +202,16 @@ const START = 275;
           start: 0,
           end: () => {
             const box = svg.getBoundingClientRect();
-            const leave = wide ? 0.35 : 0.1;
+            const leave = wide ? 0.05 : 0.1;
             return box.top + window.scrollY + (track[(count - 1) * 3 + 1] / height) * box.height - innerHeight * leave + 1;
           },
           scrub: 0.5,
           invalidateOnRefresh: true,
+          onRefresh: (self) => {
+            const box = svg.getBoundingClientRect();
+            steady = pace(track, Number(svg.dataset.start ?? 0), ((self.end - self.start) * height) / Math.max(1, box.height));
+            update();
+          },
           onUpdate: (self) => {
             state.scroll = self.progress;
             update();
