@@ -632,3 +632,8 @@ One line per decision: the date, who asked, what was decided and why. The newest
   and its link still wait for the ball. Below a computer, where the story sits under the drawing, unchanged.
 - 2026-11-18, Samuel Charpentier (OP System's Expérience): smooth scroll light instead of medium (Lenis's lerp 0.16
   instead of 0.1: the page glides for less time after the wheel). Loader and page transition unchanged.
+- 2026-11-18, Samuel Charpentier (« créer les pages template sur nos projets actuels »): the directors' pages say they
+  come from a collection. site.json gives each `collection: "directors"` and its `item` (integrations/op-system.mjs,
+  `templateRoutes`: a dynamic route whose getStaticPaths reads a collection), and the template's name, « Director »
+  (op.config.json `templates`). OP System's pages list files them under Templates, one row, instead of among the
+  pages. Nothing changes on the site itself.

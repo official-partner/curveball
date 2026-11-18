@@ -156,6 +156,30 @@ function measure(value, ref = 1440) {
   return { value: Math.round((n * ref) / 100 * 100) / 100, css: at(`calc({v} * ${Number((100 / ref).toFixed(6))}vw)`), unit: "px" };
 }
 
+/* The pages made from a collection (OP System's pages list files them under their template: op-system's README,
+   site.json `collection` and `item`): a dynamic route of one parameter (src/pages/<folder>/[id].astro) whose
+   getStaticPaths reads a collection with getItems("<name>"). Each gives { prefix: its folder as a route, collection,
+   items: the collection's files by their slug } */
+async function templateRoutes(root) {
+  const out = [];
+  const walk = async (dir, rel) => {
+    let entries = [];
+    try { entries = await readdir(dir, { withFileTypes: true }); } catch { return; }
+    for (const e of entries) {
+      if (e.isDirectory()) { await walk(path.join(dir, e.name), rel ? `${rel}/${e.name}` : e.name); continue; }
+      if (!/^\[[^.\]]+\]\.astro$/.test(e.name) || !rel) continue;
+      const src = await readFile(path.join(dir, e.name), "utf8");
+      const m = /getStaticPaths[\s\S]*?getItems\(\s*["']([\w-]+)["']\s*\)/.exec(src);
+      if (!m) continue;
+      let files = [];
+      try { files = await readdir(path.join(root, "src", "content", m[1])); } catch { files = []; }
+      out.push({ prefix: rel, collection: m[1], items: new Set(files.filter((f) => /\.(json|md|mdx|markdown)$/.test(f)).map((f) => f.replace(/\.[^.]+$/, ""))) });
+    }
+  };
+  await walk(path.join(root, "src", "pages"), "");
+  return out;
+}
+
 async function htmlFiles(dir, base = dir) {
   const out = [];
   for (const e of await readdir(dir, { withFileTypes: true })) {
@@ -265,6 +289,8 @@ export default function opSystem(site) {
         // Classes; op-system's op-global-classes skill). Astro's scoped classes (astro-…) left out
         const classUse = new Map();
         const htmlDir = site.pagesDir ? path.join(root, site.pagesDir) : out;
+        const tplRoutes = await templateRoutes(root);
+        const tplSeen = new Set();
         for (const file of await htmlFiles(htmlDir)) {
           if (/(^|\/)404\.html$/.test(file)) continue;
           const html = await readFile(path.join(htmlDir, file), "utf8");
@@ -295,7 +321,11 @@ export default function opSystem(site) {
             }
           }
           const id = route === "./" ? (lang === "en" ? "home" : "accueil") : route.replace(/\//g, "-");
+          // a page made from a collection: its collection and its item (the pages list's templates)
+          const tpl = internal ? null : tplRoutes.find((x) => route.startsWith(`${x.prefix}/`) && x.items.has(route.slice(x.prefix.length + 1)));
+          if (tpl) tplSeen.add(tpl.collection);
           pages.push(Object.assign({ id, title: own || id, path: route, group: internal ? t.system : t.site },
+            tpl ? { collection: tpl.collection, item: route.slice(tpl.prefix.length + 1) } : {},
             components ? { role: "components" } : { seo: { title: full, description, slug: route === "./" ? "" : route, index } }));
         }
         // the home page first, then as the site lists them
@@ -621,6 +651,10 @@ export default function opSystem(site) {
           Object.assign(system, { rules: { failures: broken.length, known: knownRules, checked: today,
             list: broken.slice(0, 60).map(({ rule, file, where, detail }) => ({ rule, file, where, detail })) } });
         }
+        // a template's name as the team says it (op.config.json `templates`: { "<collection>": "Article" }), for the
+        // collections that have pages; without one OP System uses the collection's own label
+        const tplNames = Object.fromEntries(Object.entries(conf.templates || {}).filter(([k, v]) => tplSeen.has(k) && typeof v === "string" && v.trim()));
+        if (Object.keys(tplNames).length) manifest.templates = tplNames;
         await writeFile(path.join(out, "site.json"), JSON.stringify(manifest, null, 1) + "\n");
         // out of search engines until the site is live, and always on a branch other than main; the secure headers on
         // every build, but those the site's own _headers names (public/_headers, copied into dist/ by the build)
