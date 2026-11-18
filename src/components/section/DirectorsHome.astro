@@ -202,7 +202,9 @@ const filters = [
           ? 0
           : reduce.matches
             ? seconds("--duration-faster")
-            : seconds(theme && paintedAs ? "--duration-medium" : "--duration-base");
+            : // quicker since Nov 17 (Sam: « plus snappy »): medium to or from the page's own ground (it was base), fast
+              // between two directors (it was medium)
+              seconds(theme && paintedAs ? "--duration-fast" : "--duration-medium");
         paintedAs = theme;
         root.style.setProperty("--paint-duration", `${duration}s`);
         // while it turns, the links' own colour transitions take the page's timing (project.css, data-painting)
@@ -223,7 +225,7 @@ const filters = [
          four on the screen at once, spread as the Figma spreads them; each rises with the scroll faster than the names
          (its pace), a little behind it (a quick catch-up gives it weight), so they travel from the foot of the screen
          to its top as the names go by. A director's balls grow in when their name becomes active (base, ease-out, 80
-         ms apart) and shrink away when it gives way (medium, the leave curve), still rising. They move only with the
+         ms apart, see show) and shrink away when it gives way (fast, the leave curve), still rising. They move only with the
          scroll: at rest, they rest. None with reduced motion. Each plays its film's short loop over its still while
          it is out (Sam, Nov 17: « faire jouer des petits thumbnails, des vidéos »); the loops of the first names load
          as the list nears the screen, a neighbour's ahead of its turn. */
@@ -246,22 +248,32 @@ const filters = [
             b.video.src = b.video.dataset.src;
           }
         });
+      /* Where the names and the filters' row are on the page is read once (when the balls start, when the list or the
+         window changes), not at every frame: a read of the layout in the middle of a colour change made the browser
+         work the whole page's styles out twice a frame (Sam, Nov 17: « c'est peut-être un peu beaucoup pour le
+         browser »). The frame only does arithmetic with the scroll's position, then writes transforms. */
       let size = 0;
+      let screen = { width: innerWidth, height: innerHeight };
+      const centres = new Map<HTMLElement, number>();
+      let rowFoot = -Infinity;
+      const scrolled = () => pageLenis()?.scroll ?? scrollY;
       const measure = () => {
         size = balls[0]?.el.offsetWidth ?? 0;
+        screen = { width: innerWidth, height: innerHeight };
+        const y = scrollY;
+        centres.clear();
+        items.forEach((item) => {
+          if (item.hidden) return;
+          const box = item.getBoundingClientRect();
+          centres.set(item, box.top + box.height / 2 + y);
+        });
+        rowFoot = filterRow ? filterRow.getBoundingClientRect().bottom + y : -Infinity;
       };
       const draw = () => {
-        const middle = innerHeight / 2;
-        const rows = new Map<HTMLElement, number>();
-        // reads first: the rows of the directors whose balls are out
-        balls.forEach((b) => {
-          if (b.s > 0.001 && !rows.has(b.item)) {
-            const box = b.item.getBoundingClientRect();
-            rows.set(b.item, box.top + box.height / 2 - middle);
-          }
-        });
+        const y = scrolled();
+        const middle = screen.height / 2;
         // the balls never cover the filters (Sam, Nov 17): none rises above the foot of their row
-        const floor = rows.size && filterRow ? filterRow.getBoundingClientRect().bottom : -Infinity;
+        const floor = rowFoot - y;
         const k = 1 - Math.exp(-gsap.ticker.deltaRatio() / 6);
         balls.forEach((b) => {
           if (b.s <= 0.001) {
@@ -276,16 +288,21 @@ const filters = [
           }
           // a ball going out while the filter changes the list stays where it was: its row is moving or gone
           if (!b.hold || b.at === null) {
-            const target = innerHeight * b.y + (rows.get(b.item) ?? 0) * b.pace;
+            const centre = centres.get(b.item);
+            const target = screen.height * b.y + (centre === undefined ? 0 : centre - y - middle) * b.pace;
             b.at = b.at === null ? target : b.at + (target - b.at) * k;
           }
           const r = size / 2;
           b.el.style.visibility = "visible";
           // by its full size, whatever its scale: a ball growing in or out does not slide along the filters
-          const y = Math.max(b.at, floor + r);
-          b.el.style.transform = `translate3d(${(innerWidth * b.x - r).toFixed(1)}px, ${(y - r).toFixed(1)}px, 0) scale(${b.s.toFixed(3)})`;
+          const top = Math.max(b.at, floor + r);
+          b.el.style.transform = `translate3d(${(screen.width * b.x - r).toFixed(1)}px, ${(top - r).toFixed(1)}px, 0) scale(${b.s.toFixed(3)})`;
         });
       };
+      // the list's size changes (its fonts arrive, the window turns): its places are read again, once
+      const sized = new ResizeObserver(() => running && measure());
+      sized.observe(wrap);
+      signal.addEventListener("abort", () => sized.disconnect(), { once: true });
       let running = false;
       const start = () => {
         if (running || reduce.matches || !balls.length) return;
@@ -307,15 +324,28 @@ const filters = [
           if (on) b.hold = b.leaving = false;
           // already on its way out since the filter's click: its tween is left alone
           if (!on && (b.s === 0 || b.leaving)) return;
-          gsap.to(b, on
-            ? { s: 1, duration: seconds("--duration-base"), ease: out, delay: i++ * 0.08, overwrite: true }
-            : { s: 0, duration: seconds("--duration-medium"), ease: leave, overwrite: true });
+          /* One step after the other, so the browser never does it all at once (Sam, Nov 17): the old balls stop
+             their films and shrink (fast) while the colour changes; the new ones wait for most of that change
+             (the colour's time less 100 ms), then grow in (medium, ease-out, 60 ms apart), each film starting with
+             its ball. A name passed quickly never starts its balls at all. */
+          if (on) {
+            gsap.to(b, {
+              s: 1,
+              duration: seconds("--duration-medium"),
+              ease: out,
+              delay: Math.max(0, seconds("--duration-fast") - 0.1) + i++ * 0.06,
+              overwrite: true,
+              onStart: () => void b.video?.play().catch(() => {}),
+            });
+          } else {
+            b.video?.pause();
+            gsap.to(b, { s: 0, duration: seconds("--duration-fast"), ease: leave, overwrite: true });
+          }
         });
         if (item) {
           // its films, and the neighbours' ahead of their turn
           const k = items.indexOf(item);
           [k, k + 1, k - 1, k + 2].forEach((n) => load(items[n]));
-          balls.forEach((b) => b.item === item && b.video?.play().catch(() => {}));
           clearTimeout(idle);
           start();
         } else {
@@ -408,11 +438,11 @@ const filters = [
          will be, read, and put back, within the click: nothing of it is painted), so every part moves once, to where
          it ends:
          - the same director stays active: the colour and the balls do not move at all, only the names change;
-         - another one, or nobody: the old one's balls shrink where they are while the list fades out (fast, the leave
-           curve), the list changes while nothing of it shows (the page's new height is never seen moving), then, in
+         - another one, or nobody: the old one's balls shrink where they are while the list fades out (faster, the
+           leave curve), the list changes while nothing of it shows (the page's new height is never seen moving), then, in
            the same beat, the colour goes straight from the old one to the new one (never by the page's own on the
-           way), the names that stay, or « No director here yet. », rise in one after the other (medium, ease-out,
-           300 ms of stagger at most) and the new balls grow in.
+           way), the names that stay, or « No director here yet. », rise in one after the other (350 ms, ease-out,
+           160 ms of stagger at most; quicker since Nov 17, « plus snappy ») and the new balls grow in.
          A second click on the way starts again from where it is. Opacity and transform only. Reduced motion: the list
          changes at once. */
       const ahead = () => {
@@ -444,7 +474,8 @@ const filters = [
           balls.forEach((b) => {
             if (b.s <= 0.001) return;
             b.hold = b.leaving = true;
-            gsap.to(b, { s: 0, duration: seconds("--duration-medium"), ease: leave, overwrite: true });
+            b.video?.pause();
+            gsap.to(b, { s: 0, duration: seconds("--duration-fast"), ease: leave, overwrite: true });
           });
           if (view && viewShown) gsap.to(view, { autoAlpha: 0, duration: seconds("--duration-fast"), ease: leave, overwrite: "auto" });
           viewShown = false;
@@ -455,11 +486,12 @@ const filters = [
         };
         change = gsap
           .timeline()
-          .to(names, { opacity: 0, duration: seconds("--duration-fast"), ease: leave })
+          .to(names, { opacity: 0, duration: seconds("--duration-faster"), ease: leave })
           .add(() => {
             gsap.set(wrap.querySelectorAll(".directors-home_name, .directors-home_empty"), { clearProps: "transform,opacity" });
             apply();
             pageLenis()?.resize();
+            measure();
             const next = lines();
             gsap.set(names, { opacity: 1 });
             gsap.fromTo(
@@ -468,9 +500,9 @@ const filters = [
               {
                 yPercent: 0,
                 opacity: 1,
-                duration: seconds("--duration-medium"),
+                duration: seconds("--duration-fast") * 1.4,
                 ease: out,
-                stagger: Math.min(0.05, 0.3 / Math.max(1, next.length)),
+                stagger: Math.min(0.03, 0.16 / Math.max(1, next.length)),
                 clearProps: "transform,opacity",
                 overwrite: true,
               },

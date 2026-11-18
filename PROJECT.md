@@ -2,6 +2,18 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-17, Sam (22:06, dictated: the colour changes and the filters' changes « un peu plus snappy », and lighter
+  for the browser, « étape par étape »; and « tu peux toujours pousser au même tes changements », read as: each
+  change goes to main as well as review from now on, until he says otherwise):
+  - Quicker: the page's colour changes in 450 ms to or from its own ground (it was 800) and 250 ms between two
+    directors (it was 450); a filter's change takes about 800 ms from the click to the last ball in (it took about
+    1400): the list out in 150 ms, the names in over 350 ms with 160 ms of stagger at most.
+  - One step after the other: the old balls stop their films and shrink (250 ms) while the colour changes; the new
+    ones wait for most of that change, then grow in (450 ms, 60 ms apart), each film starting with its ball, not
+    before. A name passed quickly while scrolling never starts its balls.
+  - Lighter: the balls' frame no longer reads the layout (the names' and the filters' places are read once, when
+    the list or the window changes; the frame does arithmetic with the scroll, then writes transforms). Before, that
+    read in the middle of a colour change made the browser work the page's styles out twice a frame.
 - 2026-11-17, Sam (21:54: « les filtres transitionnent pas au meme timing que le reste, meme la boule et la ligne »).
   Measured frame by frame on a change from a director's colour to the dark page (0.8 s, 250 to 1050 ms after the click):
   - the filters' words ran from 250 to 1850 ms. Each had a colour of its own (--text-2, a color-mix) and a transition
