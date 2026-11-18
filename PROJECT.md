@@ -2,6 +2,14 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-17, Sam (21:54: « les filtres transitionnent pas au meme timing que le reste, meme la boule et la ligne »).
+  Measured frame by frame on a change from a director's colour to the dark page (0.8 s, 250 to 1050 ms after the click):
+  - the filters' words ran from 250 to 1850 ms. Each had a colour of its own (--text-2, a color-mix) and a transition
+    of its own; while their group's colour changed, the browser started that transition again at every frame, so it
+    only got going once the group had finished. They now take their group's colour and are dimmed by opacity: one
+    transition, the group's. Measured after: 250 to 1050 ms, as the ground, the nav and the labels.
+  - the label's dot and the rule had no transition at all and flipped in one frame, at 250 ms. Both now change over
+    the page's duration (project.css, on :root[data-paints]).
 - 2026-11-17, Sam (21:40, dictated):
   - Filters: no transition of their own on the hover any more (it ran on another clock than the page's colour when a
     filter changes it; during that change they take the page's). A chosen filter has a dot at its left and moves

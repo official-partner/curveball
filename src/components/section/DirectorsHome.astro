@@ -566,7 +566,7 @@ const filters = [
        timing comes back for the hovers once the page has turned. The menu's mark and « View director », which set
        their own colour and had no transition, turned at once: they are in the list too. */
     :root[data-painting]
-      :is(.nav_wrap, .nav_logo, .nav_link, .footer_link, .directors-home_option, .directors-home_name, .directors-home_view) {
+      :is(.nav_wrap, .nav_logo, .nav_link, .footer_link, .directors-home_name, .directors-home_view) {
       transition: color var(--paint-duration, 0s) var(--ease-travel);
     }
     /* On Home, above the curve that follows it, with no ground of its own: the page's ground shows through, dark, or
@@ -625,11 +625,15 @@ const filters = [
     /* No transition of its own on the hover (Sam, Nov 17): with one, its colour ran on another clock than the page's
        when a filter changes the colour. During that change it takes the page's (the rule on :root[data-painting]).
        A chosen filter (not « All ») has a dot at its left and moves over to make room; pressed again, it lets go. */
+    /* Its colour is its group's (which changes with the page, project.css), dimmed by opacity when it is not the
+       chosen one. Not a colour of its own (--text-2) with a transition of its own: measured Nov 17, that transition
+       started again at every frame while the group's ran, and only got going once it had ended, 0.8 s late. */
     .directors-home_option {
       position: relative;
-      color: var(--text-2);
+      color: inherit;
+      opacity: var(--tone-muted);
       &[aria-pressed="true"] {
-        color: var(--text);
+        opacity: 1;
       }
       &[aria-pressed="true"]:not([data-value=""]) {
         padding-left: 0.8em;
@@ -647,7 +651,7 @@ const filters = [
       }
       @media (hover: hover) {
         &:hover {
-          color: var(--text);
+          opacity: 1;
         }
       }
     }

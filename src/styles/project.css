@@ -77,6 +77,13 @@ main {
 :root[data-paints] [data-paint] {
   transition: background-color var(--paint-duration, 0s) var(--ease-travel);
 }
+/* the rule and the dot of a label change with them (they flipped at once before: Sam, Nov 17) */
+:root[data-paints] .rule-top {
+  transition: border-color var(--paint-duration, 0s) var(--ease-travel);
+}
+:root[data-paints] .dot-label::before {
+  transition: background-color var(--paint-duration, 0s) var(--ease-travel);
+}
 :root[data-paints]
   :is(
     .nav_logo,
