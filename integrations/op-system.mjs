@@ -157,23 +157,27 @@ function measure(value, ref = 1440) {
 }
 
 /* The pages made from a collection (OP System's pages list files them under their template: op-system's README,
-   site.json `collection` and `item`): a dynamic route of one parameter (src/pages/<folder>/[id].astro) whose
-   getStaticPaths reads a collection with getItems("<name>"). Each gives { prefix: its folder as a route, collection,
-   items: the collection's files by their slug } */
+   site.json `collection` and `item`): a dynamic route (src/pages/videos/[slug].astro, src/pages/[section]/[slug].astro)
+   that reads one of the site's collections, the first it names. Each gives { match: the built routes it makes, their
+   last segment the item's slug; collection; items: the collection's files by their slug } */
 async function templateRoutes(root) {
   const out = [];
+  let names = [];
+  try { names = (await readdir(path.join(root, "src", "content"), { withFileTypes: true })).filter((e) => e.isDirectory()).map((e) => e.name); } catch { names = []; }
+  if (!names.length) return out;
   const walk = async (dir, rel) => {
     let entries = [];
     try { entries = await readdir(dir, { withFileTypes: true }); } catch { return; }
     for (const e of entries) {
       if (e.isDirectory()) { await walk(path.join(dir, e.name), rel ? `${rel}/${e.name}` : e.name); continue; }
-      if (!/^\[[^.\]]+\]\.astro$/.test(e.name) || !rel) continue;
+      if (!/^\[[^.\]]+\]\.astro$/.test(e.name)) continue;
       const src = await readFile(path.join(dir, e.name), "utf8");
-      const m = /getStaticPaths[\s\S]*?getItems\(\s*["']([\w-]+)["']\s*\)/.exec(src);
-      if (!m) continue;
+      const found = names.map((n) => ({ n, at: src.search(new RegExp(`["'\`]${n}["'\`]`)) })).filter((x) => x.at >= 0).sort((a, b) => a.at - b.at)[0];
+      if (!found) continue;
       let files = [];
-      try { files = await readdir(path.join(root, "src", "content", m[1])); } catch { files = []; }
-      out.push({ prefix: rel, collection: m[1], items: new Set(files.filter((f) => /\.(json|md|mdx|markdown)$/.test(f)).map((f) => f.replace(/\.[^.]+$/, ""))) });
+      try { files = await readdir(path.join(root, "src", "content", found.n)); } catch { files = []; }
+      const segs = (rel ? `${rel}/` : "").split("/").filter(Boolean).map((g) => (/^\[.+\]$/.test(g) ? "[^/]+" : g.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+      out.push({ match: new RegExp(`^${segs.map((g) => `${g}/`).join("")}([^/]+)$`), collection: found.n, items: new Set(files.filter((f) => /\.(json|md|mdx|markdown)$/.test(f)).map((f) => f.replace(/\.[^.]+$/, ""))) });
     }
   };
   await walk(path.join(root, "src", "pages"), "");
@@ -322,10 +326,10 @@ export default function opSystem(site) {
           }
           const id = route === "./" ? (lang === "en" ? "home" : "accueil") : route.replace(/\//g, "-");
           // a page made from a collection: its collection and its item (the pages list's templates)
-          const tpl = internal ? null : tplRoutes.find((x) => route.startsWith(`${x.prefix}/`) && x.items.has(route.slice(x.prefix.length + 1)));
-          if (tpl) tplSeen.add(tpl.collection);
+          const tpl = internal ? null : tplRoutes.map((x) => ({ x, m: x.match.exec(route) })).find((y) => y.m && y.x.items.has(y.m[1]));
+          if (tpl) tplSeen.add(tpl.x.collection);
           pages.push(Object.assign({ id, title: own || id, path: route, group: internal ? t.system : t.site },
-            tpl ? { collection: tpl.collection, item: route.slice(tpl.prefix.length + 1) } : {},
+            tpl ? { collection: tpl.x.collection, item: tpl.m[1] } : {},
             components ? { role: "components" } : { seo: { title: full, description, slug: route === "./" ? "" : route, index } }));
         }
         // the home page first, then as the site lists them

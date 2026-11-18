@@ -637,3 +637,4 @@ One line per decision: the date, who asked, what was decided and why. The newest
   `templateRoutes`: a dynamic route whose getStaticPaths reads a collection), and the template's name, « Director »
   (op.config.json `templates`). OP System's pages list files them under Templates, one row, instead of among the
   pages. Nothing changes on the site itself.
+- 2026-11-18, same change, its general form: `templateRoutes` reads any dynamic route that names one of the site's collections (the form the other sites of the studio need), no longer `getItems` alone. site.json unchanged: 11 directors' pages, « Director ».
