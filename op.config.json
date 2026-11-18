@@ -9,7 +9,7 @@
   "live": false,
   "loader": false,
   "transition": "custom",
-  "smoothScroll": "medium",
+  "smoothScroll": "light",
   "brandColor": "#1e1a21",
   "systemPages": [
     "composantes",

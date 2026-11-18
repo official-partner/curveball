@@ -424,7 +424,7 @@ One line per decision: the date, who asked, what was decided and why. The newest
     rest point is 60 % down the screen; News and Contact roll in from the edge. The tracks are computed from the
     shapes by system/curve-tracks.py (src/data/curve-tracks.json). Reduced motion: the ball rests where the Figma has it.
   - No section paints over the band any more (the directors section had its own dark ground, which cut the ball).
-  - Smooth scroll on, medium (Lenis).
+  - Smooth scroll on, light (Lenis; medium until Nov 18).
   - The page change is a colour fade (transition custom): the page dissolves into its own colour, the colour turns to
     the next page's, the next page comes up with its opening elements rising into place (data-page-reveal). The ball
     cover tried first is gone. Back and forward cut; reduced motion a short crossfade.
@@ -630,3 +630,5 @@ One line per decision: the date, who asked, what was decided and why. The newest
 - 2026-11-16, Samuel Charpentier (comment 21): on a computer, About's two story paragraphs fade in with the page's
   opening, just after the title (70 ms apart), instead of waiting for the ball to come level with them; « Let's swing »
   and its link still wait for the ball. Below a computer, where the story sits under the drawing, unchanged.
+- 2026-11-18, Samuel Charpentier (OP System's Expérience): smooth scroll light instead of medium (Lenis's lerp 0.16
+  instead of 0.1: the page glides for less time after the wheel). Loader and page transition unchanged.
