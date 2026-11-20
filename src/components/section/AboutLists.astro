@@ -75,7 +75,8 @@ const blocks = [
         grid-column: span 2;
       }
     }
-    @media (width >= 64rem) {
+    /* side by side from a tablet up (Sam, Nov 18, comment 39: « faire 2 colones comme desktop ») */
+    @media (width >= 48rem) {
       .about-lists_wrap {
         margin-top: calc(var(--u) * -210.1);
         padding-top: 0;

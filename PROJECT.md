@@ -2,6 +2,23 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-20, Sam (comments 38 to 43 of Nov 18 and 19, asked for in the conversation):
+  - 38, About on a tablet « plus comme desktop »: from 48rem the story takes the computer's composition (the band, the
+    title in it, the story at the right, « Let's swing » below), no longer the phone's enlarged drawing. Its title
+    and story keep the computer's proportions there (sized with the page's unit; the story at the running text's
+    floor, 16, and 230 down the band instead of 375.6, so it stays in the black).
+  - 39, About's two lists side by side from 48rem, as on a computer.
+  - 40, the story drifts against the page as it scrolls (parallax, depth 0.1: about 45 px each way on a laptop),
+    with a mouse and from a tablet's width, never with reduced motion, as the news' cards.
+  - 41, News on a tablet: each card on three of the eight columns, left and right in turn, the right ones lower.
+  - 42, a news card under the next after a resize: not reproduced at 478 (from 1254, by 991, down to 478 and 390: no
+    card over another, the parallax's offsets cleared). The likely cause was the tablet's old layout, where the
+    lower cards were moved by a translate the rows knew nothing of; they are lowered by a margin now.
+  - 43, balls left on screen after a very fast scroll: since Nov 17 a ball waits its turn before growing in, and a
+    name passed quickly left that wait running, so its balls came in after their director had given way. The wait
+    is cancelled with the rest. Eight very fast scrolls: stray balls 8 times out of 8 before, 0 after.
+  - Found on the way: the footer's menu on a tablet had grown with the phone's bigger links (32 px at 768,
+    « contact us » on two lines over IG, FB, LN). There it takes the running text's size.
 - 2026-11-17, Sam (22:11): from one filter with no director to another with none, « No director here yet. » stays as
   it is: no fade out and in of the same line.
 - 2026-11-17, Sam (22:06, dictated: the colour changes and the filters' changes « un peu plus snappy », and lighter

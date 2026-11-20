@@ -55,7 +55,8 @@ const { render = true, item, index = 0, class: extra, depth } = Astro.props;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       column-gap: var(--site-gutter);
       align-content: start;
-      @media (width >= 64rem) {
+      /* on the page's own columns wherever it spans three of them (a tablet and up) */
+      @media (width >= 48rem) {
         grid-template-columns: subgrid;
       }
     }

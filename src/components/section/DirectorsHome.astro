@@ -323,7 +323,14 @@ const filters = [
           const on = b.item === item;
           if (on) b.hold = b.leaving = false;
           // already on its way out since the filter's click: its tween is left alone
-          if (!on && (b.s === 0 || b.leaving)) return;
+          if (!on && b.leaving) return;
+          /* not out yet, but perhaps about to be: its growing waits its turn (a delay), and a name passed quickly
+             left that wait running, so its balls came in after their director had given way and stayed (Sam, Nov
+             18, comment 43: « certains cercles restent actifs »). The wait is cancelled with the rest. */
+          if (!on && b.s === 0) {
+            gsap.killTweensOf(b);
+            return;
+          }
           /* One step after the other, so the browser never does it all at once (Sam, Nov 17): the old balls stop
              their films and shrink (fast) while the colour changes; the new ones wait for most of that change
              (the colour's time less 100 ms), then grow in (medium, ease-out, 60 ms apart), each film starting with

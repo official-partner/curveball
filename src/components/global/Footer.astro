@@ -134,6 +134,13 @@ const curve =
         background: linear-gradient(var(--border), var(--border)) 0 0 / 100% var(--border-width) no-repeat;
       }
     }
+    /* On a tablet the menu's size is the running text's: its own scale runs from the phone's big links (56) down to
+       the computer's 16, which left it far too big in between (32 at 768, « contact us » on two lines) */
+    @media (width >= 48rem) and (width < 64rem) {
+      .footer_layout {
+        --text-menu: var(--text-main);
+      }
+    }
     /* On a phone (below 48rem): the round symbol margin to margin, then the pages and « contact us » one under the
        other, close together and bigger than the line under them (Sam, Nov 17), the social links beside them. */
     @media (width < 48rem) {

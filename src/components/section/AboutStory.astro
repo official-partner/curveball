@@ -56,7 +56,7 @@ const START = 275;
         <h1 class="about-story_title text-style-h1" data-await>
           We got a curveball for ya.
         </h1>
-        <div class="about-story_text text-style-lead">
+        <div class="about-story_text text-style-lead" data-parallax="0.1">
           <p data-await>
             That's how the call started. An agency producer, on a Friday, sounding like she'd already tried everyone
             else. The brief had changed, the window had moved, and the whole thing now hung on finding the right
@@ -84,6 +84,7 @@ const START = 275;
   import { CustomEase } from "gsap/CustomEase";
   import { onPage } from "@/utils/page.ts";
   import { pace } from "@/utils/ball-pace.ts";
+  import { parallax } from "@/utils/parallax.ts";
   import { scrollTriggerWithLenis } from "@/utils/smooth-scroll.ts";
 
   gsap.registerPlugin(ScrollTrigger, CustomEase);
@@ -100,6 +101,8 @@ const START = 275;
     const svg = wrap?.querySelector<SVGSVGElement>("svg[data-track]");
     const ball = svg?.querySelector<SVGCircleElement>(".about-story_ball");
     if (!wrap || !svg || !ball) return;
+    // the story drifts a little against the page as it scrolls (Sam, Nov 18, comment 40: « ajouter parralax »)
+    parallax(wrap, signal);
     const track = JSON.parse(svg.dataset.track ?? "[]") as number[];
     const count = track.length / 3;
     const startAt = Number(svg.dataset.start ?? 0) / (count - 1);
@@ -123,7 +126,7 @@ const START = 275;
 
     const mm = gsap.matchMedia();
     mm.add(
-      { motion: "(prefers-reduced-motion: no-preference)", wide: "(width >= 64rem)" },
+      { motion: "(prefers-reduced-motion: no-preference)", wide: "(width >= 48rem)" },
       (context) => {
         const { motion, wide } = context.conditions as { motion: boolean; wide: boolean };
         /* on a computer the story shows with the opening (Sam, Nov 13, comment 21: « dès le loading »); below, where
@@ -292,21 +295,19 @@ const START = 275;
       grid-column: margin / end;
       justify-self: start;
     }
-    /* Below a computer the drawing sits between the title and the story */
+    /* On a phone the drawing sits between the title and the story. A tablet takes the computer's composition (Sam,
+       Nov 18, comment 38: « faire plus comme desktop »): it is drawn in the page's unit, so it holds at any width. */
     /* The drawing enlarged and cut by the screen's left edge, as the curve band's (CurveBand: --_au), and the
        title on its top stem, its foot just above the bend's opening, as on a computer (Sam, Nov 17, comment 29:
        « garder ça aligné en bas en mobile comme sur desktop ») */
-    @media (width < 64rem) {
+    @media (width < 48rem) {
       .about-story_wrap {
         display: grid;
         grid-template-columns: minmax(0, 1fr);
         /* one unit of the enlarged drawing: the same on every phone (the drawing 968 wide, so its lower stem holds
-           the story whatever the screen's width), 1.3 times the page's on a tablet */
+           the story whatever the screen's width) */
         --_au: 0.035rem;
         overflow-x: clip;
-        @media (width >= 48rem) {
-          --_au: calc(var(--u) * 1.3);
-        }
       }
       /* its second curve (from 1740 down) is black across what the screen shows: what follows comes up over it */
       .about-story_art {
@@ -315,9 +316,6 @@ const START = 275;
         /* on a phone 230 further right, the bend cut a little more, so its outer corner clears the story */
         margin-left: calc(100% - var(--_au) * (1728 - 230));
         margin-top: calc(var(--_au) * -330);
-        @media (width >= 48rem) {
-          margin-left: calc(100% - var(--_au) * 1728);
-        }
         margin-bottom: calc(var(--_au) * -453);
       }
       .about-story_layout {
@@ -364,9 +362,9 @@ const START = 275;
         margin-top: var(--space-9);
       }
     }
-    /* On a computer, as drawn: the band 206.2 down the page, the title's cap top 35 into it, the story at column 10
+    /* From a tablet up, as drawn: the band 206.2 down the page, the title's cap top 35 into it, the story at column 10
        375.6 down, « Let's swing » 1148.1 down, its link 1607.4 down; the section ends with the ground */
-    @media (width >= 64rem) {
+    @media (width >= 48rem) {
       .about-story_wrap {
         height: calc(var(--u) * (206.2 + 2193));
         padding-top: 0;
@@ -396,6 +394,21 @@ const START = 275;
         grid-column: aside / end;
         top: calc(var(--u) * 375.6);
         max-width: none;
+      }
+      /* A tablet keeps the computer's proportions: there the title and the story are sized with the page's unit
+         (163 and 24 at 1728), and below 64rem the system's own scale made them bigger against the drawing, so the
+         title broke onto the red and the story ran out of the black. The two sizes are given the computer's rule,
+         the story down to the running text's floor (16, not the lead's 18), and it starts a little higher (230
+         down the band, not 375.6), since at that floor it is still taller against the drawing than on a computer. */
+      @media (width < 64rem) {
+        .about-story_wrap {
+          --h1: calc(var(--u) * 163);
+          --text-lead: calc(var(--u) * 24);
+          --text-lead-floor: var(--text-main-floor);
+        }
+        .about-story_text {
+          top: calc(var(--u) * 230);
+        }
       }
       .about-story_swing {
         top: calc(var(--u) * 1148.1);

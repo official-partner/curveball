@@ -1,8 +1,9 @@
 ---
 /* News: the page's head, then the cards in three columns that start at three heights, as the Figma scatters them (the
    right column level with the heading's last line, the left one 112 lower, the middle one 384 lower), 192 between
-   two cards of a column. Two columns on a tablet (the right one lower), one on a phone (every other card against
-   the right edge), in the news' order. Cards from src/data/news.ts. */
+   two cards of a column. On a tablet each card takes three of the eight columns, left and right in turn, the right
+   ones lower (Sam, Nov 18, comment 41: « 3 cols par news articles, staggered comme sur desktop »); one column on a
+   phone (every other card against the right edge), in the news' order. Cards from src/data/news.ts. */
 import SectionHead from "@/components/content/SectionHead.astro";
 import CardNews from "@/components/content/CardNews.astro";
 import { news } from "@/data/news.ts";
@@ -55,8 +56,8 @@ const DEPTHS = [0.06, 0.14, -0.04, 0.11, 0.02, 0.16];
       z-index: 1;
       padding-top: var(--page-top);
     }
-    /* Below a computer's width: one card after the other in the news' order, three quarters wide on a phone and half
-       on a tablet, every other one against the right edge */
+    /* On a phone: one card after the other in the news' order, three quarters wide, every other one against the
+       right edge */
     .news-list_cards {
       grid-column: margin / end;
       display: flex;
@@ -74,20 +75,22 @@ const DEPTHS = [0.06, 0.14, -0.04, 0.11, 0.02, 0.16];
         align-self: end;
       }
     }
-    /* A tablet: two columns, the right one set lower (a translate, so the rows stay as they are) */
+    /* A tablet: on the page's eight columns, a card on the first three, the next on the last three and lower (a
+       margin, not a translate: the rows make room for it, so no card ever sits over the next) */
     @media (width >= 48rem) and (width < 64rem) {
       .news-list_cards {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        column-gap: var(--site-gutter);
+        grid-template-columns: subgrid;
+        gap: normal;
         row-gap: var(--section-space-medium);
-        padding-bottom: var(--section-space-large);
+        align-items: start;
       }
       .news-list_col .card-news {
-        grid-column: auto;
+        grid-column: margin / span 3;
         width: auto;
         &.is-alt {
-          translate: 0 var(--section-space-large);
+          grid-column: span 3 / end;
+          margin-top: var(--section-space-large);
         }
       }
     }
