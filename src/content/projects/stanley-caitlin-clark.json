@@ -6,5 +6,6 @@
   "preview": "/media/films/stanley-caitlin-clark-preview.mp4",
   "cover": "https://dl.dropboxusercontent.com/scl/fi/b7fdgxu3smu5qr4wz85nt/H226-OMNI-CaitlinClark-QuickBreak-16x9-Titled.mp4?rlkey=oyhfvm9fa8aj9zmyzivuxsxly&st=euidj7ws&dl=0",
   "video": "https://dl.dropboxusercontent.com/scl/fi/v2gj50j1ret68nerrshcc/TMCNY_1063_STANLEYxCC_LikeClockwork_Online_16x9_MASTER_TITLED-1-_1.mp4?rlkey=1vn60ht6nzd7869qsotujy1p3&st=zl0t5ra0&dl=0",
-  "order": 1
+  "order": 1,
+  "vertical": false
 }
