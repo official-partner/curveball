@@ -28,7 +28,9 @@ const enquire = {
 
 <Layout
   title={director.data.name}
-  description={director.data.bio?.split(". ")[0] ?? `${director.data.name}, director at Curveball Films.`}
+  seoTitle={director.data.seoTitle}
+  description={director.data.seoDescription || (director.data.bio?.split(". ")[0] ?? `${director.data.name}, director at Curveball Films.`)}
+  image={director.data.ogImage?.src}
   theme={theme}
   accent="red"
   action={enquire}

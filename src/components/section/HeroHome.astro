@@ -1,5 +1,5 @@
 ---
-/* Home's opening: the featured films (src/data/featured.ts names them; each one's cover video over its still) across
+/* Home's opening: the featured films (the list « featured-work » of src/data/lists.json names them; each one's cover video over its still) across
    the screen under the wordmark, darker towards the foot (30 % black, then a fade to the page's ground), and the featured work's row at the foot of the first screen.
    The wordmark runs margin to margin (its own drawing measures the Figma's « curveball » exactly: 1664 x 315.6 at
    1728). The featured work turns by itself (Sam, Nov 12: « créer l'anim switch hero visuel et numéros, smooth anim
@@ -14,8 +14,8 @@
    pace, and the directors follow on that ground. */
 import Wordmark from "@/assets/logo/logo.svg";
 import Img from "@/components/media/Img.astro";
-import { featured as chosen } from "@/data/featured.ts";
-import { getItems, img } from "@/utils/content.ts";
+import { img } from "@/utils/content.ts";
+import { listed, ruleMarks } from "@/utils/lists.ts";
 import { SITE_NAME } from "@/consts.ts";
 
 interface Props {
@@ -24,13 +24,11 @@ interface Props {
 }
 
 const { render = true } = Astro.props;
-/* the chosen films, in the list's order: a film's name stands for its client until the client is written */
-const films = await getItems("projects");
-const featured = chosen.flatMap(({ project }) => {
-  const film = films.find((p) => p.id === project);
-  if (!film) return [];
-  const { name, client, agency, still, preview, cover, video } = film.data;
-  return [{ client: client || name, agency, still, film: preview || cover || video }];
+/* the featured films: the list « featured-work », its rule in src/data/lists.json (picked by hand, in that order),
+   which OP System's List options changes itself; a film's name stands for its client until the client is written */
+const featured = (await listed<"projects">("featured-work")).map(({ id, data }) => {
+  const { name, client, agency, still, preview, cover, video } = data;
+  return { id, client: client || name, agency, still, film: preview || cover || video };
 });
 const count = featured.length;
 ---
@@ -65,9 +63,9 @@ const count = featured.length;
         <div class="hero-home_row rule-top" data-page-reveal>
           <span class="hero-home_time" aria-hidden="true" />
           <p class="hero-home_label dot-label text-style-main">Featured work</p>
-          <ol class="hero-home_slides" data-op-list="featured" data-op-source="src/data/featured.ts">
+          <ol class="hero-home_slides" {...ruleMarks("featured-work")}>
             {featured.map((f, i) => (
-              <li class:list={["hero-home_slide text-style-main", i === 0 && "is-active"]} data-op-item={String(i)}>
+              <li class:list={["hero-home_slide text-style-main", i === 0 && "is-active"]} data-op-item={f.id}>
                 <p class="hero-home_client">
                   <span class="hero-home_key">Client</span>
                   <br />

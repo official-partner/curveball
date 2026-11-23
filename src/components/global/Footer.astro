@@ -5,7 +5,7 @@
    with the footer's width (cqw): 1728 wide, the symbol 290 below the top, 531 wide. */
 import LogoSymbol from "@/assets/logo/symbol.svg";
 import { SITE_NAME } from "@/consts.ts";
-import { social, legal } from "@/data/site.ts";
+import { social, legal, SOCIAL_FILE } from "@/data/site.ts";
 
 interface Props {
   /** Set to `false` to omit the component. */
@@ -52,15 +52,15 @@ const curve =
         <a class="footer_contact footer_link text-style-menu" href="/contact">
           contact us
         </a>
-        <p class="footer_social text-style-large" data-op-list="social" data-op-source="src/data/site.ts">
+        <p class="footer_social text-style-large" data-op-list="social" data-op-source={SOCIAL_FILE}>
           {social.map((s, i) => (
             <>
               {s.href ? (
-                <a class="footer_link" href={s.href} data-op-item={s.label} aria-label={s.name}>
+                <a class="footer_link" href={s.href} data-op-item={s.id} aria-label={s.name}>
                   {s.label}
                 </a>
               ) : (
-                <span data-op-item={s.label} title={s.name}>
+                <span data-op-item={s.id} title={s.name}>
                   {s.label}
                 </span>
               )}

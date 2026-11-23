@@ -3,10 +3,10 @@
    right column level with the heading's last line, the left one 112 lower, the middle one 384 lower), 192 between
    two cards of a column. On a tablet each card takes three of the eight columns, left and right in turn, the right
    ones lower (Sam, Nov 18, comment 41: « 3 cols par news articles, staggered comme sur desktop »); one column on a
-   phone (every other card against the right edge), in the news' order. Cards from src/data/news.ts. */
+   phone (every other card against the right edge), in the news' order. Cards from src/data/news.json. */
 import SectionHead from "@/components/content/SectionHead.astro";
 import CardNews from "@/components/content/CardNews.astro";
-import { news } from "@/data/news.ts";
+import { news, NEWS_FILE } from "@/data/news.ts";
 
 interface Props {
   /** Set to `false` to omit the component. */
@@ -28,7 +28,7 @@ const DEPTHS = [0.06, 0.14, -0.04, 0.11, 0.02, 0.16];
     <section class="news-list_wrap" data-op-section="NewsList">
       <div class="news-list_layout site-grid">
         <SectionHead label="News and awards" heading="Signings, launches, recognition and the occasional thing we're proud of." as="h1" />
-        <div class="news-list_cards" data-op-list="news" data-op-source="src/data/news.ts" data-page-reveal>
+        <div class="news-list_cards" data-op-list="news" data-op-source={NEWS_FILE} data-page-reveal>
           {columns.map((col) => (
             <div class:list={["news-list_col", col.place]}>
               {col.items.map(({ item, index }) => (

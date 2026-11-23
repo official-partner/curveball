@@ -127,7 +127,7 @@
       "date": "2026-11-12"
     },
     {
-      "key": "fact-twice | src/data/contact.ts | email bids@curveballfilms.com also in src/pages/composantes.astro, src/pages/contact.astro, src/pages/directors/[id].astro",
+      "key": "fact-twice | src/data/contact-blocks.json | email bids@curveballfilms.com also in src/pages/composantes.astro, src/pages/contact.astro, src/pages/directors/[id].astro",
       "why": "From before the rules (Nov 12, 2026): the same fact written in several files. It moves to one data file at the health review.",
       "date": "2026-11-12"
     }

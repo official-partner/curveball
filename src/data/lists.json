@@ -1,0 +1,16 @@
+{
+  "lists": {
+    "featured-work": {
+      "collection": "projects",
+      "shows": "chosen",
+      "chosen": [
+        "perrier",
+        "puma",
+        "volvo---jimmy-chin",
+        "uber",
+        "takis",
+        "booksy"
+      ]
+    }
+  }
+}

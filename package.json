@@ -20,6 +20,7 @@
     "measure": "node scripts/measure.mjs",
     "widths": "node scripts/widths.mjs",
     "compare": "node scripts/compare.mjs",
+    "test:rules": "node --test scripts/list-rule.test.mjs",
     "system": "node scripts/system.mjs"
   },
   "dependencies": {

@@ -1,87 +1,28 @@
-/* News and awards: the cards of the News page, edited on the canvas with OP System's Modifier (data-op-list). The
-   client's eight news, from the current site's CMS (Nov 17), the newest first; each card links to its article. The
-   current site has no date and no text for them: a date is the one its article gives (read from its link, Nov 17),
-   and a card without one shows none; their photos are the current site's. */
-import photo1 from "@/assets/content/news/curveball-films-signs-director-michael-chemaly.jpg";
-import photo2 from "@/assets/content/news/curveball-films-hires-jake-cameron-as-executive-producer.jpg";
-import photo3 from "@/assets/content/news/curveball-films-welcomes-directing-duo-neymarc-brothers.jpg";
-import photo4 from "@/assets/content/news/team-behind-five-to-sixty-launches-rostered-production-company-curveball.jpg";
-import photo5 from "@/assets/content/news/connor-carroll-signs-with-curveball-films.jpg";
-import photo6 from "@/assets/content/news/clr-cranks-the-heat-with-so-hot-so-clean-sequel.jpg";
-import photo7 from "@/assets/content/news/curveball-films-signs-joe-pernice-and-james-niebuhr.jpg";
-import photo8 from "@/assets/content/news/curveball-launches.jpg";
+/* News and awards: the cards of the News page, written in src/data/news.json (the client's eight news, from the
+   current site's CMS, Nov 17, the newest first; each card links to its article), which OP System's Edit writes itself
+   when a card is copied, deleted or moved (op-astro docs/content.md, Lists as data). This file only reads it: each
+   entry checked when the site is built, its photo as its path under src/assets/. The current site has no date and no
+   text for them: a date is the one its article gives (read from its link, Nov 17), and a card without one shows none. */
+import { z } from "astro/zod";
+import data from "@/data/news.json";
+import { listFrom, picture } from "@/utils/data-list.ts";
 
-export type NewsItem = {
-  source: string;
-  date?: string;
-  title: string;
-  text?: string;
-  href: string;
-  photo?: ImageMetadata;
-  alt?: string;
-};
+export const NEWS_FILE = "src/data/news.json";
 
-export const news: NewsItem[] = [
-  {
-    source: "The Howler",
-    title: "Curveball Films Signs Director Michael Chemaly",
-    href: "https://thehowler.news/curveball-films-signs-director-michael-chemaly",
-    photo: photo1,
-    alt: "A man in a dark cap and a black sweatshirt, on a dark background",
-  },
-  {
-    source: "LBB Online",
-    title: "Curveball Films Hires Jake Cameron as Executive Producer",
-    href: "https://lbbonline.com/news/curveball-films-hires-jake-cameron-as-executive-producer",
-    photo: photo2,
-    alt: "A smiling man in a blue sweater, arms crossed",
-  },
-  {
-    source: "LBB Online",
-    title: "Curveball Films Welcomes Directing Duo Neymarc Brothers",
-    date: "September 5, 2025",
-    href: "https://lbbonline.com/news/Curveball-Films-Directing-Duo-Neymarc-Brothers",
-    photo: photo3,
-    alt: "Two men beside a film camera on set, in black and white",
-  },
-  {
-    source: "LBB Online",
-    title: "Team Behind Five to Sixty Launches Rostered Production Company Curveball",
-    date: "March 4, 2024",
-    href: "https://lbbonline.com/news/team-behind-five-to-sixty-launches-rostered-production-company-curveball",
-    photo: photo4,
-    alt: "The team squeezed into a photo booth, in black and white",
-  },
-  {
-    source: "LBB Online",
-    title: "Connor Carroll Signs with Curveball Films",
-    date: "September 12, 2024",
-    href: "https://lbbonline.com/news/connor-carroll-signs-with-curveball-films",
-    photo: photo5,
-    alt: "A bearded man in a rust beanie, facing the camera",
-  },
-  {
-    source: "LBB Online",
-    title: "CLR Cranks the Heat with 'So Hot, So Clean' Sequel",
-    date: "July 31, 2025",
-    href: "https://lbbonline.com/news/CLR-So-Hot-So-Clean-Betty-Curveball-Films",
-    photo: photo6,
-    alt: "A still from the film: a man in a towel in a blue tiled bathroom",
-  },
-  {
-    source: "LBB Online",
-    title: "Curveball Films Signs Joe Pernice and James Niebuhr",
-    date: "May 16, 2024",
-    href: "https://www.lbbonline.com/news/directors-joe-pernice-and-james-niebuhr-sign-to-curveball-films",
-    photo: photo7,
-    alt: "Two portraits side by side: a man in a grey shirt, and a man in a beanie with a camera",
-  },
-  {
-    source: "LBB Online",
-    title: "Curveball Films Launches",
-    date: "March 4, 2024",
-    href: "https://www.lbbonline.com/news/team-behind-five-to-sixty-launches-rostered-production-company-curveball",
-    photo: photo8,
-    alt: "The team squeezed into a photo booth, in black and white",
-  },
-];
+const entry = z.object({
+  id: z.string().regex(/^[a-z0-9-]+$/),
+  source: z.string(),
+  date: z.string().optional(),
+  title: z.string(),
+  text: z.string().optional(),
+  href: z.string(),
+  photo: z.string().optional(),
+  alt: z.string().optional(),
+});
+
+export type NewsItem = Omit<z.infer<typeof entry>, "photo"> & { photo?: ImageMetadata };
+
+export const news: NewsItem[] = listFrom(data, entry, NEWS_FILE).map((n) => ({
+  ...n,
+  photo: n.photo ? picture(n.photo, NEWS_FILE) : undefined,
+}));

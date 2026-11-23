@@ -18,7 +18,7 @@ const { render = true, block, index = 0 } = Astro.props;
 
 {
   render && (
-    <a class="contact-block" href={`mailto:${block.email}`} data-op-item={String(index)}>
+    <a class="contact-block" href={`mailto:${block.email}`} data-op-item={block.id}>
       <h3 class="contact-block_title text-style-h3">
         <span class="contact-block_words" data-op-field="title">
           {block.title}

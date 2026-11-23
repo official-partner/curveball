@@ -1,0 +1,22 @@
+{
+  "items": [
+    {
+      "id": "instagram",
+      "label": "IG",
+      "name": "Instagram",
+      "href": ""
+    },
+    {
+      "id": "facebook",
+      "label": "FB",
+      "name": "Facebook",
+      "href": ""
+    },
+    {
+      "id": "linkedin",
+      "label": "LN",
+      "name": "LinkedIn",
+      "href": ""
+    }
+  ]
+}

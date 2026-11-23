@@ -4,6 +4,7 @@
    computer they sit on the second « u »'s black stem, as drawn: the first heading's cap top 210 above the story's
    end, the second 366 lower; below a computer, one after the other. */
 import { callSheet, schedule } from "@/data/about.ts";
+import { listMarks } from "@/utils/data-list.ts";
 
 interface Props {
   /** Set to `false` to omit the component. */
@@ -26,9 +27,9 @@ const blocks = [
           <div class:list={["about-lists_block", `is-${b.key}`]} data-parallax={b.depth}>
             <h2 class="about-lists_heading text-style-h2">{b.heading}</h2>
             {b.columns.map((col, c) => (
-              <ul class="about-lists_column text-style-main" data-op-list={`${b.list}-${c + 1}`} data-op-source="src/data/about.ts">
-                {col.map((item) => (
-                  <li data-op-item={item}>{item}</li>
+              <ul class="about-lists_column text-style-main" {...listMarks(`${b.list}-${c + 1}`, col.file)}>
+                {col.items.map((item) => (
+                  <li data-op-item={item.id} data-op-field="name">{item.name}</li>
                 ))}
               </ul>
             ))}

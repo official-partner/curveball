@@ -1,0 +1,28 @@
+{
+  "items": [
+    {
+      "id": "commercial",
+      "name": "Commercial"
+    },
+    {
+      "id": "brand-film",
+      "name": "Brand film"
+    },
+    {
+      "id": "social-and-vertical",
+      "name": "Social and vertical"
+    },
+    {
+      "id": "documentary",
+      "name": "Documentary"
+    },
+    {
+      "id": "tabletop-and-food",
+      "name": "Tabletop and food"
+    },
+    {
+      "id": "vfx-and-cg",
+      "name": "VFX and CG"
+    }
+  ]
+}

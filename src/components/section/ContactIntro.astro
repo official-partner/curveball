@@ -3,7 +3,7 @@
    Figma places them. One column on a phone. Blocks from src/data/contact.ts. */
 import SectionHead from "@/components/content/SectionHead.astro";
 import ContactBlock from "@/components/content/ContactBlock.astro";
-import { blocks } from "@/data/contact.ts";
+import { blocks, CONTACT_FILE } from "@/data/contact.ts";
 
 interface Props {
   /** Set to `false` to omit the component. */
@@ -18,7 +18,7 @@ const { render = true } = Astro.props;
     <section class="contact-intro_wrap" data-op-section="ContactIntro">
       <div class="contact-intro_layout site-grid">
         <SectionHead label="Get in touch." heading="Tell us which one you are and we'll skip you to the right person." as="h1" />
-        <div class="contact-intro_blocks" data-op-list="contact-blocks" data-op-source="src/data/contact.ts" data-page-reveal>
+        <div class="contact-intro_blocks" data-op-list="contact-blocks" data-op-source={CONTACT_FILE} data-page-reveal>
           {blocks.map((block, index) => (
             <ContactBlock block={block} index={index} />
           ))}

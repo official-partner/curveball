@@ -1,28 +1,15 @@
-/* Contact's blocks, edited on the canvas with OP System's Modifier (data-op-list). The Figma's copy word for word (one
-   double space fixed in « Got a job? Got a curveball? »); its placeholder kept: every block writes to
+/* Contact's blocks, written in src/data/contact-blocks.json, which OP System's Edit writes itself when a block is
+   copied, deleted or moved (op-astro docs/content.md, Lists as data); this file reads it. The Figma's copy word for
+   word (one double space fixed in « Got a job? Got a curveball? »); its placeholder kept: every block writes to
    bids@curveballfilms.com until the real addresses are in. The team is the collection « Team ». */
+import { z } from "astro/zod";
+import data from "@/data/contact-blocks.json";
+import { listFrom } from "@/utils/data-list.ts";
 
-export type ContactBlock = { title: string; text: string; email: string };
+export const CONTACT_FILE = "src/data/contact-blocks.json";
 
-export const blocks: ContactBlock[] = [
-  {
-    title: "Got a job? Got a curveball?",
-    text: "Briefs, bids, availability, awkward timelines. This is the one you want.",
-    email: "bids@curveballfilms.com",
-  },
-  {
-    title: "Writing something?",
-    text: "Briefs, bids, availability, awkward timelines. This is the one you want.",
-    email: "bids@curveballfilms.com",
-  },
-  {
-    title: "Are you a director?",
-    text: "We look at everything, and we answer. Send a reel and a sentence about what you're chasing.",
-    email: "bids@curveballfilms.com",
-  },
-  {
-    title: "Want to work with us?",
-    text: "We look at everything, and we answer. Send a reel and a sentence about what you're chasing.",
-    email: "bids@curveballfilms.com",
-  },
-];
+const entry = z.object({ id: z.string().regex(/^[a-z0-9-]+$/), title: z.string(), text: z.string(), email: z.string() });
+
+export type ContactBlock = z.infer<typeof entry>;
+
+export const blocks: ContactBlock[] = listFrom(data, entry, CONTACT_FILE);

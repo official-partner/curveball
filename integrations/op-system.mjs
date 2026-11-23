@@ -293,6 +293,11 @@ export default function opSystem(site) {
         // Classes; op-system's op-global-classes skill). Astro's scoped classes (astro-…) left out
         const classUse = new Map();
         const htmlDir = site.pagesDir ? path.join(root, site.pagesDir) : out;
+        // the lists of a collection's items the pages show (data-op-list with data-op-source="astro:<collection>"): on
+        // which page, the items it shows as built, and its rule when it has one (docs/content.md, A list's rule). OP System reads them to say where
+        // an item shows (Contenu, « Shows in »)
+        const cmsLists = [];
+        const attr = (tag, name) => { const m = new RegExp(`\\s${name}=(?:"([^"]*)"|'([^']*)')`).exec(tag); return m ? (m[1] ?? m[2]).replace(/&quot;/g, '"').replace(/&#34;/g, '"').replace(/&amp;/g, "&") : ""; };
         const tplRoutes = await templateRoutes(root);
         const tplSeen = new Set();
         for (const file of await htmlFiles(htmlDir)) {
@@ -325,6 +330,16 @@ export default function opSystem(site) {
             }
           }
           const id = route === "./" ? (lang === "en" ? "home" : "accueil") : route.replace(/\//g, "-");
+          for (const m of html.matchAll(/<[a-z][^>]*\sdata-op-source="astro:([A-Za-z_][\w-]*)"[^>]*>/g)) {
+            const name = attr(m[0], "data-op-list");
+            if (!name || internal) continue;
+            let rule = null;
+            try { rule = attr(m[0], "data-op-rule") ? JSON.parse(attr(m[0], "data-op-rule-is")) : null; } catch { rule = null; }
+            // the items it shows as built: the entries marked after it, up to the next list
+            const from = m.index + m[0].length, next = html.indexOf(" data-op-list=", from);
+            const items = [...new Set([...html.slice(from, next < 0 ? html.length : next).matchAll(/\sdata-op-item="([^"]+)"/g)].map((x) => x[1]))].slice(0, 500);
+            cmsLists.push(Object.assign({ name, collection: m[1], page: id, items }, attr(m[0], "data-op-label") ? { label: attr(m[0], "data-op-label") } : {}, rule ? { rule } : {}));
+          }
           // a page made from a collection: its collection and its item (the pages list's templates)
           const tpl = internal ? null : tplRoutes.map((x) => ({ x, m: x.match.exec(route) })).find((y) => y.m && y.x.items.has(y.m[1]));
           if (tpl) tplSeen.add(tpl.x.collection);
@@ -632,6 +647,7 @@ export default function opSystem(site) {
           changes: [],
         };
         if (grid) manifest.grid = JSON.parse(JSON.stringify(grid));
+        if (cmsLists.length) manifest.lists = cmsLists;
         if (icon) manifest.favicon = icon;
         // where the favicon comes from (OP System's Réglages › Technique › Favicon): the current site's (op.config.json
         // "favicon": "site", written at a redo's setup), scripts/favicon.mjs's (its stamp in favicon.svg), or made by hand
@@ -640,7 +656,9 @@ export default function opSystem(site) {
         // the staging renders on demand and reads OP's working copy (op-live.mjs): OP System says a save shows at once.
         // The live build writes site.json from its inner static pass (OP_LIVE_INNER), so that one counts as live too.
         const liveBuild = process.env.OP_LIVE_INNER === "1" || (process.env.OP_LIVE ? process.env.OP_LIVE === "1" : process.env.WORKERS_CI_BRANCH === "review");
-        if (liveBuild) manifest.content = { live: true };
+        // `drafts`: the site knows OP System's « Draft » (src/utils/content.ts: an item whose `draft` is true shows on
+        // the staging only), so the app may offer that state
+        manifest.content = Object.assign({ drafts: true }, liveBuild ? { live: true } : {});
         // the rules the site holds to stay one system (scripts/rules.mjs, npm run rules; Nov 12): on a machine the
         // build stops on a failure the team has not accepted, so no session pushes without seeing it; on Cloudflare
         // it only warns, so the review is never blocked. site.json carries the count either way. OP_RULES=warn builds

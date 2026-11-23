@@ -1,0 +1,28 @@
+{
+  "items": [
+    {
+      "id": "live-action",
+      "name": "Live action"
+    },
+    {
+      "id": "content-series",
+      "name": "Content series"
+    },
+    {
+      "id": "music-video",
+      "name": "Music video"
+    },
+    {
+      "id": "directors-treatments",
+      "name": "Directors' treatments"
+    },
+    {
+      "id": "casting",
+      "name": "Casting"
+    },
+    {
+      "id": "post-through-clockwork",
+      "name": "Post through Clockwork"
+    }
+  ]
+}

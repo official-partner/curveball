@@ -1,0 +1,28 @@
+{
+  "items": [
+    {
+      "id": "got-a-job-got-a-curveball",
+      "title": "Got a job? Got a curveball?",
+      "text": "Briefs, bids, availability, awkward timelines. This is the one you want.",
+      "email": "bids@curveballfilms.com"
+    },
+    {
+      "id": "writing-something",
+      "title": "Writing something?",
+      "text": "Briefs, bids, availability, awkward timelines. This is the one you want.",
+      "email": "bids@curveballfilms.com"
+    },
+    {
+      "id": "are-you-a-director",
+      "title": "Are you a director?",
+      "text": "We look at everything, and we answer. Send a reel and a sentence about what you're chasing.",
+      "email": "bids@curveballfilms.com"
+    },
+    {
+      "id": "want-to-work-with-us",
+      "title": "Want to work with us?",
+      "text": "We look at everything, and we answer. Send a reel and a sentence about what you're chasing.",
+      "email": "bids@curveballfilms.com"
+    }
+  ]
+}

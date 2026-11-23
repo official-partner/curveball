@@ -1,0 +1,48 @@
+{
+  "items": [
+    {
+      "id": "clr",
+      "name": "CLR"
+    },
+    {
+      "id": "uber",
+      "name": "Uber"
+    },
+    {
+      "id": "tidy-cats",
+      "name": "Tidy Cats"
+    },
+    {
+      "id": "secret",
+      "name": "Secret"
+    },
+    {
+      "id": "babbel",
+      "name": "Babbel"
+    },
+    {
+      "id": "grammarly",
+      "name": "Grammarly"
+    },
+    {
+      "id": "capital-one",
+      "name": "Capital One"
+    },
+    {
+      "id": "iu-health",
+      "name": "IU Health"
+    },
+    {
+      "id": "geico",
+      "name": "Geico"
+    },
+    {
+      "id": "united-airlines",
+      "name": "United Airlines"
+    },
+    {
+      "id": "nike",
+      "name": "Nike"
+    }
+  ]
+}

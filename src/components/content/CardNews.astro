@@ -24,7 +24,7 @@ const { render = true, item, index = 0, class: extra, depth } = Astro.props;
 
 {
   render && (
-    <article class:list={["card-news", extra]} data-op-item={String(index)} data-parallax={depth || undefined} style={`--_order: ${index}`}>
+    <article class:list={["card-news", extra]} data-op-item={item.id} data-parallax={depth || undefined} style={`--_order: ${index}`}>
       <div class="card-news_media">
         {item.photo && (
           <Img class="card-news_img cover-absolute object-fit-cover" src={item.photo} alt={item.alt ?? ""} variant="constrained" sizes="(min-width: 64rem) 24vw, (min-width: 48rem) 38vw, 75vw" />

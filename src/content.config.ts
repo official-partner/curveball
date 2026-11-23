@@ -23,6 +23,7 @@ const team = defineCollection({
         bio: z.string().optional().describe("A few lines"),
         photo: image().optional().describe("Portrait"),
         visible: z.boolean().default(true).describe("Visible on the site"),
+        draft: z.boolean().default(false).describe("Draft"),
         order: z.number().optional().describe("Order"),
       })
       .describe("Team"),
@@ -53,7 +54,12 @@ const directors = defineCollection({
           .enum(["Chicago", "Los Angeles", "New Orleans", "New York"])
           .optional()
           .describe("Location"),
+        // its page for Google (OP System's « For Google »): empty, the page says the name and the bio's first sentence
+        seoTitle: z.string().optional().describe("Title for Google"),
+        seoDescription: z.string().optional().describe("Description for Google"),
+        ogImage: image().optional().describe("Share image"),
         visible: z.boolean().default(true).describe("Visible on the site"),
+        draft: z.boolean().default(false).describe("Draft"),
         order: z.number().optional().describe("Order"),
       })
       .describe("Directors"),
@@ -80,6 +86,7 @@ const projects = defineCollection({
         link: z.string().optional().describe("Film page (Vimeo)"),
         vertical: z.boolean().optional().describe("Vertical film"),
         visible: z.boolean().default(true).describe("Visible on the site"),
+        draft: z.boolean().default(false).describe("Draft"),
         order: z.number().optional().describe("Order"),
       })
       .describe("Films"),
