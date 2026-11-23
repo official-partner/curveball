@@ -2,6 +2,11 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-23, Sam (comment C2, Nov 22: the site's words in their own case, the capitals text-transform's): the
+  starter's new rule caps-typed found one text typed in capitals, a film's title in Joe Pernice's bio (« CHASING
+  YESTERDAY », from the Webflow site): now « Chasing Yesterday », flagged here as a change to the client's copy. The
+  layout carries the starter's `CopyCase`: a copy from the page gives the words as written, never as a text style
+  shows them. The skip link speaks the site's language (« Skip to content », it said « Aller au contenu »).
 - 2026-11-20, Sam (comments 38 to 43 of Nov 18 and 19, asked for in the conversation):
   - 38, About on a tablet « plus comme desktop »: from 48rem the story takes the computer's composition (the band, the
     title in it, the story at the right, « Let's swing » below), no longer the phone's enlarged drawing. Its title
