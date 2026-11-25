@@ -1,6 +1,7 @@
 ---
 import Layout from "@/layouts/BaseLayout.astro";
 import HeroHome from "@/components/section/HeroHome.astro";
+import HomeIntro from "@/components/section/HomeIntro.astro";
 import DirectorsHome from "@/components/section/DirectorsHome.astro";
 import CurveBand from "@/components/section/CurveBand.astro";
 ---
@@ -12,6 +13,8 @@ import CurveBand from "@/components/section/CurveBand.astro";
   theme="dark"
   accent="red"
 >
+  <HomeIntro part="head" slot="head" />
+  <HomeIntro />
   <HeroHome />
   <DirectorsHome />
   <CurveBand variant="home" />

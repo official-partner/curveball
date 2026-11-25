@@ -203,7 +203,8 @@ const count = featured.length;
         run();
       };
       const run = () => {
-        const play = !stopped && !held && !away && !document.hidden;
+        // the featured one's time starts once the home's intro has handed over (HomeIntro.astro)
+        const play = !stopped && !held && !away && !document.hidden && !document.documentElement.dataset.intro;
         if (play) fill.play();
         else fill.pause();
         film();
@@ -226,6 +227,7 @@ const count = featured.length;
       row.addEventListener("focusin", () => ((held = true), run()), { signal });
       row.addEventListener("focusout", () => ((held = false), run()), { signal });
       document.addEventListener("visibilitychange", run, { signal });
+      document.addEventListener("home-intro:end", run, { signal });
       const seen = new IntersectionObserver(([entry]) => {
         away = !entry.isIntersecting;
         run();

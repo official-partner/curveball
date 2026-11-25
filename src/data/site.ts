@@ -16,3 +16,6 @@ export const legal: { label: string; href: string }[] = [
   { label: "privacy", href: "/privacy" },
   { label: "accessibility", href: "/accessibility" },
 ];
+
+/* The footer's sentence, also the home intro's (src/components/section/HomeIntro.astro) */
+export const LINE = "We're in cahoots with filmmakers who live between the expected and the unexpected.";

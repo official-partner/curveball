@@ -5,7 +5,7 @@
    with the footer's width (cqw): 1728 wide, the symbol 290 below the top, 531 wide. */
 import LogoSymbol from "@/assets/logo/symbol.svg";
 import { SITE_NAME } from "@/consts.ts";
-import { social, legal, SOCIAL_FILE } from "@/data/site.ts";
+import { social, legal, SOCIAL_FILE, LINE } from "@/data/site.ts";
 
 interface Props {
   /** Set to `false` to omit the component. */
@@ -68,9 +68,7 @@ const curve =
             </>
           ))}
         </p>
-        <p class="footer_line text-style-h2">
-          We're in cahoots with filmmakers who live between the expected and the unexpected.
-        </p>
+        <p class="footer_line text-style-h2">{LINE}</p>
         <p class="footer_legal text-style-small">
           © 2026 Curveball Films. Part of the Five to Sixty family, with Clockwork Post and FatHappy Media.
         </p>

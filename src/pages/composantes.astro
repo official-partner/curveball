@@ -4,6 +4,7 @@ import ComponentList from "@/components/system/ComponentList.astro";
 import ComponentSample from "@/components/system/ComponentSample.astro";
 import ArrowLink from "@/components/content/ArrowLink.astro";
 import HeroHome from "@/components/section/HeroHome.astro";
+import HomeIntro from "@/components/section/HomeIntro.astro";
 import DirectorsHome from "@/components/section/DirectorsHome.astro";
 import CurveBand from "@/components/section/CurveBand.astro";
 import SectionHead from "@/components/content/SectionHead.astro";
@@ -37,6 +38,11 @@ const reel = (await getItems("projects")).filter((p) => p.data.director?.id === 
     <ComponentSample file="content/ArrowLink.astro" note="A link with its arrow: Home's CTA, the news cards' « Read ».">
       <div class="container">
         <ArrowLink href="/contact" text="Start a conversation" />
+      </div>
+    </ComponentSample>
+    <ComponentSample file="section/HomeIntro.astro" note="Home's intro, its first frame still: the wordmark's « u » and « r » turned and seen close, the balls where they pass slowest, the footer's sentence. On the home it plays once per visit (?op-intro to see it again), then dives into the logo onto the opening.">
+      <div class="container">
+        <HomeIntro part="sample" />
       </div>
     </ComponentSample>
     <ComponentSample file="section/HeroHome.astro" note="Home's opening: the featured films' stills turning under the wordmark, the featured work's row with its counter (the pause).">

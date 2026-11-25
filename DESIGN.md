@@ -82,6 +82,19 @@ it (system/gen.py).
 - A news card is one link (« Read » stretched over it) and answers the pointer and the keyboard: its round photo grows
   to `--card-hover-scale` (1.04) on medium, the picture in it to `--card-hover-zoom` (1.1) on base, both on the out
   curve, so the picture moves inside its ball; they leave on fast and medium (Sam, Nov 20, comment 44).
+- Home's intro (Sam, Nov 25, option 1 of the study « Curveball, l'intro de la marque »): on a visit that starts on the
+  home, once per tab session (`?op-intro` plays it again), before the opening. The first frame is the wordmark turned a
+  quarter and seen very close (its « u » across the screen, its « r » above, a little closer than in the wordmark),
+  black on red, drawn at the screen's own resolution (a canvas: Safari blurred an SVG mask). The « u » slides in from
+  the left and the « r » from the top (base, the arrive curve); both rise a little the whole time (2 and 3.5 % of the
+  screen, the « r » nearer); a ball runs the whole of each letter and leaves the frame, slowest where the storyboard
+  has it, its size the stroke's (97 %, system/intro-tracks.py); the footer's sentence fades up line by line at 0.45 s
+  (h2, h4 upright; base, ease-out, 70 ms apart) and sits on the « u ». At `--intro-hold` (2.95 s) the sentence goes,
+  the black thins to the opening's film (base, ease-travel) while each letter grows round where the sentence was
+  (`--intro-dive-duration`, 1.6 s, ease-travel; the « r » 1.32 times faster) and the film settles from 112 %; past half
+  the dive the wordmark, the menu, the row's rule (drawn from the left, slow, the arrive curve) and the row come in
+  one after another (base, ease-out, 1.25 rem). About 5.4 s in all; a click, a key, the wheel or a swipe plays the rest
+  five times faster. The featured work's time starts after it. None with reduced motion.
 - Reduced motion: no travel, scale, parallax or smooth scroll; the balls sit at their Figma rest, the reel's film
   fills its stage, colours change at once or over faster, page changes crossfade.
 
