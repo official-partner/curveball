@@ -49,7 +49,9 @@ it (system/gen.py).
 - The curve bands (Home, News, Contact, About): the ball follows the stroke's middle, its radius following the
   stroke's width, from where it enters to the Figma's rest and out by the other edge, scrubbed (0.5). On Home the band
   waits for the directors: its ball rolls in about a third of a screen after the last name gives its colour back
-  (the room under the list), so the colour change and the ball never come at once.
+  (the room under the list), so the colour change and the ball never come at once. The bands above the footer
+  (Home, News, Contact) start their ball when its track's start is 80, 85 and 95 % down the screen (Sam, Nov 21,
+  comment 45: a little later in the scroll).
 - Home's opening: six films of the collection (src/data/featured.ts), each one's short version playing muted over its
   still while it holds the screen, the next one loaded while it plays. The featured work turns every six seconds while the row's rule fills (its time), the next still
   fading in over the last (slow, ease-out) as it settles from 104 % (twice slow, the arrive curve), the client and
@@ -77,6 +79,9 @@ it (system/gen.py).
   out after two seconds without a move (Sam, Nov 17).
 - Parallax: the news cards, the team's portraits and About's two lists drift at their own pace (fine pointer, 48rem
   and up, scrub 0.6).
+- A news card is one link (« Read » stretched over it) and answers the pointer and the keyboard: its round photo grows
+  to `--card-hover-scale` (1.04) on medium, the picture in it to `--card-hover-zoom` (1.1) on base, both on the out
+  curve, so the picture moves inside its ball; they leave on fast and medium (Sam, Nov 20, comment 44).
 - Reduced motion: no travel, scale, parallax or smooth scroll; the balls sit at their Figma rest, the reel's film
   fills its stage, colours change at once or over faster, page changes crossfade.
 

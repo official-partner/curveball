@@ -22,7 +22,9 @@ const { render = true, variant = "home" } = Astro.props;
    News and Contact's upper 1320 are empty there, Sam, Nov 17, comment 27; Home's no longer does, Nov 11:
    its directors turn to a colour, which the curve's black must not run behind), and when the ball travels: it
    leaves the start of its track when that point is `startAt` down the screen, passes where the Figma rests it, and
-   has left the frame by the other edge when its exit is `endAt` down (Sam, Nov 12). The tracks (the stroke's centre
+   has left the frame by the other edge when its exit is `endAt` down (Sam, Nov 12). Every ball starts 15 % of a
+   screen later than it did (Sam, Nov 21, comment 45: « toutes ces sections: commencer l'anim de la boule un peu plus
+   tard dans le scroll »; it was 0.95, 1 and 1.1). The tracks (the stroke's centre
    line, the ball's radius along it) come from system/curve-tracks.py. */
 const art = {
   home: {
@@ -38,7 +40,7 @@ const art = {
       { y: 0, d: "M1121.51 0H1728V317.88H1121.51Z" },
     ],
     ball: { cx: 1167, cy: 1342, r: 276 },
-    startAt: 0.95,
+    startAt: 0.8,
     // it leaves late, the lower stem past the screen's top (Sam, Nov 12: « exit la balle plus tard »; Nov 17,
     // comment 23: « scroller plus longtemps avant de faire disparaitre la boule », every curve)
     endAt: -0.1,
@@ -55,7 +57,7 @@ const art = {
       },
     ],
     ball: { cx: 1123.5, cy: 1610.8, r: 273 },
-    startAt: 1,
+    startAt: 0.85,
     endAt: 0.05,
   },
   contact: {
@@ -70,7 +72,7 @@ const art = {
       },
     ],
     ball: { cx: 1556.5, cy: 1612.3, r: 273 },
-    startAt: 1.1,
+    startAt: 0.95,
     endAt: 0.05,
   },
 }[variant];

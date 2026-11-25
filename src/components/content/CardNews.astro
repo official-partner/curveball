@@ -42,7 +42,7 @@ const { render = true, item, index = 0, class: extra, depth } = Astro.props;
           {item.text}
         </p>
       )}
-      <ArrowLink class="card-news_link" href={item.href} text="Read" />
+      <ArrowLink class="card-news_link" href={item.href} text="Read" label={`Read: ${item.title}`} />
     </article>
   )
 }
@@ -50,6 +50,7 @@ const { render = true, item, index = 0, class: extra, depth } = Astro.props;
 <style is:global>
   @layer components {
     .card-news {
+      position: relative;
       grid-column: 1 / -1;
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -67,6 +68,31 @@ const { render = true, item, index = 0, class: extra, depth } = Astro.props;
       border-radius: var(--radius-round);
       overflow: clip;
       background-color: var(--background-2);
+      transition: scale var(--duration-fast) var(--ease-out);
+    }
+    .card-news_img {
+      transition: scale var(--duration-medium) var(--ease-out);
+    }
+    /* The whole card is the link (Sam, comment 44, Nov 20: « rendre le bloc complet cliquable »): « Read » stretches
+       over it. Its answer to the pointer, and to the keyboard: the round photo grows a little and the picture in it a
+       little more and a little longer, so the picture moves inside its ball (« pour créer un mouvement intéressant »);
+       it leaves quicker than it came. Never with reduced motion. */
+    a.card-news_link::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+    }
+    @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+      .card-news:has(a.card-news_link:is(:hover, :focus-visible)) {
+        & .card-news_media {
+          scale: var(--card-hover-scale);
+          transition-duration: var(--duration-medium);
+        }
+        & .card-news_img {
+          scale: var(--card-hover-zoom);
+          transition-duration: var(--duration-base);
+        }
+      }
     }
     .card-news_meta {
       grid-column: 1 / -1;

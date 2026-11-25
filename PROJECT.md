@@ -2,6 +2,20 @@
 
 One line per decision: the date, who asked, what was decided and why. The newest at the top.
 
+- 2026-11-24, Sam (comments 44 and 45 in OP System, handled at his ask in the conversation):
+  - 44, News (« rendre le bloc complet cliquable, et créer un hover de l'image: léger scale up de la boule, et scale
+    up de l'image à l'intérieur aussi »): the whole card is the link (« Read » stretched over it, its name for a screen
+    reader « Read: » and the title: ArrowLink's new `label`). On hover and on focus the round photo grows to
+    `--card-hover-scale` (1.04, medium) and the picture inside to `--card-hover-zoom` (1.1, base), so the picture
+    keeps moving inside its ball after the ball has settled; leaving takes fast and medium. Never with reduced motion.
+    The two scales are new tokens (gen.py). Every news card.
+  - 45, Contact (« toutes ces sections: commencer l'anim de la boule un peu plus tard dans le scroll »): the three
+    bands above the footer start their ball 15 % of a screen later: `startAt` 0.95 to 0.8 (Home), 1 to 0.85 (News),
+    1.1 to 0.95 (Contact). Measured at 1440 by 900: 135 px of scroll later on each page; the end is unchanged, so the
+    ball runs its track over a little less scroll. About's ball is another movement (the page's opening) and is not
+    changed.
+  - Checked: rules 0 new (20 known), widths 0 failures on News and Contact, News looked at at 1254 and 390, the card's
+    hover sampled frame by frame at 1254 (the photo, the title and the text all reach the link).
 - 2026-11-23, Sam (comment C2, Nov 22: the site's words in their own case, the capitals text-transform's): the
   starter's new rule caps-typed found one text typed in capitals, a film's title in Joe Pernice's bio (« CHASING
   YESTERDAY », from the Webflow site): now « Chasing Yesterday », flagged here as a change to the client's copy. The
