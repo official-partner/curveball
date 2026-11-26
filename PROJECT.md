@@ -685,3 +685,16 @@ One line per decision: the date, who asked, what was decided and why. The newest
   `--intro-dive-duration`, `--intro-layer` (system/gen.py). The footer's sentence moved to src/data/site.ts (`LINE`),
   read by the footer and the intro. HeroHome's featured time waits for the intro (`home-intro:end`). The sentence is
   the footer's h2 (« We're » with its capital, as the footer; the storyboard set it in lower case: to confirm).
+- 2026-11-25, Sam (« utiliser la taille de typo H2, ... alignée sur la grille, dans la même colonne que Directors About
+  et News »; « enlève le mouvement de translate sur l'axe des Y »; « faire l'intro en CSS ... que ça load
+  instantanément »; « enlever le mouvement d'apparition des deux shapes »): the intro is CSS from the first paint. The
+  letters are an SVG in place from the start (no entrance; the red is one path with the letters as holes, so the film
+  shows through when the black thins, no mask); the balls run on keyframes the component writes from the tracks
+  (transform, played by the browser even while the scripts load); the dive is a CSS scale of the drawing round where
+  the sentence was read, both letters together (the « r »'s faster growth needed a script: gone); the opening's
+  elements and the row's rule are CSS animations on the same clock. The rise of the shapes is gone. The sentence is
+  h3, the storyboard's size (57 at 1728; the system's h2 is the footer's 98, the size it had), in the menu's column
+  (`half`) on a computer and on the margin upright. The script left only hurries it (a click, a key, the wheel, a
+  swipe: five times faster) and tells the page it has ended; without it the intro still plays, and the page comes
+  back after 9 s.
+

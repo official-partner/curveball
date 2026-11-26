@@ -2,8 +2,12 @@
 /* The home's intro (Sam, Nov 25: option 1 of the study, « La plongée »). The first frame is the wordmark itself,
    turned a quarter and seen very close: the middle band is its « u », the top one its « r » (drawn a little closer
    than in the wordmark, as in the storyboard). Two balls run through the letters while the footer's sentence fades
-   up; then the camera goes into the logo: the black thins to the opening's film, each letter grows at its own pace
-   until the film fills the screen, and the opening's own elements come in one after another.
+   up; then the camera goes into the logo: the black thins to the opening's film and the letters grow until the film
+   fills the screen, while the opening's own elements come in one after another.
+   All of it is CSS, there from the first paint (Sam, Nov 25: « que ça load instantanément »): the drawing is an SVG in
+   place from the start, the balls run on keyframes written here from system/intro-tracks.py's tracks (moved by
+   transform, so the browser plays them on its own even while the page's scripts load), the timing is base.css's
+   tokens. A short script only hurries it on a click or a scroll and says when it has ended.
    `head` goes in the page's head (the decision before the first paint), the cover first in the page, `sample` is its
    first frame, still, for the components page. */
 import logo from "@/assets/logo/logo.svg?raw";
@@ -17,15 +21,75 @@ type Props = {
 
 const { part = "cover" } = Astro.props;
 
+/* The storyboard's box is 2000 x 1129. The camera's first place: the wordmark turned a quarter (its « u » across the
+   screen, its bowl at the right edge), 24.87 units of the box to one of the wordmark. */
+const CAMERA = { x: -557.7, y: 3860, s: 24.87 };
+const camera = `translate(${CAMERA.x} ${CAMERA.y}) scale(${CAMERA.s}) rotate(-90)`;
+// the « r » 4.4 units closer to the « u » than in the wordmark, as in the storyboard
+const R_SHIFT = -4.4;
+
 /* The wordmark's letters, as logo.svg draws them (one subpath each: the « u » is the 11th, the « r » the 10th, as
-   system/intro-tracks.py reads them) */
+   system/intro-tracks.py reads them; absolute M, C, H, V, Z only) */
 const subpaths = logo.match(/ d="([^"]+)"/)?.[1].match(/M[^M]+/g) ?? [];
-/* Each letter and its run-ons in one shape (the same turn as the letter's own outline, the stems' own edges), so they
-   read as one stroke with no seam: the « u »'s stems on past the screen's left edge, as the site's curves do; the « r »'s stem on past
-   the screen's right edge (Sam, Nov 25: no red at its end) and its arm past the top */
+const shiftX = (d: string, dx: number) => {
+  let cmd = "";
+  let i = 0;
+  return d.replace(/[MCHVZ]|-?\d*\.?\d+(?:e-?\d+)?/g, (t) => {
+    if (/[MCHVZ]/.test(t)) {
+      cmd = t;
+      i = 0;
+      return t;
+    }
+    const x = cmd === "H" || ((cmd === "M" || cmd === "C") && i % 2 === 0);
+    i += 1;
+    return x ? String(Math.round((parseFloat(t) + dx) * 10000) / 10000) : t;
+  });
+};
+/* Each letter and its run-ons in one shape, the run-ons on the stems' own ends (no overlap: no seam, and as holes no
+   gap): the « u »'s stems on past the screen's left edge, as the site's curves do; the « r »'s stem on past the
+   screen's right edge (Sam, Nov 25: no red at its end) and its arm past the top. */
 const box = (x: number, y: number, w: number, h: number) => `M${x} ${y}H${x + w}V${y + h}H${x}Z`;
-const U = (subpaths[10] ?? "") + box(75.99, -400, 20.4374, 440) + box(121.9, -400, 20.437, 440);
-const R = (subpaths[9] ?? "") + box(147.337, 60, 20.437, 440) + box(187.767, 30.9519, 50, 18.364);
+const U = (subpaths[10] ?? "") + box(75.99, -2000, 20.4374, 2031.3965) + box(121.9, -2000, 20.437, 2031.3965);
+const R =
+  shiftX(subpaths[9] ?? "", R_SHIFT) +
+  box(147.337 + R_SHIFT, 101.002, 20.437, 2000) +
+  box(187.767 + R_SHIFT, 30.9519, 2000, 18.364);
+// the red: everything but the letters (a frame wider than any screen, turned the other way: the letters are holes)
+const GROUND = "M-2000 -2000V2000H2000V-2000Z" + U + R;
+
+/* The balls: each runs the whole of its letter and leaves the frame, slowest where the storyboard has it and never
+   stopping (fast at both ends), its size the stroke's (97 %). Their keyframes are in the box's units (one unit is
+   0.05cqw of the box); a ball's own size is 250 units of radius, scaled. */
+type Track = { points: number[]; rest: number };
+const linger = (p: number) => p + (0.72 * Math.sin(2 * Math.PI * p)) / (2 * Math.PI);
+const STEPS = 72;
+const BALL = 250;
+const along = (t: Track, i: number) => {
+  const n = t.points.length / 3;
+  const k = Math.max(0, Math.min(n - 1.001, i));
+  const a = Math.floor(k);
+  const f = k - a;
+  const p = t.points;
+  return [0, 1, 2].map((j) => p[a * 3 + j] + (p[(a + 1) * 3 + j] - p[a * 3 + j]) * f);
+};
+const onScreen = ([x, y, r]: number[], dx: number) => ({
+  cx: CAMERA.x + CAMERA.s * y,
+  cy: CAMERA.y - CAMERA.s * (x + dx),
+  r: CAMERA.s * r,
+});
+const keyframes = (name: string, t: Track, reach: number, dx: number) => {
+  const frames = [];
+  for (let s = 0; s <= STEPS; s++) {
+    const { cx, cy, r } = onScreen(along(t, t.rest + reach * (2 * linger(s / STEPS) - 1)), dx);
+    frames.push(
+      `${((s / STEPS) * 100).toFixed(2)}%{transform:translate(calc(${cx.toFixed(1)}*.05cqw),calc(${cy.toFixed(1)}*.05cqw)) scale(${(r / BALL).toFixed(4)})}`,
+    );
+  }
+  return `@keyframes ${name}{${frames.join("")}}`;
+};
+const ballKeyframes =
+  keyframes("home-intro-ball-r", tracks.r, 155, R_SHIFT) + keyframes("home-intro-ball-u", tracks.u, 180, 0);
+const rest = (t: Track, dx: number) => onScreen(t.points.slice(t.rest * 3, t.rest * 3 + 3), dx);
 
 /* The sentence on the storyboard's four lines */
 const BREAKS = ["filmmakers", "between", "and"];
@@ -34,13 +98,6 @@ const lines = LINE.split(" ").reduce<string[]>((all, word) => {
   else all[all.length - 1] += ` ${word}`;
   return all;
 }, []);
-
-/* The still: the storyboard's box (2000 x 1129) with the letters at the camera's first place, the balls where they
-   pass slowest */
-const at = (t: { points: number[]; rest: number }) => t.points.slice(t.rest * 3, t.rest * 3 + 3);
-const [ux, uy, ur] = at(tracks.u);
-const [rx, ry, rr] = at(tracks.r);
-const camera = "translate(-557.7 3860) scale(24.87) rotate(-90)";
 ---
 
 {
@@ -49,10 +106,10 @@ const camera = "translate(-557.7 3860) scale(24.87) rotate(-90)";
       (() => {
         /* The home's intro (src/components/section/HomeIntro.astro): on a visit that starts on the home, once per
            tab session, every time with ?op-intro in the address; never with reduced motion, nor on a page change
-           within the site (the document is already loaded then). */
+           within the site (the document is already loaded then). Its CSS plays it; this only decides. */
         if (document.readyState !== "loading") return;
-        const root = document.documentElement;
         if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        const root = document.documentElement;
         const asked = new URLSearchParams(location.search).has("op-intro");
         let seen = true;
         try {
@@ -61,10 +118,12 @@ const camera = "translate(-557.7 3860) scale(24.87) rotate(-90)";
         } catch {}
         if (seen && !asked) return;
         root.dataset.intro = "play";
-        /* if its script never runs, or stops half way, the page comes back by itself */
-        const back = () => delete root.dataset.intro;
-        setTimeout(() => root.dataset.intro === "play" && back(), 4000);
-        setTimeout(() => root.dataset.intro && back(), 12000);
+        /* if the page's script never says it has ended, the page comes back by itself */
+        setTimeout(() => {
+          if (root.dataset.intro === undefined) return;
+          delete root.dataset.intro;
+          document.dispatchEvent(new Event("home-intro:end"));
+        }, 9000);
       })();
     </script>
   )
@@ -72,13 +131,25 @@ const camera = "translate(-557.7 3860) scale(24.87) rotate(-90)";
 
 {
   part === "cover" && (
-    <div class="home-intro_wrap" aria-hidden="true" data-u={U} data-r={R}>
-      <canvas class="home-intro_scene" />
-      <p class="home-intro_line text-style-h2">
-        {lines.map((l) => (
-          <span class="home-intro_part">{l}</span>
-        ))}
-      </p>
+    <div class="home-intro_wrap" aria-hidden="true">
+      <style is:inline set:html={ballKeyframes} />
+      <div class="home-intro_box">
+        <svg class="home-intro_scene" viewBox="0 0 2000 1129">
+          <g class="home-intro_zoom">
+            <path class="home-intro_ground" d={GROUND} transform={camera} />
+            <path class="home-intro_black" d={U + R} transform={camera} />
+          </g>
+        </svg>
+        <span class="home-intro_ball is-r" />
+        <span class="home-intro_ball is-u" />
+      </div>
+      <div class="home-intro_words site-grid">
+        <p class="home-intro_line text-style-h3">
+          {lines.map((l) => (
+            <span class="home-intro_part">{l}</span>
+          ))}
+        </p>
+      </div>
     </div>
   )
 }
@@ -86,17 +157,13 @@ const camera = "translate(-557.7 3860) scale(24.87) rotate(-90)";
 {
   part === "sample" && (
     <div class="home-intro_sample" aria-hidden="true">
-      <svg class="home-intro_still" viewBox="0 0 2000 1129">
-        <g transform={camera}>
-          <path d={U} />
-          <circle class="home-intro_ball" cx={ux} cy={uy} r={ur} />
-        </g>
-        <g transform={`${camera} translate(-4.4 0)`}>
-          <path d={R} />
-          <circle class="home-intro_ball" cx={rx} cy={ry} r={rr} />
-        </g>
+      <svg class="home-intro_scene" viewBox="0 0 2000 1129">
+        <path class="home-intro_ground" d={GROUND} transform={camera} />
+        <path class="home-intro_black" d={U + R} transform={camera} />
+        <circle class="home-intro_still" {...rest(tracks.r, R_SHIFT)} />
+        <circle class="home-intro_still" {...rest(tracks.u, 0)} />
       </svg>
-      <p class="home-intro_line text-style-h2">
+      <p class="home-intro_line text-style-h3">
         {lines.map((l) => (
           <span class="home-intro_part">{l}</span>
         ))}
@@ -106,268 +173,42 @@ const camera = "translate(-557.7 3860) scale(24.87) rotate(-90)";
 }
 
 <script>
-  import { gsap } from "gsap";
-  import { CustomEase } from "gsap/CustomEase";
   import { onPage } from "@/utils/page.ts";
   import { onLenis } from "@/utils/smooth-scroll.ts";
-  import tracks from "@/data/intro-tracks.json";
 
-  gsap.registerPlugin(CustomEase);
-
-  type Track = { points: number[]; rest: number };
-  type Plane = { lx: number; ly: number; drift: number; zoom: number };
-
-  /* The storyboard's box is 2000 x 1129. The camera's first place: the wordmark turned a quarter (its « u » across the
-     screen, its bowl at the right edge), 24.87 units of the box to one of the wordmark. The « r » is drawn 4.4 units
-     closer to the « u » than in the wordmark, as in the storyboard. */
-  const BOX = { w: 2000, h: 1129, x: -557.7, y: 3860, s: 24.87 };
-  const R_SHIFT = -4.4;
-  // where the sentence sits (its left and its middle) and where the camera goes in: on the « u », where it was read
-  const WORDS = { x: 1003, y: 580 };
-  const FOCUS = { x: 1250, y: 580 };
-  // the bowl's outer edge in the box (the storyboard's), which the sentence keeps clear of
-  const BOWL = { x: 1190, y: 1125, r: 805 };
-
+  /* The intro plays in CSS from the first paint; here only what needs a script: the smooth scroll held while it
+     plays, a click, a key, the wheel or a swipe playing the rest five times faster, and its end said to the page
+     (the featured work's time waits for it). */
   onPage((signal) => {
     const root = document.documentElement;
-    const wrap = document.querySelector<HTMLElement>(".home-intro_wrap");
-    const canvas = wrap?.querySelector<HTMLCanvasElement>(".home-intro_scene");
-    const sentence = wrap?.querySelector<HTMLElement>(".home-intro_line");
-    const ctx = canvas?.getContext("2d");
-    if (!wrap || !canvas || !sentence || !ctx || root.dataset.intro !== "play") return;
-    // a page opened far down (a reload keeps the scroll): straight to the page
-    if (scrollY > innerHeight * 0.3) {
-      delete root.dataset.intro;
-      return;
-    }
-
-    const css = getComputedStyle(root);
-    const seconds = (name: string) => {
-      const v = css.getPropertyValue(name).trim();
-      return v.endsWith("ms") ? parseFloat(v) / 1000 : parseFloat(v) || 0;
-    };
-    const ease = (name: string) => {
-      const m = css.getPropertyValue(name).match(/cubic-bezier\(([^)]+)\)/);
-      return m ? CustomEase.create(name, m[1]) : "power2.out";
-    };
-    const colour = (name: string) => css.getPropertyValue(name).trim();
-    const OUT = ease("--ease-out"), ARRIVE = ease("--ease-arrive"), TRAVEL = ease("--ease-travel"), LEAVE = ease("--ease-leave");
-    const FAST = seconds("--duration-fast"), BASE = seconds("--duration-base"), SLOW = seconds("--duration-slow");
-    const HOLD = seconds("--intro-hold"), DIVE = seconds("--intro-dive-duration");
-    const RED = colour("--red"), BLACK = colour("--black");
-
-    // the letters, each with its run-ons, as one canvas path
-    const SHAPES = { U: [new Path2D(wrap.dataset.u ?? "")], R: [new Path2D(wrap.dataset.r ?? "")] };
-    // the black is painted whole on its own layer, then laid on at its opacity: where the letters cross as they grow
-    // at their own pace, it never darkens
-    const layer = document.createElement("canvas");
-    const lctx = layer.getContext("2d");
-    if (!lctx) return;
-
-    const media = document.querySelector<HTMLElement>(".hero-home_media");
-    const title = document.querySelector<HTMLElement>(".hero-home_title");
-    const row = document.querySelector<HTMLElement>(".hero-home_row");
-    const nav = [...document.querySelectorAll<HTMLElement>(".nav_logo, .nav_links > li, .nav_contact, .nav_action")];
-    const rowItems = row ? [...row.querySelectorAll<HTMLElement>(":scope > :is(.hero-home_label, .hero-home_slides, .hero-home_count)")] : [];
-    const words = [...sentence.querySelectorAll<HTMLElement>(".home-intro_part")];
-
-    /* ---- where everything is, for this screen ---- */
-    const L = { W: 0, H: 0, dpr: 1, f: 1, ox: 0, oy: 0, fill: 3.2, rise: 20 };
-    const P: Record<"U" | "R", Plane> = { U: { lx: 0, ly: -40, drift: 0, zoom: 0 }, R: { lx: 25, ly: 0, drift: 0, zoom: 0 } };
-    const B = { u: 0, r: 0, showU: 1, showR: 1 };
-    const S = { black: 1 };
-    const box = (x: number, y: number) => [x * L.f + L.ox, y * L.f + L.oy];
-
-    function layout() {
-      L.W = innerWidth;
-      L.H = innerHeight;
-      L.dpr = Math.min(devicePixelRatio || 1, 3);
-      if (L.W < L.H) {
-        // upright: the box's right part, its width the screen's, the « u » seen whole below
-        L.f = L.W / 1040;
-        L.ox = -960 * L.f;
-        L.oy = (L.H - BOX.h * L.f) / 2;
-        L.fill = 4.8;
-      } else {
-        // across: the box covers the screen
-        L.f = Math.max(L.W / BOX.w, L.H / BOX.h);
-        L.ox = (L.W - BOX.w * L.f) / 2;
-        L.oy = (L.H - BOX.h * L.f) / 2;
-        L.fill = 3.2;
-      }
-      L.rise = parseFloat(css.fontSize) * 1.25;
-      canvas!.width = layer.width = Math.round(L.W * L.dpr);
-      canvas!.height = layer.height = Math.round(L.H * L.dpr);
-      // the sentence: its middle on the band's, its left where the storyboard has it unless a line would reach the
-      // bowl's edge; then left enough for its longest line, never past the site's margin
-      sentence!.style.left = "0px";
-      const height = sentence!.offsetHeight;
-      const top = box(0, WORDS.y)[1] - height / 2;
-      let left = box(WORDS.x, 0)[0];
-      words.forEach((w) => {
-        const middle = top + w.offsetTop + w.offsetHeight / 2;
-        const yb = (middle - L.oy) / L.f;
-        const edge = box(BOWL.x + Math.sqrt(Math.max(0, BOWL.r ** 2 - (BOWL.y - yb) ** 2)), 0)[0];
-        left = Math.min(left, edge - w.offsetWidth - L.rise * 2);
-      });
-      sentence!.style.left = `${Math.max(left, parseFloat(css.getPropertyValue("--site-margin")) || 0)}px`;
-      sentence!.style.top = `${top}px`;
-    }
-
-    /* ---- one frame: the red, the letters' black (the film shows where it thins), the balls ---- */
-    const track = (t: Track, i: number) => {
-      const n = t.points.length / 3;
-      const k = Math.max(0, Math.min(n - 1.001, i));
-      const a = Math.floor(k), f = k - a, p = t.points;
-      return [0, 1, 2].map((j) => p[a * 3 + j] + (p[(a + 1) * 3 + j] - p[a * 3 + j]) * f);
-    };
-    function plane(c: CanvasRenderingContext2D, p: Plane, lx: number, ly: number) {
-      const [fx, fy] = box(FOCUS.x, FOCUS.y);
-      const z = 1 + (L.fill - 1) * p.zoom;
-      c.setTransform(L.dpr, 0, 0, L.dpr, 0, 0);
-      c.translate(fx, fy);
-      c.scale(z, z);
-      c.translate(-fx, -fy + p.drift * L.H);
-      c.translate(BOX.x * L.f + L.ox, BOX.y * L.f + L.oy);
-      c.scale(BOX.s * L.f, BOX.s * L.f);
-      c.rotate(-Math.PI / 2);
-      c.translate(lx, ly);
-    }
-    const planes = () =>
-      [
-        ["R", P.R, R_SHIFT + P.R.lx, 0],
-        ["U", P.U, 0, P.U.ly],
-      ] as const;
-    function draw() {
-      const c = ctx!;
-      c.setTransform(1, 0, 0, 1, 0, 0);
-      c.globalAlpha = 1;
-      c.globalCompositeOperation = "source-over";
-      c.fillStyle = RED;
-      c.fillRect(0, 0, canvas!.width, canvas!.height);
-      const solid = S.black >= 1;
-      if (!solid) {
-        c.globalCompositeOperation = "destination-out";
-        for (const [k, p, lx, ly] of planes()) {
-          plane(c, p, lx, ly);
-          SHAPES[k].forEach((s) => c.fill(s));
-        }
-        c.globalCompositeOperation = "source-over";
-        lctx!.setTransform(1, 0, 0, 1, 0, 0);
-        lctx!.clearRect(0, 0, layer.width, layer.height);
-      }
-      if (S.black > 0) {
-        const b = solid ? c : lctx!;
-        b.fillStyle = BLACK;
-        for (const [k, p, lx, ly] of planes()) {
-          plane(b, p, lx, ly);
-          SHAPES[k].forEach((s) => b.fill(s));
-        }
-        if (!solid) {
-          c.setTransform(1, 0, 0, 1, 0, 0);
-          c.globalAlpha = S.black;
-          c.drawImage(layer, 0, 0);
-          c.globalAlpha = 1;
-        }
-      }
-      c.fillStyle = RED;
-      const balls = [
-        [P.R, R_SHIFT + P.R.lx, 0, track(tracks.r, B.r), B.showR],
-        [P.U, 0, P.U.ly, track(tracks.u, B.u), B.showU],
-      ] as const;
-      for (const [p, lx, ly, [x, y, r], show] of balls) {
-        if (!show) continue;
-        plane(c, p, lx, ly);
-        c.beginPath();
-        c.arc(x, y, r, 0, Math.PI * 2);
-        c.fill();
-      }
-      sentence!.style.translate = `0 ${(P.U.drift * L.H).toFixed(2)}px`;
-    }
-
-    /* ---- the timeline ---- */
-    // fast at both ends, slow through the middle: a ball lingers where the storyboard has it, never stops
-    const linger = (p: number) => p + (0.72 * Math.sin(2 * Math.PI * p)) / (2 * Math.PI);
-    const tl = gsap.timeline({ paused: true, onUpdate: draw });
-    const through = (key: "u" | "r", t: Track, reach: number, at: number, duration: number) => {
-      const run = { p: 0 };
-      tl.to(run, { p: 1, duration, ease: "none", onUpdate: () => (B[key] = t.rest + reach * (2 * linger(run.p) - 1)) }, at);
-    };
-
-    // the first frame (job: say who Curveball is, in its own shapes): the « u » comes in from the left, the « r »
-    // from the top; the shapes rise a little the whole time, the « r » nearer, faster
-    tl.to(P.U, { ly: 0, duration: BASE, ease: ARRIVE }, 0);
-    tl.to(P.R, { lx: 0, duration: BASE, ease: ARRIVE }, 0.08);
-    tl.to(P.R, { drift: -0.035, duration: HOLD + DIVE, ease: "none" }, 0);
-    tl.to(P.U, { drift: -0.02, duration: HOLD + DIVE, ease: "none" }, 0);
-    // each ball runs the whole of its letter and leaves the frame: the r's round its shoulder and out by the right,
-    // the u's up from below through the bowl, along the band behind the sentence and out by the left as the dive
-    // starts; its size is the stroke's (97 %), so it never touches an edge where the stroke narrows
-    through("r", tracks.r, 155, 0.2, HOLD + 0.25);
-    through("u", tracks.u, 180, 0.35, HOLD - 0.35);
-    // the sentence fades up line by line, as the site's openings do (no mask)
-    tl.fromTo(words, { autoAlpha: 0, y: L.rise * 0.9 }, { autoAlpha: 1, y: 0, duration: BASE, ease: OUT, stagger: 0.07 }, 0.45);
-
-    // the dive (job: go into the logo and come out on the work): the sentence goes, the black thins to the film
-    // while each letter grows round the place it was read, the « r » faster; the film settles as it comes
-    tl.to(words, { autoAlpha: 0, y: () => -L.rise * 0.6, duration: FAST, ease: LEAVE, stagger: 0.03 }, HOLD - 0.15);
-    tl.to(P.U, { zoom: 1, duration: DIVE, ease: TRAVEL }, HOLD);
-    tl.to(P.R, { zoom: 1.32, duration: DIVE, ease: TRAVEL }, HOLD);
-    tl.to(S, { black: 0, duration: BASE, ease: TRAVEL }, HOLD + 0.1);
-    if (media) tl.fromTo(media, { scale: 1.12 }, { scale: 1, duration: DIVE + 0.6, ease: OUT }, HOLD);
-    tl.set(wrap, { autoAlpha: 0 }, HOLD + DIVE);
-
-    // the opening's own elements (job: hand over to the page) while the film is still opening up: the wordmark,
-    // the menu, the row's rule drawn from the left, then the row, one after another
-    const reveal = HOLD + DIVE * 0.55;
-    const up = () => ({ autoAlpha: 0, y: L.rise });
-    const into = (stagger = 0) => ({ autoAlpha: 1, y: 0, duration: BASE, ease: OUT, stagger });
-    if (title) tl.fromTo(title, up(), into(), reveal);
-    if (nav.length) tl.fromTo(nav, up(), into(0.08), reveal + 0.12);
-    if (row) tl.fromTo(row, { "--intro-rule": 0 }, { "--intro-rule": 1, duration: SLOW, ease: ARRIVE }, reveal + 0.3);
-    if (rowItems.length) tl.fromTo(rowItems, up(), into(0.1), reveal + 0.5);
-    tl.call(() => finish(), [], ">");
-
-    /* ---- the page held still while it plays; a click, a key, the wheel or a swipe hurries it to its end ---- */
+    if (root.dataset.intro === undefined) return;
+    const mine = () =>
+      document
+        .getAnimations()
+        .filter((a): a is CSSAnimation => a instanceof CSSAnimation && a.animationName.startsWith("home-intro"));
     let lenis: { stop(): void; start(): void } | undefined;
-    const stopLenis = onLenis((l) => {
+    const release = onLenis((l) => {
       lenis = l;
-      l.stop();
+      if (root.dataset.intro !== undefined) l.stop();
     });
-    root.style.overflow = "hidden";
-    let done = false;
-    function finish() {
-      if (done) return;
-      done = true;
-      tl.kill();
+    const end = () => {
+      if (root.dataset.intro === undefined) return;
       delete root.dataset.intro;
-      gsap.set(wrap!, { autoAlpha: 0 });
-      gsap.set([title, ...nav, ...rowItems, media].filter(Boolean), { clearProps: "opacity,visibility,transform,translate,scale" });
-      row?.style.removeProperty("--intro-rule");
-      root.style.removeProperty("overflow");
       lenis?.start();
-      stopLenis();
+      release();
       document.dispatchEvent(new Event("home-intro:end"));
-    }
+    };
+    // a page opened far down (a reload keeps the scroll): straight to the page
+    if (scrollY > innerHeight * 0.3) return end();
+    Promise.allSettled(mine().map((a) => a.finished)).then(end);
     let hurried = false;
     const hurry = () => {
-      if (hurried || done) return;
+      if (hurried) return;
       hurried = true;
-      gsap.to(tl, { timeScale: 5, duration: FAST, ease: "none" });
+      mine().forEach((a) => a.updatePlaybackRate(5));
     };
     for (const type of ["pointerdown", "keydown", "wheel", "touchmove"]) addEventListener(type, hurry, { signal, passive: true });
-    addEventListener("resize", () => (layout(), draw()), { signal });
-    signal.addEventListener("abort", finish, { once: true });
-
-    layout();
-    draw();
-    root.dataset.intro = "run";
-    // the sentence's face first (a second at most), then it plays
-    Promise.race([document.fonts?.ready, new Promise((resolve) => setTimeout(resolve, 1000))]).then(() => {
-      if (done) return;
-      layout();
-      tl.play();
-    });
+    signal.addEventListener("abort", end, { once: true });
   });
 </script>
 
@@ -376,81 +217,220 @@ const camera = "translate(-557.7 3860) scale(24.87) rotate(-90)";
     .home-intro_wrap {
       display: none;
     }
-    /* while it plays it covers the page; at the first paint, before its drawing, the red of the storyboard */
-    html[data-intro] .home-intro_wrap {
-      position: fixed;
-      inset: 0;
-      z-index: var(--intro-layer);
-      display: block;
-      overflow: hidden;
+    /* the storyboard's box: covering the screen across; upright, its right part as wide as the screen, centred */
+    .home-intro_box {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: max(100cqw, 100cqh * 2000 / 1129);
+      aspect-ratio: 2000 / 1129;
+      translate: -50% -50%;
+      container-type: size;
+      @media (orientation: portrait) {
+        left: calc(100cqw * -960 / 1040);
+        width: calc(100cqw * 2000 / 1040);
+        translate: 0 -50%;
+      }
     }
-    html[data-intro="play"] .home-intro_wrap {
-      background-color: var(--red);
-    }
-    /* the drawing fills the cover (the canvas) or the sample's box (the still) */
-    :is(.home-intro_scene, .home-intro_still) {
+    /* the drawing fills the box (the intro) or the sample's frame, and runs on past them */
+    .home-intro_scene {
       position: absolute;
       inset: 0;
       display: block;
       width: 100%;
       height: 100%;
+      overflow: visible;
     }
-    /* the footer's sentence, on the « u »: the site's h2, smaller upright so it stays inside the band */
-    .home-intro_line {
+    :is(.home-intro_ground, .home-intro_still) {
+      fill: var(--red);
+    }
+    .home-intro_black {
+      fill: var(--black);
+    }
+    .home-intro_ball {
       position: absolute;
+      top: 0;
+      left: 0;
+      width: 25cqw;
+      margin: -12.5cqw;
+      aspect-ratio: 1;
+      border-radius: var(--radius-round);
+      background-color: var(--red);
+    }
+    /* the footer's sentence on the « u », on the grid: in the menu's column across, on the margin upright */
+    .home-intro_words {
+      position: absolute;
+      inset-inline: 0;
+      top: calc(50cqh + 0.01373 * max(100cqh, 100cqw * 1129 / 2000));
+      translate: 0 -50%;
+      @media (orientation: portrait) {
+        top: calc(50cqh + 0.01373 * 100cqw * 1129 / 1040);
+      }
+    }
+    .home-intro_line {
+      grid-column: half / end;
       margin: 0;
       color: var(--taupe);
       @media (orientation: portrait) {
-        font-size: var(--h4);
+        grid-column: margin / end;
       }
     }
     .home-intro_part {
       display: block;
       white-space: nowrap;
     }
-    html[data-intro] .home-intro_part {
-      opacity: 0;
+    .home-intro_part:nth-child(2) {
+      --_i: 1;
     }
-    /* the opening's own elements wait for it, which brings them in; the row's rule is drawn from the left */
-    html[data-intro]
-      :is(.nav_logo, .nav_links > li, .nav_contact, .nav_action, .hero-home_title, .hero-home_label, .hero-home_slides, .hero-home_count) {
-      opacity: 0;
+    .home-intro_part:nth-child(3) {
+      --_i: 2;
     }
-    html[data-intro] .hero-home_row {
-      border-top-color: transparent;
-      &::before {
-        content: "";
-        position: absolute;
-        inset: calc(var(--border-width) * -1) 0 auto;
-        height: var(--border-width);
-        background-color: var(--border);
-        transform-origin: left;
-        scale: var(--intro-rule, 0) 1;
+    .home-intro_part:nth-child(4) {
+      --_i: 3;
+    }
+
+    /* While it plays: it covers the page (held still, its scrollbar's room kept), and goes once the film fills the
+       screen. The opening's own elements come in one after another as the film opens up (past half the dive): the
+       wordmark, the menu, the row's rule drawn from the left, the row; the film settles from 112 % through the dive. */
+    html[data-intro] {
+      --intro-reveal: calc(var(--intro-hold) + var(--intro-dive-duration) * 0.55);
+      overflow: hidden;
+      scrollbar-gutter: stable;
+      & .home-intro_wrap {
+        --intro-zoom: 3.2;
+        position: fixed;
+        inset: 0;
+        z-index: var(--intro-layer);
+        display: block;
+        overflow: hidden;
+        container-type: size;
+        animation: home-intro-gone var(--duration-faster) linear calc(var(--intro-hold) + var(--intro-dive-duration)) both;
+        @media (orientation: portrait) {
+          --intro-zoom: 4.8;
+        }
+      }
+      /* the balls run through the letters from the first paint, the « u »'s a step behind the « r »'s; both have
+         left the frame before the dive */
+      & .home-intro_ball {
+        animation: home-intro-ball-r calc(var(--intro-hold) - 0.1 * 1s) linear both;
+        &.is-u {
+          animation-name: home-intro-ball-u;
+          animation-duration: calc(var(--intro-hold) - 0.2 * 1s);
+          animation-delay: calc(0.1 * 1s);
+        }
+      }
+      & .home-intro_part {
+        animation:
+          home-intro-up var(--duration-base) var(--ease-out) calc((0.3 + var(--_i, 0) * 0.07) * 1s) both,
+          home-intro-out var(--duration-fast) var(--ease-leave) calc(var(--intro-hold) + (var(--_i, 0) * 0.03 - 0.2) * 1s) forwards;
+      }
+      /* the dive: the black thins to the film while the letters grow round where the sentence was read */
+      & .home-intro_black {
+        animation: home-intro-thin var(--duration-base) var(--ease-travel) calc(var(--intro-hold) + 0.1 * 1s) both;
+      }
+      & .home-intro_zoom {
+        transform-box: view-box;
+        transform-origin: calc(1250 * 1px) calc(580 * 1px);
+        animation: home-intro-zoom var(--intro-dive-duration) var(--ease-travel) var(--intro-hold) both;
+      }
+      & .hero-home_media {
+        animation: home-intro-settle calc(var(--intro-dive-duration) + 0.6 * 1s) var(--ease-out) var(--intro-hold) both;
+      }
+      & :is(.hero-home_title, .nav_logo, .nav_links > li, .nav_contact, .nav_action, .hero-home_label, .hero-home_slides, .hero-home_count) {
+        animation: home-intro-up var(--duration-base) var(--ease-out) calc(var(--intro-reveal) + var(--_at, 0) * 1s) both;
+      }
+      & .nav_logo {
+        --_at: 0.12;
+      }
+      & .nav_links > li:nth-child(1) {
+        --_at: 0.2;
+      }
+      & .nav_links > li:nth-child(2) {
+        --_at: 0.28;
+      }
+      & .nav_links > li:nth-child(3) {
+        --_at: 0.36;
+      }
+      & .nav_contact {
+        --_at: 0.44;
+      }
+      & .nav_action {
+        --_at: 0.52;
+      }
+      & .hero-home_label {
+        --_at: 0.5;
+      }
+      & .hero-home_slides {
+        --_at: 0.6;
+      }
+      & .hero-home_count {
+        --_at: 0.7;
+      }
+      & .hero-home_row {
+        border-top-color: transparent;
+        &::before {
+          content: "";
+          position: absolute;
+          inset: calc(var(--border-width) * -1) 0 auto;
+          height: var(--border-width);
+          background-color: var(--border);
+          transform-origin: left;
+          animation: home-intro-rule var(--duration-slow) var(--ease-arrive) calc(var(--intro-reveal) + 0.3 * 1s) both;
+        }
       }
     }
-    html[data-intro] .hero-home_media {
-      transform-origin: center;
+
+    @keyframes home-intro-up {
+      from {
+        opacity: 0;
+        translate: 0 1.25rem;
+      }
     }
-    /* the components page: the first frame, still */
+    @keyframes home-intro-out {
+      to {
+        opacity: 0;
+        translate: 0 -0.75rem;
+      }
+    }
+    @keyframes home-intro-thin {
+      to {
+        opacity: 0;
+      }
+    }
+    @keyframes home-intro-zoom {
+      to {
+        scale: var(--intro-zoom);
+      }
+    }
+    @keyframes home-intro-settle {
+      from {
+        scale: 1.12;
+      }
+    }
+    @keyframes home-intro-rule {
+      from {
+        scale: 0 1;
+      }
+    }
+    @keyframes home-intro-gone {
+      to {
+        visibility: hidden;
+      }
+    }
+
+    /* the components page: the first frame, still (the storyboard's type size: 62 of its 2000) */
     .home-intro_sample {
       position: relative;
       width: 100%;
       aspect-ratio: 2000 / 1129;
       overflow: hidden;
-      background-color: var(--red);
       container-type: inline-size;
-      /* the storyboard's size: 62 of its 2000 */
       & .home-intro_line {
+        position: absolute;
         left: 50.15%;
         top: 40.3%;
         font-size: 3.1cqi;
       }
-    }
-    .home-intro_still {
-      fill: var(--black);
-    }
-    .home-intro_ball {
-      fill: var(--red);
     }
   }
 </style>
