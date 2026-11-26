@@ -89,17 +89,18 @@ it (system/gen.py).
   its place (24 % of the drawing), and keeps easing in until the dive (`--intro-hold`, ease-smooth), while the whole
   drawing comes a little nearer (93 % to 100 %, linear, round where the sentence is read): nothing is ever still, and
   the dive carries on a movement already there. The footer's sentence (h3, in the menu's
-  column; on the margin upright) comes in the same way from 0.35 s, from the left with the « u », a line after the other
-  (80 ms). Then the balls, once it can be read: the « r »'s at 1.1 s, the « u »'s when the first is half way, each 2 s
-  through the whole of its letter and out of the frame, slowest where the storyboard has it, its size the stroke's
+  column; on the margin upright) rises in from 0.3 s as the site's elements do (base, ease-out, 1.25 rem), a line after
+  the other (70 ms). The balls come as it settles, together: the « r »'s shows at about 1.2 s, the « u »'s a moment
+  later (0.25 s; it sets off later upright, where its stem starts on the screen), each 2.6 s through the whole of its
+  letter and out of the frame, slowest where the storyboard has it, its size the stroke's
   (97 %, system/intro-tracks.py); their keyframes are written by the component and move them by transform, so they run
-  while the page's scripts load. At `--intro-hold` (3.975 s; 3.7 s upright, where the drawing runs past the screen's
-  left edge), as the second ball is half out of the frame, the sentence goes (fast, the leave curve) and a canvas takes
+  while the page's scripts load. At `--intro-hold` (3.1 s; 3.38 s upright), as the « u »'s ball is half out of the
+  frame, the sentence goes (fast, the leave curve) and a canvas takes
   the drawing over on the CSS's clock, the ball carried out on its letter: the black thins to the opening's film (base, ease-travel) while each letter grows
   round where the sentence was read (`--intro-dive-duration`, 1.6 s, ease-travel; 3.2 times across, 4.8 upright, the
   « r » 1.32 times faster) and the film settles from 112 %; past half the dive the wordmark, the menu, the row's rule
   (drawn from the left, slow, the arrive curve) and the row come in one after another (base, ease-out, 1.25 rem).
-  About 6.4 s in all; nothing hurries it. Without the script it fades into the page at the dive. The featured work's
+  About 5.3 s in all; nothing hurries it. Without the script it fades into the page at the dive. The featured work's
   time starts after it. None with reduced motion.
 - Reduced motion: no travel, scale, parallax or smooth scroll; the balls sit at their Figma rest, the reel's film
   fills its stage, colours change at once or over faster, page changes crossfade.

@@ -720,4 +720,11 @@ One line per decision: the date, who asked, what was decided and why. The newest
   the dive) and the drawing comes nearer the whole time (93 % to 100 %, linear), so the dive's growth carries it on.
   The letters' run-ons are about a screen past the edge (many screens before): drawn that long, the browser painted the
   scaled layer coarse (the « r »'s arm stepped). About 6.4 s in all.
+- 2026-11-25, Sam (« garder ça plus simple »; « le texte, j'aimais mieux avant, plus de bas en haut, plus subtil »; « les
+  boules une petite affaire plus lentement, plus en même temps : la deuxième juste un mini délai après l'apparition de
+  la première »; « en ce moment on dirait plein d'étapes séparées »): the sentence rises in again (base, ease-out,
+  1.25 rem, 70 ms a line, from 0.3 s) instead of sliding from the left; the balls run 2.6 s (2 s before) and show
+  together as the sentence settles, the « u »'s about 0.25 s after the « r »'s (measured at 1440, 1920, 390 and 430;
+  upright the « u »'s sets off later, its stem starting on the screen). The dive still starts as the « u »'s ball is
+  half out, now at 3.1 s (3.38 s upright): about 5.3 s in all. The slow zoom and the letters' slide stay.
 
