@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "defaultTarget": "all",
+  "githubAccount": "",
+  "hosting": {
+    "provider": "cloudflare-workers",
+    "accountId": "33f4d673af24c70ff7c895de93ba0501",
+    "project": "curveball"
+  },
+  "buildScript": "build",
+  "beforePublish": [],
+  "afterPublish": [],
+  "publishedSite": {
+    "hosting": {
+      "provider": "cloudflare-workers",
+      "accountId": "33f4d673af24c70ff7c895de93ba0501",
+      "project": "curveball"
+    },
+    "source": "discovered",
+    "url": "https://curveball.samuel-3f4.workers.dev"
+  }
+}
