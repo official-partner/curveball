@@ -697,4 +697,12 @@ One line per decision: the date, who asked, what was decided and why. The newest
   (`half`) on a computer and on the margin upright. The script left only hurries it (a click, a key, the wheel, a
   swipe: five times faster) and tells the page it has ended; without it the intro still plays, and the page comes
   back after 9 s.
+- 2026-11-25, Sam (screenshots of the dive: squares of an older frame, « ça bug, ça glitch »; « j'enlèverais le script
+  qui accélère »; « ramener le petit effet d'apparition des shapes, sur l'axe des X, inversé, plus subtil, plus
+  smooth »): the dive is drawn on a canvas again, on the CSS's clock (the wrap's animation); the SVG redrawn by CSS at
+  every frame, full screen, made the browser show tiles of an older frame when it fell behind. The canvas brings
+  back the « r »'s faster growth. The first frame stays CSS: each letter is its own SVG and slides in from its side
+  (the « u » from the left, the « r » from the right, 8 % of the drawing, slow x 1.25 on ease-smooth), its ball with it.
+  Nothing hurries the intro any more (the script only draws the dive, holds the smooth scroll and tells the page it
+  ended); without the script it fades into the page at the dive.
 
