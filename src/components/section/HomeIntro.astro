@@ -482,6 +482,13 @@ const lines = LINE.split(" ").reduce<string[]>((all, word) => {
       & :is(.home-intro_shape, .home-intro_runner).is-r {
         --_from: 24cqw;
       }
+      /* the sentence as a whole travels in with the « u » it sits on, a little farther, so a little faster: a layer
+         above the letters, never past the black (Sam, Nov 25: « le bloc texte en entier voyage de gauche à droite en
+         même temps que sa shape ... un genre de parallaxe ») */
+      & .home-intro_line {
+        --_from: -32cqw;
+        animation: home-intro-enter var(--intro-hold) var(--ease-smooth) both;
+      }
       & .home-intro_part {
         animation:
           home-intro-up var(--duration-base) var(--ease-out) calc((0.3 + var(--_i, 0) * 0.07) * 1s) both,
@@ -489,8 +496,8 @@ const lines = LINE.split(" ").reduce<string[]>((all, word) => {
       }
       /* then the balls, as the sentence settles, together (Sam, Nov 25: « la deuxième boule juste un mini délai plus
          tard que l'apparition de la première », « plus lentement »): the « u »'s shows a moment after the « r »'s;
-         each takes 2.5 s through its letter. The dive starts as the « u »'s is half out of the frame (--intro-hold;
-         upright sooner, the drawing running past the left edge); the script carries it out on the canvas */
+         each takes 2.6 s through its letter. The dive starts as the « u »'s is half out of the frame (--intro-hold;
+         upright --intro-hold-upright); the script carries it out on the canvas */
       & .home-intro_ball {
         --_run: calc(2.6 * 1s);
         animation: home-intro-ball-r var(--_run) linear calc(0.9 * 1s) both;

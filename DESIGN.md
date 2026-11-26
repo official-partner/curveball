@@ -90,7 +90,8 @@ it (system/gen.py).
   drawing comes a little nearer (93 % to 100 %, linear, round where the sentence is read): nothing is ever still, and
   the dive carries on a movement already there. The footer's sentence (h3, in the menu's
   column; on the margin upright) rises in from 0.3 s as the site's elements do (base, ease-out, 1.25 rem), a line after
-  the other (70 ms). The balls come as it settles, together: the « r »'s shows at about 1.2 s, the « u »'s a moment
+  the other (70 ms), while the whole sentence travels in with the « u » it sits on, a little farther (32 % against the
+  letters' 24 %, the same curve and time): a layer above them, never past the black. The balls come as it settles, together: the « r »'s shows at about 1.2 s, the « u »'s a moment
   later (0.25 s; it sets off later upright, where its stem starts on the screen), each 2.6 s through the whole of its
   letter and out of the frame, slowest where the storyboard has it, its size the stroke's
   (97 %, system/intro-tracks.py); their keyframes are written by the component and move them by transform, so they run

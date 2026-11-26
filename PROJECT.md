@@ -727,4 +727,9 @@ One line per decision: the date, who asked, what was decided and why. The newest
   together as the sentence settles, the « u »'s about 0.25 s after the « r »'s (measured at 1440, 1920, 390 and 430;
   upright the « u »'s sets off later, its stem starting on the screen). The dive still starts as the « u »'s ball is
   half out, now at 3.1 s (3.38 s upright): about 5.3 s in all. The slow zoom and the letters' slide stay.
+- 2026-11-25, Sam (« le bloc texte en entier va voyager de gauche à droite, à peu près en même temps que sa shape ...
+  le texte ne va pas dépasser la shape noire ... pas au même timing ou à la même distance, un genre de parallaxe »):
+  the sentence as a whole slides in from the left with the « u » until the dive (ease-smooth), from 32 % of the screen
+  where the letters come from 24 %: always a little ahead of its letter, so never past the black. Its lines still rise
+  in one after another. Upright, where it sits on the margin, it comes in from the screen's edge.
 
