@@ -433,29 +433,34 @@ const lines = LINE.split(" ").reduce<string[]>((all, word) => {
           visibility: hidden;
         }
       }
-      /* the letters slide in from either side, a little (Sam, Nov 25: « plus subtil, plus smooth »), their balls
-         with them; each ball runs through its letter from the first paint and leaves the frame before the dive */
+      /* the letters slide in from either side, from well off their place, and settle (Sam, Nov 25: « qui partent de
+         plus loin, avec un ease à la fin »), their balls with them; the sentence comes in the same way, from the left
+         with the « u » it sits on, a line after the other */
       & :is(.home-intro_shape, .home-intro_runner) {
         animation: home-intro-enter calc(var(--duration-slow) * 1.25) var(--ease-smooth) both;
       }
       & :is(.home-intro_shape, .home-intro_runner).is-u {
-        --_from: -8cqw;
+        --_from: -24cqw;
       }
       & :is(.home-intro_shape, .home-intro_runner).is-r {
-        --_from: 8cqw;
-      }
-      & .home-intro_ball {
-        animation: home-intro-ball-r calc(var(--intro-hold) - 0.1 * 1s) linear both;
-        &.is-u {
-          animation-name: home-intro-ball-u;
-          animation-duration: calc(var(--intro-hold) - 0.2 * 1s);
-          animation-delay: calc(0.1 * 1s);
-        }
+        --_from: 24cqw;
       }
       & .home-intro_part {
         animation:
-          home-intro-up var(--duration-base) var(--ease-out) calc((0.3 + var(--_i, 0) * 0.07) * 1s) both,
+          home-intro-in calc(var(--duration-slow) * 1.25) var(--ease-smooth) calc((0.35 + var(--_i, 0) * 0.08) * 1s) both,
           home-intro-out var(--duration-fast) var(--ease-leave) calc(var(--intro-hold) + (var(--_i, 0) * 0.03 - 0.2) * 1s) forwards;
+      }
+      /* then the balls, once the sentence can be read (Sam, Nov 25): the « r »'s first, the « u »'s when the first is
+         half way; each takes 2 s through its letter, so the second has left the frame just before the dive
+         (--intro-hold, 4.15 s) */
+      & .home-intro_ball {
+        --_run: calc(2 * 1s);
+        --_start: calc(1.1 * 1s);
+        animation: home-intro-ball-r var(--_run) linear var(--_start) both;
+        &.is-u {
+          animation-name: home-intro-ball-u;
+          animation-delay: calc(var(--_start) + var(--_run) / 2);
+        }
       }
       & .hero-home_media {
         animation: home-intro-settle calc(var(--intro-dive-duration) + 0.6 * 1s) var(--ease-out) var(--intro-hold) both;
@@ -507,6 +512,12 @@ const lines = LINE.split(" ").reduce<string[]>((all, word) => {
     @keyframes home-intro-enter {
       from {
         translate: var(--_from) 0;
+      }
+    }
+    @keyframes home-intro-in {
+      from {
+        opacity: 0;
+        translate: -12cqw 0;
       }
     }
     @keyframes home-intro-up {

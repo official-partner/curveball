@@ -705,4 +705,11 @@ One line per decision: the date, who asked, what was decided and why. The newest
   (the « u » from the left, the « r » from the right, 8 % of the drawing, slow x 1.25 on ease-smooth), its ball with it.
   Nothing hurries the intro any more (the script only draws the dive, holds the smooth scroll and tells the page it
   ended); without the script it fades into the page at the dive.
+- 2026-11-25, Sam (« accentuer la première animation ... qui partent de plus loin et viennent se placer avec un ease à
+  la fin »; « faire apparaître le texte de la même façon »; « un petit délai entre l'apparition du texte et des
+  boules ... la première bulle en haut, quand elle est à mi-chemin, la bulle du bas »): the letters slide in from 24 %
+  of the drawing (8 % before) and settle on ease-smooth; the sentence slides in the same way from the left with the « u »
+  instead of fading up; the « r »'s ball starts at 1.1 s, the « u »'s at the first one's half way, each 2 s through its
+  letter. The dive now starts at 4.15 s (`--intro-hold`, 2.95 s before) so the second ball has left the frame: about
+  7 s in all instead of 5.4. The rest unchanged.
 

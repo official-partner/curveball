@@ -55,7 +55,7 @@ w("  --hover-duration: var(--duration-fast);\n  --hover-ease: var(--ease-out);\n
   "  --page-arrive-ease: var(--ease-arrive);")
 w("  --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);\n  --ease-osmo: var(--ease-arrive);\n  --ease-rebound: cubic-bezier(0.34, 1.56, 0.64, 1);")
 w("  /* The home's intro (Sam, Nov 25): its first frame, the dive into the logo, its place over the whole page */\n"
-  "  --intro-hold: 2950ms;\n  --intro-dive-duration: 1600ms;\n  --intro-layer: 900;")
+  "  --intro-hold: 4150ms;\n  --intro-dive-duration: 1600ms;\n  --intro-layer: 900;")
 w("  /* A card that links answers the pointer (Sam, comment 44, Nov 20): its round photo grows a little, the picture in\n     it a little more and a little longer */\n  --card-hover-scale: 1.04;\n  --card-hover-zoom: 1.1;")
 w("\n  /* Radius: the design has no rounded corner but full circles (the photos, the ball, the dot) */")
 w("  --radius-small: 0rem;\n  --radius-main: 0rem;\n  --radius-round: 100vw;")
