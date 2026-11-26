@@ -103,6 +103,13 @@ it (system/gen.py).
   (drawn from the left, slow, the arrive curve) and the row come in one after another (base, ease-out, 1.25 rem).
   About 5.3 s in all; nothing hurries it. Without the script it fades into the page at the dive. The featured work's
   time starts after it. None with reduced motion.
+- The footer's easter egg (Sam, Nov 25, the « Onde » of the study « Curveball, le easter egg du footer »): the symbol is
+  drawn as its three rings (src/data/symbol.ts), the cut of its C a mask; at rest it is the logo, to the pixel. While a
+  mouse is on it (or the keyboard's focus), the rings turn through three states (the logo, one fine line near the edge
+  with a wide hole, three thin rings), a state every 1.15 s, each ring 80 ms after the one inside it (a ball dropped in
+  water) on a soft spring (k 150, damping 0.72: under a pixel of overshoot); the cut slides out to the right and comes
+  back 0.38 s after the leave. The symbol takes the three page colours, one per state, on the footer's dark ground only
+  (fast, hover ease). Not on a touch screen, not with reduced motion.
 - Reduced motion: no travel, scale, parallax or smooth scroll; the balls sit at their Figma rest, the reel's film
   fills its stage, colours change at once or over faster, page changes crossfade.
 

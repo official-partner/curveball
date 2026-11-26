@@ -732,4 +732,10 @@ One line per decision: the date, who asked, what was decided and why. The newest
   the sentence as a whole slides in from the left with the « u » until the dive (ease-smooth), from 32 % of the screen
   where the letters come from 24 %: always a little ahead of its letter, so never past the black. Its lines still rise
   in one after another. Upright, where it sits on the margin, it comes in from the screen's edge.
-
+- 2026-11-25, Sam (« garde la 2, mets-la en dev ... le gap dans la shape jaune, augmente-le pour matcher le gap dans la
+  shape rouge, fais-la plus comme ça »): the footer's easter egg, the « Onde » of the study « Curveball, le easter egg
+  du footer » (artifact). The footer's symbol is now an inline SVG of three rings with the C's cut as a mask, the same
+  as symbol.svg at rest (compared at 444 px: no pixel apart by more than the edges' smoothing); the states are in
+  src/data/symbol.ts, the second redrawn from Sam's capture (its line near the edge, as wide as the logo's lines, 8.09;
+  its hole 31 % of the radius). On the footer's dark ground the symbol takes red, mustard and teal by state, the page's
+  colour again on leaving. Mouse and keyboard focus only; nothing with reduced motion. The nav keeps symbol.svg.

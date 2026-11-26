@@ -3,8 +3,8 @@
    above the black, the symbol in that colour, the menu, the line and the small print. Measured on News and Contact,
    identical on both (Home's curve sat 61 px to the right: one curve for all). Geometry in the Figma's units, scaled
    with the footer's width (cqw): 1728 wide, the symbol 290 below the top, 531 wide. */
-import LogoSymbol from "@/assets/logo/symbol.svg";
 import { SITE_NAME } from "@/consts.ts";
+import { C, LINE as CUT, STATES } from "@/data/symbol.ts";
 import { social, legal, SOCIAL_FILE, LINE } from "@/data/site.ts";
 
 interface Props {
@@ -20,6 +20,10 @@ const menu = [
   { href: "/about", label: "about" },
   { href: "/news", label: "news" },
 ];
+/* The symbol drawn as its three rings (src/data/symbol.ts), the cut of its C a mask: at rest, the logo itself; the
+   easter egg moves the rings (the script below). One mask per footer. */
+const cutId = `footer-cut-${Math.random().toString(36).slice(2, 8)}`;
+const rings = (STATES[0] ?? []).map(([i, o]) => ({ r: (i + o) / 2, w: o - i }));
 /* The bottom curve: the « u » turned a quarter, its top stem running off the right edge (Figma 9:452 on News) */
 const curve =
   "M-281.952 957.828C-277.695 1570.84 105.436 1907.14 646.077 1907.14L1765.67 1907.14L1765.67 1319.67L688.647 1319.67C407.684 1319.67 233.146 1196.22 228.889 957.828C224.632 698.15 399.17 587.468 684.39 587.468L1765.67 587.468L1765.67 0L641.82 0C126.721 0 -286.209 395.902 -281.952 957.828Z";
@@ -27,16 +31,62 @@ const curve =
 
 {
   render && (
-    <footer class:list={["footer_wrap theme-dark", variant === "plain" && "is-plain"]} data-paint="theme-dark" data-op-section="Footer">
+    <footer
+      class:list={["footer_wrap theme-dark", variant === "plain" && "is-plain"]}
+      data-paint="theme-dark"
+      data-op-section="Footer"
+    >
       {variant === "curve" && (
-        <svg class="footer_curve" viewBox="0 0 1728 300" aria-hidden="true" focusable="false">
+        <svg
+          class="footer_curve"
+          viewBox="0 0 1728 300"
+          aria-hidden="true"
+          focusable="false"
+        >
           <rect class="footer_curve-ground" width="1728" height="300" />
           <path class="footer_curve-shape" d={curve} />
         </svg>
       )}
       <div class="footer_layout site-grid">
         <a class="footer_symbol" href="/" aria-label={`${SITE_NAME}, home`}>
-          <LogoSymbol class="logo-art" aria-hidden="true" />
+          <svg
+            class="footer_symbol-art logo-art"
+            viewBox="0 0 548.743 548.743"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <defs>
+              <mask
+                id={cutId}
+                maskUnits="userSpaceOnUse"
+                x="-40"
+                y="-40"
+                width="640"
+                height="640"
+              >
+                <rect x="-40" y="-40" width="640" height="640" fill="white" />
+                <rect
+                  class="footer_symbol-cut"
+                  x={C}
+                  y={C - CUT / 2}
+                  width={600 - C}
+                  height={CUT}
+                  fill="black"
+                />
+              </mask>
+            </defs>
+            <g mask={`url(#${cutId})`} fill="none" stroke="currentColor">
+              {rings.map(({ r, w }) => (
+                <circle
+                  class="footer_symbol-ring"
+                  cx={C}
+                  cy={C}
+                  r={r}
+                  stroke-width={w}
+                />
+              ))}
+            </g>
+          </svg>
         </a>
         <nav class="footer_menu" aria-label="Footer">
           <ul class="text-style-menu">
@@ -52,11 +102,20 @@ const curve =
         <a class="footer_contact footer_link text-style-menu" href="/contact">
           contact us
         </a>
-        <p class="footer_social text-style-large" data-op-list="social" data-op-source={SOCIAL_FILE}>
+        <p
+          class="footer_social text-style-large"
+          data-op-list="social"
+          data-op-source={SOCIAL_FILE}
+        >
           {social.map((s, i) => (
             <>
               {s.href ? (
-                <a class="footer_link" href={s.href} data-op-item={s.id} aria-label={s.name}>
+                <a
+                  class="footer_link"
+                  href={s.href}
+                  data-op-item={s.id}
+                  aria-label={s.name}
+                >
                   {s.label}
                 </a>
               ) : (
@@ -70,7 +129,8 @@ const curve =
         </p>
         <p class="footer_line text-style-h2">{LINE}</p>
         <p class="footer_legal text-style-small">
-          © 2026 Curveball Films. Part of the Five to Sixty family, with Clockwork Post and FatHappy Media.
+          © 2026 Curveball Films. Part of the Five to Sixty family, with
+          Clockwork Post and FatHappy Media.
         </p>
         <p class="footer_policies text-style-small">
           {legal.map((l, i) => (
@@ -129,7 +189,8 @@ const curve =
          symbol 24 under it (the Figma's director page and About) */
       .is-plain & {
         padding-top: var(--space-5);
-        background: linear-gradient(var(--border), var(--border)) 0 0 / 100% var(--border-width) no-repeat;
+        background: linear-gradient(var(--border), var(--border)) 0 0 / 100%
+          var(--border-width) no-repeat;
       }
     }
     /* On a tablet the menu's size is the running text's: its own scale runs from the phone's big links (56) down to
@@ -179,13 +240,33 @@ const curve =
          one (Sam, Nov 12: « idéalement max 100vh ... avec un min »), 144 at least */
       @media (width >= 64rem) {
         grid-column: margin / span 4;
-        width: clamp(9rem, calc(100svh - var(--_rest) + var(--_above)), calc(var(--_u) * 531));
+        width: clamp(
+          9rem,
+          calc(100svh - var(--_rest) + var(--_above)),
+          calc(var(--_u) * 531)
+        );
       }
       /* on a red ground (the footer painted a red director's colour, data-paint), the symbol in the text's black */
       .theme-brand & {
         color: var(--text);
       }
       transition: color var(--paint-duration, 0s) var(--ease-travel);
+    }
+    /* the easter egg (the script below): while it plays, the symbol takes each state's colour, the site's three page
+       colours, on the footer's own dark ground only (on a painted ground one state would vanish into it) */
+    .footer_symbol-art {
+      .footer_symbol:is([data-play], [data-played]) & {
+        transition: color var(--hover-duration) var(--hover-ease);
+      }
+      .footer_wrap.theme-dark .footer_symbol[data-play="0"] & {
+        color: var(--red);
+      }
+      .footer_wrap.theme-dark .footer_symbol[data-play="1"] & {
+        color: var(--mustard);
+      }
+      .footer_wrap.theme-dark .footer_symbol[data-play="2"] & {
+        color: var(--teal);
+      }
     }
     .footer_menu,
     .footer_contact,
@@ -257,3 +338,175 @@ const curve =
     }
   }
 </style>
+
+<script>
+  import { onPage } from "@/utils/page.ts";
+  import { C, LINE, STATES } from "@/data/symbol.ts";
+
+  /* The footer's easter egg (Sam, Nov 25: the « Onde » of the study « Curveball, le easter egg du footer »). Job: a
+     small reward for whoever lingers on the symbol. While a mouse is on it (or the keyboard's focus), its three rings
+     turn from one state to the next (src/data/symbol.ts), a little more than once a second, each ring after the one
+     inside it, like a ball dropped in water, on a soft spring (a hint of overshoot, under a pixel at the footer's
+     size); the cut of its C slides out to the right, and comes back once the rings are home. On springs, so a leave
+     midway carries on from where the rings are. Not on a touch screen (a tap goes home), not with reduced motion. */
+  const SPRING = { k: 150, z: 0.72 };
+  const CUT_SPRING = { k: 170, z: 1 };
+  const DELAYS = [160, 80, 0]; // ms, outer ring to inner: the inner one moves first
+  const EVERY = 1150; // ms from one state to the next
+  const HOME = 380; // ms after the leave, the cut comes back
+  const OUT = 600; // where the cut starts once it has slid out, past the symbol's right edge
+
+  class Spring {
+    v: number;
+    t: number;
+    vel = 0;
+    k: number;
+    c: number;
+    constructor(v: number, { k, z }: { k: number; z: number }) {
+      this.v = v;
+      this.t = v;
+      this.k = k;
+      this.c = 2 * z * Math.sqrt(k);
+    }
+    step(dt: number) {
+      this.vel += (-this.k * (this.v - this.t) - this.c * this.vel) * dt;
+      this.v += this.vel * dt;
+    }
+    get still() {
+      return Math.abs(this.v - this.t) < 0.005 && Math.abs(this.vel) < 0.005;
+    }
+  }
+
+  onPage((signal) => {
+    const link = document.querySelector<HTMLElement>(".footer_symbol");
+    const circles = [
+      ...(link?.querySelectorAll<SVGCircleElement>(".footer_symbol-ring") ??
+        []),
+    ];
+    const cut = link?.querySelector<SVGRectElement>(".footer_symbol-cut");
+    const home = STATES[0];
+    if (!link || !cut || !home || circles.length !== home.length) return;
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+    const rings = home.map(([i, o]) => ({
+      i: new Spring(i, SPRING),
+      o: new Spring(o, SPRING),
+    }));
+    const slide = new Spring(C, CUT_SPRING);
+
+    let clock = 0;
+    let playing = false;
+    let state = 0;
+    let next = Infinity;
+    let queue: { at: number; fn: () => void }[] = [];
+    let frame = 0;
+    let last = 0;
+    let played = 0;
+    const later = (ms: number, fn: () => void) =>
+      queue.push({ at: clock + ms, fn });
+
+    const go = (n: number) => {
+      state = n;
+      STATES[n]?.forEach(([i, o], k) =>
+        later(DELAYS[k] ?? 0, () => {
+          const ring = rings[k];
+          if (ring) [ring.i.t, ring.o.t] = [i, o];
+        }),
+      );
+      link.dataset.play = String(n);
+    };
+    const enter = () => {
+      if (playing || reduce.matches) return;
+      playing = true;
+      queue = [];
+      clearTimeout(played);
+      delete link.dataset.played;
+      slide.t = OUT;
+      go(1);
+      next = clock + EVERY;
+      wake();
+    };
+    const leave = () => {
+      if (!playing) return;
+      playing = false;
+      queue = [];
+      next = Infinity;
+      go(0);
+      // the colour goes back to the page's, at the hover's pace
+      delete link.dataset.play;
+      link.dataset.played = "";
+      played = window.setTimeout(() => delete link.dataset.played, 600);
+      later(HOME, () => (slide.t = C));
+      wake();
+    };
+
+    const draw = () => {
+      rings.forEach((ring, k) => {
+        const circle = circles[k];
+        if (!circle) return;
+        circle.setAttribute("r", ((ring.i.v + ring.o.v) / 2).toFixed(2));
+        circle.setAttribute(
+          "stroke-width",
+          Math.max(0, ring.o.v - ring.i.v).toFixed(2),
+        );
+      });
+      cut.setAttribute("x", slide.v.toFixed(2));
+      cut.setAttribute("width", Math.max(0, OUT - slide.v).toFixed(2));
+      cut.setAttribute("y", (C - LINE / 2).toFixed(2));
+    };
+    const tick = (now: number) => {
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      clock += dt * 1000;
+      queue = queue.filter((q) => (q.at <= clock ? (q.fn(), false) : true));
+      if (playing && clock >= next) {
+        go((state + 1) % STATES.length);
+        next = clock + EVERY;
+      }
+      // small steps, so the spring holds at any frame rate
+      const n = Math.ceil(dt / 0.004);
+      for (let s = 0; s < n; s++) {
+        for (const ring of rings) {
+          ring.i.step(dt / n);
+          ring.o.step(dt / n);
+        }
+        slide.step(dt / n);
+      }
+      draw();
+      const still =
+        !playing &&
+        !queue.length &&
+        slide.still &&
+        rings.every((r) => r.i.still && r.o.still);
+      frame = still ? 0 : requestAnimationFrame(tick);
+    };
+    const wake = () => {
+      if (frame) return;
+      last = performance.now();
+      frame = requestAnimationFrame(tick);
+    };
+
+    link.addEventListener(
+      "pointerenter",
+      (e) => e.pointerType === "mouse" && enter(),
+      { signal },
+    );
+    link.addEventListener(
+      "pointerleave",
+      (e) => e.pointerType === "mouse" && leave(),
+      { signal },
+    );
+    link.addEventListener(
+      "focus",
+      () => link.matches(":focus-visible") && enter(),
+      { signal },
+    );
+    link.addEventListener("blur", leave, { signal });
+    reduce.addEventListener("change", () => reduce.matches && leave(), {
+      signal,
+    });
+    signal.addEventListener("abort", () => {
+      cancelAnimationFrame(frame);
+      clearTimeout(played);
+    });
+  });
+</script>
