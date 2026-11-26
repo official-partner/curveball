@@ -712,4 +712,12 @@ One line per decision: the date, who asked, what was decided and why. The newest
   instead of fading up; the « r »'s ball starts at 1.1 s, the « u »'s at the first one's half way, each 2 s through its
   letter. The dive now starts at 4.15 s (`--intro-hold`, 2.95 s before) so the second ball has left the frame: about
   7 s in all instead of 5.4. The rest unchanged.
+- 2026-11-25, Sam (« commencer le scale plus tôt ... quand elle est à 50 % sortie »; « un petit scale subtil tout le
+  long de l'animation pour tease »; « toujours un léger translate tout au long ... que ça feel pas statique »): the dive
+  starts as the « u »'s ball is half out of the frame (`--intro-hold` 3.975 s, 3.7 s upright, where the drawing runs
+  past the left edge and the ball leaves sooner; measured: 55 % out at 1440, 47 % at 390, 57 % at 1024 x 1366), the
+  canvas carrying the ball out on its letter. The letters' slide now lasts the whole first frame (ease-smooth, until
+  the dive) and the drawing comes nearer the whole time (93 % to 100 %, linear), so the dive's growth carries it on.
+  The letters' run-ons are about a screen past the edge (many screens before): drawn that long, the browser painted the
+  scaled layer coarse (the « r »'s arm stepped). About 6.4 s in all.
 
