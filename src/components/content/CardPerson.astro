@@ -1,6 +1,8 @@
 ---
-/* A person of the team: the round portrait over two columns, the name and the role (the role at 30 %), the city with
-   Email and LinkedIn a column over, then a few lines in large. */
+/* A person of the team, as the Figma's card (Sam, Nov 25): the name and the role (the role at 30 %), the round
+   portrait under them (76 % of the card: 309 of 407 at 1728), the city with Email and LinkedIn a column over, then a
+   few lines in large. In a list drawn for portraits (`placeholder`), a person without one keeps the circle, their
+   initials in it, so the list keeps its rhythm. */
 import Img from "@/components/media/Img.astro";
 import When from "@/components/system/When.astro";
 import { img, type Item } from "@/utils/content.ts";
@@ -18,24 +20,40 @@ interface Props {
   style?: string;
   /** How much faster or slower than the page it travels (src/utils/parallax.ts). */
   depth?: number;
+  /** Keep the portrait's circle, with the initials, when there is no photo. */
+  placeholder?: boolean;
 }
 
-const { render = true, person, index = 0, class: extra, style = "", depth } = Astro.props;
+const {
+  render = true,
+  person,
+  index = 0,
+  class: extra,
+  style = "",
+  depth,
+  placeholder = false,
+} = Astro.props;
 const { name, role, location, email, linkedin, bio, photo } = person.data;
 const links = [
   { label: "Email", href: email ? `mailto:${email}` : "" },
   { label: "Linkedin", href: linkedin ?? "" },
 ].filter((l) => l.href);
+const initials = name
+  .split(/\s+/)
+  .filter(Boolean)
+  .slice(0, 2)
+  .map((word) => word[0])
+  .join("");
 ---
 
 {
   render && (
-    <article class:list={["card-person", extra]} data-op-item={person.id} data-parallax={depth || undefined} style={`--_order: ${index}; ${style}`}>
-      {photo && (
-        <div class="card-person_media">
-          <Img class="card-person_img cover-absolute object-fit-cover" {...img(photo)} alt={`Portrait of ${name}`} variant="constrained" sizes="(min-width: 64rem) 16vw, 50vw" />
-        </div>
-      )}
+    <article
+      class:list={["card-person", extra]}
+      data-op-item={person.id}
+      data-parallax={depth || undefined}
+      style={`--_order: ${index}; ${style}`}
+    >
       <p class="card-person_name text-style-main">
         <span data-op-field="name">{name}</span>
         {role && <br />}
@@ -43,11 +61,41 @@ const links = [
           {role}
         </When>
       </p>
-      <When field="location" value={location} as="p" class="card-person_location text-style-main">
+      <When field="photo" value={photo} class="card-person_media">
+        {photo && (
+          <Img
+            class="card-person_img cover-absolute object-fit-cover"
+            {...img(photo)}
+            alt={`Portrait of ${name}`}
+            variant="constrained"
+            sizes="(min-width: 64rem) 18vw, 40vw"
+          />
+        )}
+        {placeholder && (
+          <span
+            class="card-person_initials text-style-h3"
+            slot="else"
+            aria-hidden="true"
+          >
+            {initials}
+          </span>
+        )}
+      </When>
+      <When
+        field="location"
+        value={location}
+        as="p"
+        class="card-person_location text-style-main"
+      >
         {location}
       </When>
       {links.length > 0 && (
-        <ul class:list={["card-person_links text-style-main", !location && "is-first"]}>
+        <ul
+          class:list={[
+            "card-person_links text-style-main",
+            !location && "is-first",
+          ]}
+        >
           {links.map((l) => (
             <li>
               <a href={l.href}>{l.label}</a>
@@ -55,7 +103,12 @@ const links = [
           ))}
         </ul>
       )}
-      <When field="bio" value={bio} as="p" class="card-person_bio text-style-large">
+      <When
+        field="bio"
+        value={bio}
+        as="p"
+        class="card-person_bio text-style-large"
+      >
         {bio}
       </When>
     </article>
@@ -69,24 +122,29 @@ const links = [
       grid-template-columns: repeat(3, minmax(0, 1fr));
       column-gap: var(--site-gutter);
       align-content: start;
+      /* the links take the row of the city, whatever comes before them */
+      grid-auto-flow: row dense;
       @media (width >= 64rem) {
         grid-template-columns: subgrid;
       }
     }
     .card-person_media {
-      grid-column: 1 / span 2;
+      grid-column: 1 / -1;
       position: relative;
+      display: grid;
+      place-items: center;
+      width: 76%;
       aspect-ratio: 1;
+      margin-top: var(--space-meta);
       border-radius: var(--radius-round);
       overflow: clip;
       background-color: var(--background-2);
     }
+    .card-person_initials {
+      color: var(--text-3);
+    }
     .card-person_name {
       grid-column: 1 / -1;
-      /* a person without a photo opens on the name */
-      .card-person_media + & {
-        margin-top: var(--space-media);
-      }
     }
     .card-person_role,
     .card-person_links {
@@ -101,7 +159,6 @@ const links = [
     }
     .card-person_links {
       grid-column: 3;
-      grid-row: 3;
       @media (width >= 64rem) {
         grid-column: 2 / -1;
       }
@@ -109,10 +166,10 @@ const links = [
       /* without a city, the links take its place at the left */
       &.is-first {
         grid-column: 1 / -1;
-        grid-row: auto;
       }
       & a {
         color: inherit;
+        text-decoration: none;
         transition: color var(--hover-duration) var(--hover-ease);
         @media (hover: hover) {
           &:hover {

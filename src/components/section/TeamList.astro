@@ -4,7 +4,7 @@
    a tablet and a phone, every other one against the right edge. People from the collection « Team ».
    The scatter is drawn for portraits: while nobody has a photo, the people stand in plain rows instead (two across on
    a phone, four on a computer), and the scatter comes back with the first photo (Sam, Nov 17: a layout rearranges
-   itself when something is missing). */
+   itself when something is missing); in it, a person still without one keeps the circle, their initials in it. */
 import SectionHead from "@/components/content/SectionHead.astro";
 import CardPerson from "@/components/content/CardPerson.astro";
 import { getItems } from "@/utils/content.ts";
@@ -34,8 +34,15 @@ const DEPTHS = [0.12, -0.05, 0.08, 0.15, 0.02, 0.1];
 {
   render && (
     <section class="team-list_wrap" data-op-section="TeamList">
-      <div class="team-list_layout site-grid" data-op-list="team" data-op-source="astro:team">
-        <SectionHead label="The team" heading="One home base, and a crew spread across the map. Nobody's ever a stranger." />
+      <div
+        class="team-list_layout site-grid"
+        data-op-list="team"
+        data-op-source="astro:team"
+      >
+        <SectionHead
+          label="The team"
+          heading="One home base, and a crew spread across the map. Nobody's ever a stranger."
+        />
         {portraits ? (
           people.map((person, index) => {
             const spot = spots[index % spots.length];
@@ -43,16 +50,24 @@ const DEPTHS = [0.12, -0.05, 0.08, 0.15, 0.02, 0.1];
               <CardPerson
                 person={person}
                 index={index}
-                class:list={["team-list_card", index % 2 ? "is-alt" : undefined]}
+                class:list={[
+                  "team-list_card",
+                  index % 2 ? "is-alt" : undefined,
+                ]}
                 style={`--_col: ${spot.col}; --_y: ${spot.y};`}
                 depth={DEPTHS[index % DEPTHS.length]}
+                placeholder
               />
             );
           })
         ) : (
           <div class="team-list_rows">
             {people.map((person, index) => (
-              <CardPerson person={person} index={index} class="team-list_person" />
+              <CardPerson
+                person={person}
+                index={index}
+                class="team-list_person"
+              />
             ))}
           </div>
         )}
@@ -65,7 +80,11 @@ const DEPTHS = [0.12, -0.05, 0.08, 0.15, 0.02, 0.1];
   import { onPage } from "@/utils/page.ts";
   import { parallax } from "@/utils/parallax.ts";
 
-  onPage((signal) => document.querySelectorAll(".team-list_wrap").forEach((wrap) => parallax(wrap, signal)));
+  onPage((signal) =>
+    document
+      .querySelectorAll(".team-list_wrap")
+      .forEach((wrap) => parallax(wrap, signal)),
+  );
 </script>
 
 <style is:global>

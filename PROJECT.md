@@ -739,3 +739,12 @@ One line per decision: the date, who asked, what was decided and why. The newest
   src/data/symbol.ts, the second redrawn from Sam's capture (its line near the edge, as wide as the logo's lines, 8.09;
   its hole 31 % of the radius). On the footer's dark ground the symbol takes red, mustard and teal by state, the page's
   colour again on leaving. Mouse and keyboard focus only; nothing with reduced motion. The nav keeps symbol.svg.
+- 2026-11-25, Sam (« voici le design, dev-le, ajoute dans le CMS les options »; his capture of Nic's card, the Figma's
+  Contact card 1:98 and 1:105 moved the same evening): a person's card now opens on the name and the role, the round
+  portrait under them (76 % of the card: the Figma's 309 of 407 at 1728), then the city with Email and LinkedIn a
+  column over (no underline, as drawn), then the few lines in large. The fields were already in the collection
+  « Team » (City, LinkedIn, A few lines, Portrait), so Contenu has them. In the scatter (as soon as one person has a
+  portrait), a person without one keeps the circle with their initials, so the scatter keeps its rhythm; with no
+  portrait at all the people stay in rows. Nic's city (Los Angeles) and lines come from the Figma: to confirm with
+  Curveball. The role stays the current site's « CEO | Founder » (the Figma says « Founder & CEO »). His portrait is
+  in the Figma but not here: this session cannot download from Figma; it goes in through Contenu (Portrait).
