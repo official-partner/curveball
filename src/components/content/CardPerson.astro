@@ -1,7 +1,7 @@
 ---
-/* A person of the team, as the Figma's card (Sam, Nov 25): the name and the role (the role at 30 %), the round
-   portrait under them (76 % of the card: 309 of 407 at 1728), the city with Email and LinkedIn a column over, then a
-   few lines in large. In a list drawn for portraits (`placeholder`), a person without one keeps the circle, their
+/* A person of the team: the round portrait (76 % of the card: the Figma's 309 of 407 at 1728), the name and the role
+   under it (the role at 30 %; Sam, Nov 27, comment 48: under the picture after all), the city with Email and LinkedIn
+   a column over, then a few lines in large. In a list drawn for portraits (`placeholder`), a person without one keeps the circle, their
    initials in it, so the list keeps its rhythm. */
 import Img from "@/components/media/Img.astro";
 import When from "@/components/system/When.astro";
@@ -54,13 +54,6 @@ const initials = name
       data-parallax={depth || undefined}
       style={`--_order: ${index}; ${style}`}
     >
-      <p class="card-person_name text-style-main">
-        <span data-op-field="name">{name}</span>
-        {role && <br />}
-        <When field="role" value={role} as="span" class="card-person_role">
-          {role}
-        </When>
-      </p>
       <When field="photo" value={photo} class="card-person_media">
         {photo && (
           <Img
@@ -81,6 +74,13 @@ const initials = name
           </span>
         )}
       </When>
+      <p class="card-person_name text-style-main">
+        <span data-op-field="name">{name}</span>
+        {role && <br />}
+        <When field="role" value={role} as="span" class="card-person_role">
+          {role}
+        </When>
+      </p>
       <When
         field="location"
         value={location}
@@ -135,7 +135,6 @@ const initials = name
       place-items: center;
       width: 76%;
       aspect-ratio: 1;
-      margin-top: var(--space-meta);
       border-radius: var(--radius-round);
       overflow: clip;
       background-color: var(--background-2);
@@ -145,6 +144,10 @@ const initials = name
     }
     .card-person_name {
       grid-column: 1 / -1;
+      /* a person without a photo opens on the name */
+      .card-person_media + & {
+        margin-top: var(--space-media);
+      }
     }
     .card-person_role,
     .card-person_links {

@@ -757,3 +757,23 @@ One line per decision: the date, who asked, what was decided and why. The newest
   in src/assets/content/team/ as sent (TJ's 350 x 400, a little small for a retina screen at the card's size).
   Juan Sebastián's email stays the current site's (sebastian@curveballfilms.com; the email shows
   sebastian@fivetosixty.com): to confirm.
+- 2026-11-27, Sam, comments 46 to 50 (his own, handled at his ask in his conversation):
+  - 46 (News, « ouvrir les news dans un autre onglet »): a news card's « Read » opens its article in a new tab
+    (ArrowLink's `newTab`, its label saying so to a screen reader).
+  - 47 (About's menu, « couleur taupe pour la nav, comme le texte de la page; règle : taupe sur le fond noir »): a role
+    of the themes, `--nav-text` (taupe in the dark theme, the text's colour in the others: system/gen.py), read by the
+    menu's logo and links; its current page and hover at --tone-muted of it. Every page on the black follows.
+  - 48 (Contact, « mettre le nom et le poste sous l'image finalement »): the card opens on the portrait again, the
+    name and the role under it; reverses Nov 25 (Sam: the name above, from his capture).
+  - 49 (Home, the switch): « Featured work » beside « Directors » (its dot an outline until chosen), changing the names
+    to the films marked « Featured work » the way a filter does (the filters step aside: they are the directors').
+    The films have a new toggle « Featured work » (content.config.ts, `featured`); the list is « home-featured-work »
+    in src/data/lists.json (the films where it is on). Three placeholders, picked from the opening's featured six, one
+    per colour: Perrier (Neymarc Brothers, teal), Takis (Connor Carroll, mustard), Volvo / Jimmy Chin (Dylan Mulick,
+    red). Each links to its director's page and plays their films in the balls, its own first. The label is written
+    « Featured work » as the opening's row writes it.
+  - 50 (About's clients): a client with a film on the site shows its loop in a small window beside the names on a
+    mouse's hover (5:4 as Sam said; his capture was nearer 3:2), the name under the mouse lit. Ten of the twenty-one
+    have one (src/data/about-call-sheet-*.json, `film`: CLR, Uber, Tidy Cats, Secret, Babbel, Grammarly, IU Health,
+    Adidas with Adidas Optime, Ninja Trader, Garden of Life); Capital One, Geico and United Airlines have only hidden
+    films, the eight others none on the site.

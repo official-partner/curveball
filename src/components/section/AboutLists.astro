@@ -2,9 +2,14 @@
 /* About's two lists (the Figma's « About »): « Some of the names on the call sheet: » at column 7 with its two columns
    of clients, and « Some of the work on the schedule: » at column 1, lower, with its two columns of work. On a
    computer they sit on the second « u »'s black stem, as drawn: the first heading's cap top 210 above the story's
-   end, the second 366 lower; below a computer, one after the other. */
+   end, the second 366 lower; below a computer, one after the other.
+   A client with a film of theirs on the site (its item's `film`, a film's id) shows it on a hover with a mouse: a small
+   window, 5:4, beside the names, playing the film's short loop over its still (Sam, Nov 27, comment 50); the name
+   under the mouse lights up, film or not. */
+import { getImage } from "astro:assets";
 import { callSheet, schedule } from "@/data/about.ts";
 import { listMarks } from "@/utils/data-list.ts";
+import { getItems, LIVE } from "@/utils/content.ts";
 
 interface Props {
   /** Set to `false` to omit the component. */
@@ -12,6 +17,22 @@ interface Props {
 }
 
 const { render = true } = Astro.props;
+/* each client's film: its short loop (else its short version, else its cover) and a small still (two windows wide) */
+const films = new Map((await getItems("projects")).map((p) => [p.id, p.data]));
+const peeks = Object.fromEntries(
+  await Promise.all(
+    callSheet
+      .flatMap((col) => col.items)
+      .filter((item) => item.film && films.has(item.film))
+      .map(async (item) => {
+        const film = films.get(item.film!)!;
+        const video = film.loop ?? film.preview ?? film.cover;
+        const still = film.still;
+        const poster = !still ? undefined : !("format" in still) || LIVE ? still.src : (await getImage({ src: still, width: 320, format: "webp" })).src;
+        return [item.id, { video, poster }] as const;
+      }),
+  ),
+);
 const blocks = [
   // each drifts at its own pace as the page scrolls (Sam, Nov 12: « parallax sur ces 2 blocs au scroll »)
   { key: "names", heading: "Some of the names on the call sheet:", columns: callSheet, list: "call-sheet", depth: 0.14 },
@@ -29,10 +50,18 @@ const blocks = [
             {b.columns.map((col, c) => (
               <ul class="about-lists_column text-style-main" {...listMarks(`${b.list}-${c + 1}`, col.file)}>
                 {col.items.map((item) => (
-                  <li data-op-item={item.id} data-op-field="name">{item.name}</li>
+                  <li data-op-item={item.id} data-op-field="name" data-video={peeks[item.id]?.video} data-poster={peeks[item.id]?.poster}>
+                    {item.name}
+                  </li>
                 ))}
               </ul>
             ))}
+            {b.key === "names" && (
+              <div class="about-lists_peek" aria-hidden="true">
+                <img class="about-lists_still cover-absolute object-fit-cover" alt="" decoding="async" />
+                <video class="about-lists_film cover-absolute object-fit-cover" muted loop playsinline preload="none" />
+              </div>
+            )}
           </div>
         ))}
       </div>
@@ -41,10 +70,97 @@ const blocks = [
 }
 
 <script>
+  import { gsap } from "gsap";
+  import { CustomEase } from "gsap/CustomEase";
   import { onPage } from "@/utils/page.ts";
   import { parallax } from "@/utils/parallax.ts";
 
-  onPage((signal) => document.querySelectorAll(".about-lists_wrap").forEach((wrap) => parallax(wrap, signal)));
+  gsap.registerPlugin(CustomEase);
+  const css = (name: string) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  const seconds = (name: string) => (parseFloat(css(name)) || 0) / (css(name).endsWith("ms") ? 1000 : 1);
+  const curve = (name: string, fallback: string) => {
+    const m = css(name).match(/cubic-bezier\(([^)]+)\)/);
+    return CustomEase.create(`about${name}`, m ? m[1] : fallback);
+  };
+
+  onPage((signal) => {
+    document.querySelectorAll<HTMLElement>(".about-lists_wrap").forEach((wrap) => parallax(wrap, signal));
+
+    /* The client's film beside their name (job: show the work behind a name, playfully, for whoever lingers). One
+       window for the list: it comes in by the name under the mouse (fast, ease-out, from 85 %), sits a gutter to the
+       left of the name's column and follows the mouse up and down the names (medium, ease-out: a little behind it, so
+       it glides from one to the next), its still at once and the film's loop over it once it plays; it goes when the
+       mouse leaves the names or reaches a client with no film (faster, the leave curve). A mouse only; with reduced
+       motion it stands still by the name and shows the still alone. */
+    const fine = matchMedia("(hover: hover) and (pointer: fine)");
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+    document.querySelectorAll<HTMLElement>(".about-lists_block.is-names").forEach((block) => {
+      const peek = block.querySelector<HTMLElement>(".about-lists_peek");
+      const still = peek?.querySelector("img");
+      const film = peek?.querySelector("video");
+      if (!peek || !still || !film) return;
+      const out = curve("--ease-out", "0.23, 1, 0.32, 1");
+      const leave = curve("--ease-leave", "0.5, 0, 0.75, 0");
+      const xTo = gsap.quickTo(peek, "x", { duration: seconds("--duration-medium"), ease: out });
+      const yTo = gsap.quickTo(peek, "y", { duration: seconds("--duration-medium"), ease: out });
+      gsap.set(peek, { autoAlpha: 0, scale: 0.85 });
+      let shown = false;
+      let current: HTMLElement | null = null;
+      film.addEventListener("playing", () => gsap.to(film, { opacity: 1, duration: seconds("--duration-fast"), ease: out }), { signal });
+
+      const choose = (item: HTMLElement) => {
+        current = item;
+        const { video, poster } = item.dataset;
+        if (!video) return;
+        if (poster && still.getAttribute("src") !== poster) still.src = poster;
+        if (film.getAttribute("src") !== video) {
+          gsap.killTweensOf(film);
+          gsap.set(film, { opacity: 0 });
+          film.src = video;
+        }
+        if (!reduce.matches) void film.play().catch(() => {});
+      };
+      const hide = () => {
+        current = null;
+        if (!shown) return;
+        shown = false;
+        gsap.to(peek, { autoAlpha: 0, scale: 0.85, duration: seconds("--duration-faster"), ease: leave, overwrite: "auto", onComplete: () => film.pause() });
+      };
+      block.addEventListener(
+        "pointermove",
+        (event) => {
+          if (!fine.matches || event.pointerType !== "mouse") return;
+          const item = (event.target as HTMLElement).closest<HTMLElement>(".about-lists_column > li");
+          if (!item) return hide();
+          if (item !== current) choose(item);
+          if (!item.dataset.video) return hide();
+          const box = block.getBoundingClientRect();
+          const column = item.parentElement!.getBoundingClientRect();
+          const gutter = parseFloat(getComputedStyle(block).columnGap) || 0;
+          const x = column.left - box.left - gutter - peek.offsetWidth;
+          const y = (reduce.matches ? item.getBoundingClientRect().top + item.offsetHeight / 2 : event.clientY) - box.top - peek.offsetHeight / 2;
+          if (!shown || reduce.matches) {
+            gsap.set(peek, { x, y });
+            xTo(x, x);
+            yTo(y, y);
+          } else {
+            xTo(x);
+            yTo(y);
+          }
+          if (!shown) {
+            shown = true;
+            gsap.to(peek, { autoAlpha: 1, scale: 1, duration: seconds("--duration-fast"), ease: out, overwrite: "auto" });
+          }
+        },
+        { signal },
+      );
+      block.addEventListener("pointerleave", hide, { signal });
+      signal.addEventListener("abort", () => {
+        gsap.killTweensOf([peek, film]);
+        film.pause();
+      });
+    });
+  });
 </script>
 
 <style is:global>
@@ -60,6 +176,7 @@ const blocks = [
       align-items: start;
     }
     .about-lists_block {
+      position: relative;
       grid-column: margin / end;
       display: grid;
       grid-template-columns: subgrid;
@@ -75,6 +192,37 @@ const blocks = [
       @media (width >= 48rem) {
         grid-column: span 2;
       }
+    }
+    /* the name under the mouse lights up (the page's light text over its taupe) */
+    @media (hover: hover) {
+      .about-lists_block.is-names li {
+        transition: color var(--hover-duration) var(--hover-ease);
+        &:hover {
+          color: var(--text);
+        }
+      }
+    }
+    /* the client's film: a column wide (the Figma's 128 at 1728), 5:4, its corners rounded a tenth of its width; placed
+       and shown by the script */
+    .about-lists_peek {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      width: calc(var(--u) * 128);
+      aspect-ratio: 5 / 4;
+      overflow: hidden;
+      border-radius: 10% / 12.5%;
+      background-color: var(--background-2);
+      pointer-events: none;
+      visibility: hidden;
+      @media not ((hover: hover) and (pointer: fine)) {
+        display: none;
+      }
+    }
+    .about-lists_still:not([src]),
+    .about-lists_film:not([src]) {
+      visibility: hidden;
     }
     /* side by side from a tablet up (Sam, Nov 18, comment 39: « faire 2 colones comme desktop ») */
     @media (width >= 48rem) {

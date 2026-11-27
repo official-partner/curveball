@@ -85,6 +85,8 @@ const projects = defineCollection({
         video: z.string().optional().describe("Film (MP4 or WebM link)"),
         link: z.string().optional().describe("Film page (Vimeo)"),
         vertical: z.boolean().optional().describe("Vertical film"),
+        // Home's « Featured work » beside « Directors » (Sam, Nov 27, comment 49): the list « home-featured-work »
+        featured: z.boolean().default(false).describe("Featured work"),
         visible: z.boolean().default(true).describe("Visible on the site"),
         draft: z.boolean().default(false).describe("Draft"),
         order: z.number().optional().describe("Order"),

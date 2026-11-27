@@ -14,15 +14,23 @@ interface Props {
   field?: string;
   /** What the link says to a screen reader when its words alone are too short (« Read: the article's title »). */
   label?: string;
+  /** Opens in a new tab (an article on another site). */
+  newTab?: boolean;
 }
 
-const { render = true, href, text, class: extra, field, label } = Astro.props;
+const { render = true, href, text, class: extra, field, label, newTab = false } = Astro.props;
 const Tag = href ? "a" : "span";
 ---
 
 {
   render && (
-    <Tag class:list={["arrow-link", "text-style-large", extra]} href={href || undefined} aria-label={href && label ? label : undefined}>
+    <Tag
+      class:list={["arrow-link", "text-style-large", extra]}
+      href={href || undefined}
+      target={href && newTab ? "_blank" : undefined}
+      rel={href && newTab ? "noopener" : undefined}
+      aria-label={href && label ? label : undefined}
+    >
       <span data-op-field={field}>{text}</span>
       <svg class="arrow-link_icon" viewBox="0 0 17.8 14" aria-hidden="true" focusable="false">
         <path d="M0 5.8h13.6L9.3 1.5 10.8 0l7 7-7 7-1.5-1.5 4.3-4.3H0z" />

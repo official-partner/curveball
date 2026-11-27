@@ -48,8 +48,8 @@ const reel = (await getItems("projects")).filter((p) => p.data.director?.id === 
     <ComponentSample file="section/HeroHome.astro" note="Home's opening: the featured films' stills turning under the wordmark, the featured work's row with its counter (the pause).">
       <HeroHome />
     </ComponentSample>
-    <ComponentSample file="section/DirectorsHome.astro" note="Every director in the big type, with the filters; the name in the middle of the screen takes its colour and its films.">
-      <DirectorsHome />
+    <ComponentSample file="section/DirectorsHome.astro" note="Every director in the big type, with the filters and, on Home, the switch to the featured work; the name in the middle of the screen takes its colour and its films.">
+      <DirectorsHome featured />
     </ComponentSample>
     <ComponentSample file="section/CurveBand.astro" note="The curve above the footer, Home's drawing with its CTA (News and Contact have their own).">
       <CurveBand variant="home" />

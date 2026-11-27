@@ -64,11 +64,13 @@ const current = (href: string) => (path === href || path.startsWith(href + "/") 
     .nav_layout {
       align-items: start;
     }
+    /* the menu in the theme's own colour for it: taupe on the black, as the page's text (Sam, Nov 25, comment 47);
+       the text's colour on the other grounds */
     .nav_logo {
       grid-column: margin;
       display: block;
       width: max(var(--logo-size-floor), var(--logo-size));
-      color: var(--text);
+      color: var(--nav-text);
     }
     .nav_menu {
       grid-column: half;
@@ -91,14 +93,14 @@ const current = (href: string) => (path === href || path.startsWith(href + "/") 
       }
     }
     .nav_link {
-      color: var(--text);
+      color: var(--nav-text);
       transition: color var(--hover-duration) var(--hover-ease);
       &[aria-current="page"] {
-        color: var(--text-2);
+        color: color-mix(in srgb, var(--nav-text) var(--tone-muted), transparent);
       }
       @media (hover: hover) {
         &:hover {
-          color: var(--text-2);
+          color: color-mix(in srgb, var(--nav-text) var(--tone-muted), transparent);
         }
       }
     }

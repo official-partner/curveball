@@ -6,7 +6,8 @@
     },
     {
       "id": "adidas",
-      "name": "Adidas"
+      "name": "Adidas",
+      "film": "adidas-optime"
     },
     {
       "id": "spotify",
@@ -34,11 +35,13 @@
     },
     {
       "id": "ninja-trader",
-      "name": "Ninja Trader"
+      "name": "Ninja Trader",
+      "film": "ninja-trader"
     },
     {
       "id": "garden-of-life",
-      "name": "Garden of Life"
+      "name": "Garden of Life",
+      "film": "garden-of-life"
     }
   ]
 }

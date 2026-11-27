@@ -19,6 +19,8 @@ it (system/gen.py).
 - Each page has its ground: Home, Directors and About dark (black, stone text, taupe for the big type), News mustard,
   Contact teal, a director's page in the director's colour (black text). The footer is dark everywhere and takes the
   page's colour for its mark; Directors, a director's page and About have the plain footer (a rule, no curve).
+- The menu (logo and links) is taupe on the black, as the page's own text, and the text's colour on the other grounds:
+  the themes' role `--nav-text` (Sam, Nov 27, comment 47); its current page and its hover at --tone-muted of it.
 - Each director has a colour, from the brand's three, in turn down the list: teal, mustard, red (src/content/
   directors, `colour`). Their page wears it; on the directors list (Home, Directors, the foot of a director's page)
   the name in the middle of the screen turns the whole page to it, every ground included (Home's opening and its
@@ -103,6 +105,15 @@ it (system/gen.py).
   (drawn from the left, slow, the arrive curve) and the row come in one after another (base, ease-out, 1.25 rem).
   About 5.3 s in all; nothing hurries it. Without the script it fades into the page at the dive. The featured work's
   time starts after it. None with reduced motion.
+- Home's switch beside « Directors » (Sam, Nov 27, comment 49): « Featured work », its dot outlined until chosen
+  (the dots fill and empty on the hover's time); chosen, the names change as for a filter (the list out on faster,
+  the new names rising 35 % on fast x 1.4, 30 ms apart at most) to the films marked « Featured work », each in its
+  director's colour with their films in the balls, and the filters fade out (fast) and are out of reach.
+- About's clients (Sam, Nov 27, comment 50): with a mouse, the name under it lights up (stone, the hover's time) and a
+  client with a film of theirs on the site shows it in a small window beside the names: a column wide, 5:4, corners a
+  tenth of its width, a gutter left of the name's column; in from 85 % on fast (ease-out), following the mouse up and
+  down the names on medium (ease-out, a little behind), out on faster (leave); its still at once, the film's short loop
+  fading in over it (fast) once it plays. Reduced motion: still, by the name, the still alone.
 - The footer's easter egg (Sam, Nov 25, the « Onde » of the study « Curveball, le easter egg du footer »): the symbol is
   drawn as its three rings (src/data/symbol.ts), the cut of its C a mask; at rest it is the logo, to the pixel. While a
   mouse is on it (or the keyboard's focus), the rings turn through three states (the logo, one fine line near the edge

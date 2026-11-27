@@ -124,7 +124,7 @@ THEME = """  --text-2: color-mix(in srgb, var(--text) var(--tone-muted), transpa
   --link-border: transparent;
   --link-text-hover: var(--text);
   --link-border-hover: transparent;"""
-w(f"""/* Color themes. dark (the default: black, stone text, taupe for the big type), light (stone, black text),
+w(f"""/* Color themes. dark (the default: black, stone text, taupe for the big type and the menu), light (stone, black text),
    mustard (News) and teal (Contact): black text at full, half and 30 %; brand: red, black text. */
 :root,
 .theme-dark,
@@ -138,6 +138,7 @@ w(f"""/* Color themes. dark (the default: black, stone text, taupe for the big t
   --text: var(--stone);
   --border: color-mix(in srgb, var(--text) var(--tone-muted), transparent);
   --heading-accent: var(--taupe);
+  --nav-text: var(--taupe);
 {THEME}
 }}
 .theme-light,
@@ -152,6 +153,7 @@ w(f"""/* Color themes. dark (the default: black, stone text, taupe for the big t
   --text: var(--black);
   --border: color-mix(in srgb, var(--text) var(--tone-faint), transparent);
   --heading-accent: var(--text);
+  --nav-text: var(--text);
 {THEME}
 }}
 .theme-mustard {{

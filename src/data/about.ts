@@ -9,7 +9,9 @@ import schedule1 from "@/data/about-schedule-1.json";
 import schedule2 from "@/data/about-schedule-2.json";
 import { listFrom } from "@/utils/data-list.ts";
 
-const entry = z.object({ id: z.string().regex(/^[a-z0-9-]+$/), name: z.string() });
+/* a client may name a film of theirs (its id in the collection « Films »): About shows its loop beside the name on a
+   hover (Sam, Nov 27, comment 50) */
+const entry = z.object({ id: z.string().regex(/^[a-z0-9-]+$/), name: z.string(), film: z.string().optional() });
 export type AboutColumn = { file: string; items: z.infer<typeof entry>[] };
 const column = (data: unknown, file: string): AboutColumn => ({ file, items: listFrom(data, entry, file) });
 

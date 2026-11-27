@@ -8,10 +8,15 @@
    director » stands at the row's far right (Sam, Nov 12) and travels from name to name as they take their turn, and
    that director's own balls, carrying their films, rise through the screen. Each row is one link, and « View
    director » links to the active one. Home shows it on the page's dark; a
-   director's page shows it as « Other Directors » (without them) on its own dark. */
+   director's page shows it as « Other Directors » (without them) on its own dark.
+   On Home (`featured`), « Featured work » stands beside « Directors » (Sam, Nov 27, comment 49): a switch, its dot
+   outlined until it is chosen; chosen, the names give way to the featured films' (the films marked « Featured work »,
+   the list « home-featured-work » of src/data/lists.json), each in its director's colour with their films in the
+   balls (its own first) and a link to its director, and the filters, which are the directors', step aside. */
 import { getImage } from "astro:assets";
 import ArrowLink from "@/components/content/ArrowLink.astro";
 import { getItems, LIVE } from "@/utils/content.ts";
+import { listed, ruleMarks } from "@/utils/lists.ts";
 
 interface Props {
   /** Set to `false` to omit the component. */
@@ -24,9 +29,11 @@ interface Props {
   dark?: boolean;
   /** `h1` when the list is the page (the directors' own page): it then starts a page's height down. */
   as?: "h1" | "h2";
+  /** Home: the switch to the featured work beside the label. */
+  featured?: boolean;
 }
 
-const { render = true, label = "Directors", exclude, dark = false, as: Heading = "h2" } = Astro.props;
+const { render = true, label = "Directors", exclude, dark = false, as: Heading = "h2", featured = false } = Astro.props;
 const directors = (await getItems("directors")).filter((d) => d.id !== exclude);
 const projects = await getItems("projects");
 /* Each director's films for the balls: a small still (480 wide, twice a ball's size on a computer; on the live
@@ -40,14 +47,23 @@ const stills = Object.fromEntries(
         own.map(async (p) => {
           const pic = p.data.still!;
           const loop = p.data.loop;
-          if (!("format" in pic)) return { src: pic.src, loop };
-          return { src: LIVE ? pic.src : (await getImage({ src: pic, width: 480, format: "webp" })).src, loop };
+          if (!("format" in pic)) return { id: p.id, src: pic.src, loop };
+          return { id: p.id, src: LIVE ? pic.src : (await getImage({ src: pic, width: 480, format: "webp" })).src, loop };
         }),
       );
       return [d.id, urls] as const;
     }),
   ),
 );
+/* Home's featured work: each film with its director, their colour, and the balls' films (its own first, then two of
+   the director's others) */
+const colours = new Map((await getItems("directors")).map((d) => [d.id, d.data.colour ?? "red"]));
+const works = (featured ? await listed<"projects">("home-featured-work") : []).map((w) => {
+  const director = w.data.director?.id;
+  const theirs = director ? (stills[director] ?? []) : [];
+  const own = theirs.find((s) => s.id === w.id);
+  return { id: w.id, name: w.data.name, director, colour: (director && colours.get(director)) || "red", balls: [...(own ? [own] : []), ...theirs.filter((s) => s.id !== w.id)].slice(0, 3) };
+});
 const industries = ["Docustyle", "Comedy", "Story", "Spectacle", "Fashion"];
 const locations = ["Chicago", "Los Angeles", "New Orleans", "New York"];
 const filters = [
@@ -65,9 +81,22 @@ const filters = [
     >
       <div class="directors-home_layout site-grid">
         <div class="directors-home_row rule-top">
-          <Heading class="directors-home_label dot-label text-style-large" data-page-reveal={Heading === "h1" ? "" : undefined}>
-            {label}
-          </Heading>
+          {featured ? (
+            <div class="directors-home_switch" role="group" aria-label="Show">
+              <Heading class="directors-home_label text-style-large">
+                <button class="directors-home_mode dot-label" type="button" data-mode="director" aria-pressed="true">
+                  {label}
+                </button>
+              </Heading>
+              <button class="directors-home_mode dot-label text-style-large" type="button" data-mode="work" aria-pressed="false">
+                Featured work
+              </button>
+            </div>
+          ) : (
+            <Heading class="directors-home_label dot-label text-style-large" data-page-reveal={Heading === "h1" ? "" : undefined}>
+              {label}
+            </Heading>
+          )}
           {filters.map((f) => (
             <div class:list={["directors-home_filter", f.class]} role="group" aria-label={`Filter by ${f.label.toLowerCase()}`}>
               <p class="text-style-main">{f.label}</p>
@@ -94,6 +123,7 @@ const filters = [
           {directors.map((d) => (
             <li
               class="directors-home_item"
+              data-kind="director"
               data-op-item={d.id}
               data-industry={(d.data.industries ?? []).join("|")}
               data-location={d.data.location ?? ""}
@@ -105,6 +135,17 @@ const filters = [
             </li>
           ))}
         </ul>
+          {featured && (
+            <ul class="directors-home_list text-style-h1" {...ruleMarks("home-featured-work")}>
+              {works.map((w) => (
+                <li class="directors-home_item" data-kind="work" data-op-item={w.id} data-colour={w.colour} hidden>
+                  <a class="directors-home_name" href={w.director ? `/directors/${w.director}` : "/directors"}>
+                    <span data-op-field="name">{w.name}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
           {/* one for the list, a mouse's shortcut to the active row's own link (keyboards and readers use the row) */}
           <a class="directors-home_view" href={directors[0] ? `/directors/${directors[0].id}` : "/directors"} tabindex="-1" aria-hidden="true">
             <ArrowLink text="View director" />
@@ -118,9 +159,9 @@ const filters = [
         </div>
       </div>
       <div class="directors-home_balls" aria-hidden="true">
-        {directors.map((d) =>
-          (stills[d.id] ?? []).slice(0, 3).map(({ src, loop }) => (
-            <span class="directors-home_ball" data-for={d.id}>
+        {[...directors.map((d) => ({ id: d.id, balls: (stills[d.id] ?? []).slice(0, 3) })), ...works].map(({ id, balls }) =>
+          balls.map(({ src, loop }) => (
+            <span class="directors-home_ball" data-for={id}>
               <img class="directors-home_film cover-absolute object-fit-cover" alt="" decoding="async" data-src={src} />
               {loop && <video class="directors-home_film cover-absolute object-fit-cover" data-src={loop} muted loop playsinline preload="none" />}
             </span>
@@ -421,9 +462,13 @@ const filters = [
         setActive(find(), instant);
       };
 
-      /* Filters: Industry and Location keep the names that match; « All » shows everyone */
+      /* Filters: Industry and Location keep the names that match; « All » shows everyone. On Home, the switch shows
+         the directors or the featured work (the filters are the directors' alone) */
       const chosen: Record<string, string> = { industry: "", location: "" };
+      let mode = "director";
       const matches = (item: HTMLElement) => {
+        if ((item.dataset.kind ?? "director") !== mode) return false;
+        if (mode !== "director") return true;
         const industries = (item.dataset.industry ?? "").split("|").filter(Boolean);
         return (
           (!chosen.industry || industries.includes(chosen.industry)) &&
@@ -526,6 +571,20 @@ const filters = [
       wrap.addEventListener(
         "click",
         (event) => {
+          /* The switch (job: say which list this is, and change it in the filters' one movement): the chosen one's dot
+             fills, the other's empties (fast); the filters step aside for the featured work (fast) and come back for
+             the directors, as they were left; the names change as for a filter (below) */
+          const switcher = (event.target as HTMLElement).closest<HTMLButtonElement>(".directors-home_mode");
+          if (switcher) {
+            const next = switcher.dataset.mode ?? "director";
+            if (next === mode) return;
+            mode = next;
+            wrap.querySelectorAll<HTMLButtonElement>(".directors-home_mode").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.mode === mode)));
+            filterRow?.classList.toggle("is-work", mode === "work");
+            wrap.querySelectorAll<HTMLElement>(".directors-home_filter").forEach((f) => (f.inert = mode === "work"));
+            filter();
+            return;
+          }
           const button = (event.target as HTMLElement).closest<HTMLButtonElement>(".directors-home_option");
           if (!button) return;
           const key = button.dataset.filter ?? "";
@@ -649,10 +708,45 @@ const filters = [
         grid-column: margin / half;
       }
     }
+    /* Home's switch: « Directors » and « Featured work » side by side where the label stands */
+    .directors-home_switch {
+      grid-column: margin / end;
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-4) var(--space-label);
+      @media (width >= 48rem) {
+        grid-column: margin / half;
+      }
+    }
+    /* the chosen one's dot is full, the other's an outline of the page's line; a hover fills it a little */
+    .directors-home_mode {
+      color: inherit;
+      &::before {
+        transition:
+          background-color var(--hover-duration) var(--hover-ease),
+          box-shadow var(--hover-duration) var(--hover-ease);
+      }
+      &[aria-pressed="false"]::before {
+        background-color: transparent;
+        box-shadow: inset 0 0 0 var(--border-width) var(--dot-color);
+      }
+      @media (hover: hover) {
+        &[aria-pressed="false"]:hover::before {
+          background-color: color-mix(in srgb, var(--dot-color) var(--tone-faint), transparent);
+        }
+      }
+    }
     .directors-home_filter {
       display: flex;
       flex-direction: column;
       gap: var(--space-6);
+      transition:
+        color var(--paint-duration, 0s) var(--ease-travel),
+        opacity var(--duration-fast) var(--ease-out);
+      /* the featured work has no filters: they step aside */
+      .is-work > & {
+        opacity: 0;
+      }
       &.is-industry {
         grid-column: margin / span 2;
         @media (width >= 48rem) {

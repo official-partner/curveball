@@ -42,7 +42,8 @@ const { render = true, item, index = 0, class: extra, depth } = Astro.props;
           {item.text}
         </p>
       )}
-      <ArrowLink class="card-news_link" href={item.href} text="Read" label={`Read: ${item.title}`} />
+      {/* an article on its own site, in a new tab (Sam, Nov 25, comment 46) */}
+      <ArrowLink class="card-news_link" href={item.href} text="Read" label={`Read: ${item.title} (opens in a new tab)`} newTab />
     </article>
   )
 }

@@ -11,6 +11,17 @@
         "takis",
         "booksy"
       ]
+    },
+    "home-featured-work": {
+      "collection": "projects",
+      "shows": "some",
+      "where": [
+        {
+          "field": "featured",
+          "op": "is",
+          "value": true
+        }
+      ]
     }
   }
 }
