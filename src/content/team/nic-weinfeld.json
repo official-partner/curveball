@@ -1,8 +1,10 @@
 {
   "name": "Nic Weinfeld",
-  "role": "CEO | Founder",
-  "location": "Los Angeles",
+  "role": "Founder + CEO",
+  "location": "New Orleans, Louisiana",
   "email": "Nic@fivetosixty.com",
-  "bio": "Started Five to Sixty in his second year at USC and has grown it into a group of four companies. Still answers his own phone, which nobody expects.",
+  "linkedin": "https://www.linkedin.com/in/nic-weinfeld-18806018",
+  "bio": "Nic Weinfeld founded Five to Sixty in 2015 and has served as CEO and Executive Producer since.",
+  "photo": "../../assets/content/team/nic-weinfeld.webp",
   "order": 1
 }

@@ -1,6 +1,10 @@
 {
   "name": "TJ Tamayo",
-  "role": "MD | Partner",
+  "role": "Managing Director",
+  "location": "New York",
   "email": "tj@curveballfilms.com",
+  "linkedin": "https://www.linkedin.com/in/tj-tamayo-a9699245/",
+  "bio": "A native Angeleno, TJ was raised in a traditional Filipino household and grew up watching wrestling and Stallone movies with her father and sister.",
+  "photo": "../../assets/content/team/tj-tamayo.png",
   "order": 2
 }

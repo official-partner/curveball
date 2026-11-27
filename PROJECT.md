@@ -748,3 +748,12 @@ One line per decision: the date, who asked, what was decided and why. The newest
   portrait at all the people stay in rows. Nic's city (Los Angeles) and lines come from the Figma: to confirm with
   Curveball. The role stays the current site's « CEO | Founder » (the Figma says « Founder & CEO »). His portrait is
   in the Figma but not here: this session cannot download from Figma; it goes in through Contenu (Portrait).
+- 2026-11-27, Sam (photos of TJ, Nic and Jake; TJ's and Nic's role, city, lines and LinkedIn; an email naming
+  jake@curveballfilms.com): the collection « Team » carries them word for word. Nic: « Founder + CEO », New Orleans,
+  Louisiana, his lines (the Figma's Los Angeles and USC lines replaced). TJ: « Managing Director », New York, her lines.
+  The two LinkedIn addresses came each under the other's name: each went to the person its address names
+  (nic-weinfeld, tj-tamayo). Jake Cameron added (7th, his email and photo; role, city and lines to come), with a
+  seventh spot in the scatter (three, 1800 below the rule: no card overlaps another from 390 to 1728). The photos are
+  in src/assets/content/team/ as sent (TJ's 350 x 400, a little small for a retina screen at the card's size).
+  Juan Sebastián's email stays the current site's (sebastian@curveballfilms.com; the email shows
+  sebastian@fivetosixty.com): to confirm.
