@@ -36,6 +36,9 @@
   /* The page's own colour (red on Home, mustard on News, teal on Contact): the footer's mark, the ball and the
      curve take it. A page sets it with .accent-* on its body (themes never reset it). */
   --page-accent: var(--red);
+  /* Over a picture or a film, whatever the page's ground: the light colour (Sam, Nov 27, comment 51: the taupe is
+     for text on a black ground only, never over a visual). The menu over Home's opening takes it. */
+  --on-visual: var(--stone);
 
   /* Typography primitives */
   --es-build: "ES Build", ui-sans-serif, system-ui, sans-serif;
@@ -93,6 +96,10 @@
      it a little more and a little longer */
   --card-hover-scale: 1.04;
   --card-hover-zoom: 1.1;
+  /* A label's dot that is a button (Home's switch) answers the pointer by shrinking: a little on the hover, more
+     while pressed (Sam, Nov 27, comment 52) */
+  --dot-hover-scale: 0.8;
+  --dot-press-scale: 0.6;
 
   /* Radius: the design has no rounded corner but full circles (the photos, the ball, the dot) */
   --radius-small: 0rem;
@@ -200,6 +207,8 @@
   /* Role tokens: one job each, pointing at a step of the scale (change the step, every use follows) */
   /* a rule to the cap top of the text under it (Figma 19 to 23 on the rows and the first labels) */
   --space-rule: var(--space-4);
+  /* the band round Home's switch, and round each of its buttons, that takes a click (Sam, Nov 27, comment 55) */
+  --space-switch: var(--space-6);
   /* the dot to the text it marks (Figma 18 on Home, 15 on Contact; halved, Sam, Nov 27: 12 at 1728) */
   --space-dot: var(--space-2);
   /* a picture to its first text (the news cards: 33; the team: 18 to 42, one value) */

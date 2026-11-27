@@ -35,6 +35,9 @@ w("  --tone-strong: 100%;\n  --tone-muted: 50%;\n  --tone-faint: 30%;")
 w("  /* The page's own colour (red on Home, mustard on News, teal on Contact): the footer's mark, the ball and the\n"
   "     curve take it. A page sets it with .accent-* on its body (themes never reset it). */")
 w("  --page-accent: var(--red);")
+w("  /* Over a picture or a film, whatever the page's ground: the light colour (Sam, Nov 27, comment 51: the taupe is\n"
+  "     for text on a black ground only, never over a visual). The menu over Home's opening takes it. */")
+w("  --on-visual: var(--stone);")
 w("\n  /* Typography primitives */")
 w(f"  --es-build: {S['fonts']['family']};")
 w("  /* ES Build's cap height (682 of 1000): to centre a mark on the capitals of a trimmed text box */\n  --cap-height: 0.682em;")
@@ -57,6 +60,8 @@ w("  --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);\n  --ease-osmo: var(--ease-ar
 w("  /* The home's intro (Sam, Nov 25): its first frame, the dive into the logo, its place over the whole page */\n"
   "  --intro-hold: 3100ms;\n  --intro-hold-upright: 3380ms;\n  --intro-dive-duration: 1600ms;\n  --intro-layer: 900;\n  --layer-raised: 3;")
 w("  /* A card that links answers the pointer (Sam, comment 44, Nov 20): its round photo grows a little, the picture in\n     it a little more and a little longer */\n  --card-hover-scale: 1.04;\n  --card-hover-zoom: 1.1;")
+w("  /* A label's dot that is a button (Home's switch) answers the pointer by shrinking: a little on the hover, more\n"
+  "     while pressed (Sam, Nov 27, comment 52) */\n  --dot-hover-scale: 0.8;\n  --dot-press-scale: 0.6;")
 w("\n  /* Radius: the design has no rounded corner but full circles (the photos, the ball, the dot) */")
 w("  --radius-small: 0rem;\n  --radius-main: 0rem;\n  --radius-round: 100vw;")
 w(f"\n  /* Fluid scale range: phone {V['phone']} to tablet {V['tabletMax']}; the computer range is in the 64rem block */")

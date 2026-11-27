@@ -20,6 +20,8 @@
    the full screen of its short version; the address names the film (?film=<its id>), so Back closes it where the
    page was and a link opens it. */
 import Img from "@/components/media/Img.astro";
+import FilmControls from "@/components/media/FilmControls.astro";
+import PlayTitle from "@/components/content/PlayTitle.astro";
 import { img, type Item } from "@/utils/content.ts";
 
 interface Props {
@@ -83,22 +85,7 @@ const { render = true, projects, colour = "red", alone = false, marks } = Astro.
             <div class="director-reel_line site-grid rule-top text-style-main">
               <span class="director-reel_elapsed" aria-hidden="true" />
               <span class="director-reel_seek" aria-hidden="true" />
-              {p.data.video || p.data.cover ? (
-                <button class="director-reel_title" type="button" data-play={i} aria-label={`Play ${p.data.name}`}>
-                  <svg class="director-reel_icon" viewBox="0 0 22 24" aria-hidden="true">
-                    <path class="is-play" d="M0 0l22 12L0 24z" />
-                    <path class="is-pause" d="M1 0h7v24H1zM14 0h7v24h-7z" />
-                  </svg>
-                  <span data-op-field="name">{p.data.name}</span>
-                </button>
-              ) : (
-                <p class="director-reel_title">
-                  <svg class="director-reel_icon" viewBox="0 0 22 24" aria-hidden="true">
-                    <path d="M0 0l22 12L0 24z" />
-                  </svg>
-                  <span data-op-field="name">{p.data.name}</span>
-                </p>
-              )}
+              <PlayTitle class="director-reel_title" name={p.data.name} play={p.data.video || p.data.cover ? i : undefined} />
               {p.data.client && (
                 <p class="director-reel_client">
                   <span class="director-reel_key">Client</span>
@@ -126,13 +113,7 @@ const { render = true, projects, colour = "red", alone = false, marks } = Astro.
         <li class="director-reel_fade is-out" aria-hidden="true" />
         <li class="director-reel_space is-end" aria-hidden="true" />
       </ol>
-      <button class="director-reel_close text-style-large" type="button">
-        Close
-      </button>
-      <span class="director-reel_cursor text-style-main" aria-hidden="true">
-        <span class="director-reel_word" />
-        <span class="director-reel_ring" />
-      </span>
+      <FilmControls />
     </section>
   )
 }
@@ -238,8 +219,8 @@ const { render = true, projects, colour = "red", alone = false, marks } = Astro.
       const IDLE = 2000;
       const root = document.documentElement;
       const movie = movieBox?.querySelector<HTMLVideoElement>("video") ?? null;
-      const cursor = wrap.querySelector<HTMLElement>(".director-reel_cursor");
-      const closer = wrap.querySelector<HTMLButtonElement>(".director-reel_close");
+      const cursor = wrap.querySelector<HTMLElement>(".film-controls_cursor");
+      const closer = wrap.querySelector<HTMLButtonElement>(".film-controls_close");
       const ms = (name: string) => {
         const v = getComputedStyle(root).getPropertyValue(name).trim();
         return (parseFloat(v) || 0) * (v.endsWith("ms") ? 1 : 1000);
@@ -253,7 +234,7 @@ const { render = true, projects, colour = "red", alone = false, marks } = Astro.
       let held: AbortController | null = null;
       let loading = false;
       let dragging = false;
-      const word = cursor?.querySelector<HTMLElement>(".director-reel_word") ?? null;
+      const word = cursor?.querySelector<HTMLElement>(".film-controls_word") ?? null;
       // a film asked for by its address, which no click has started yet: a click plays it
       const unplayed = () => Boolean(movie?.paused && !movieBox?.classList.contains("is-active"));
       const label = () => {
@@ -698,36 +679,11 @@ const { render = true, projects, colour = "red", alone = false, marks } = Astro.
       align-items: start;
       color: var(--text);
     }
+    /* the title (PlayTitle): its place in the line */
     .director-reel_title {
       grid-column: margin / span 3;
-      display: flex;
-      align-items: flex-start;
-      gap: var(--space-3);
       @media (width >= 64rem) {
         grid-column: margin / half;
-      }
-    }
-    button.director-reel_title {
-      /* a button does not take the text's colour by itself: the title in the same stone as the rest over the film */
-      color: inherit;
-      text-align: start;
-      transition: color var(--hover-duration) var(--hover-ease);
-      @media (hover: hover) {
-        &:hover {
-          color: var(--text-2);
-        }
-      }
-    }
-    .director-reel_icon {
-      flex: none;
-      width: 1.2em;
-      height: 1.3em;
-      margin-top: -0.12em;
-      fill: currentColor;
-    }
-    .director-reel_title {
-      @media (48rem <= width < 64rem) {
-        grid-column: margin / span 3;
       }
     }
     .director-reel_client {
@@ -802,8 +758,7 @@ const { render = true, projects, colour = "red", alone = false, marks } = Astro.
       }
       &.is-idle {
         cursor: none;
-        & .director-reel_slot,
-        & .director-reel_cursor {
+        & .director-reel_slot {
           opacity: 0;
         }
       }
@@ -835,75 +790,6 @@ const { render = true, projects, colour = "red", alone = false, marks } = Astro.
       touch-action: none;
       .is-current & {
         display: block;
-      }
-    }
-    .director-reel_icon .is-pause,
-    .is-playing .director-reel_icon .is-play {
-      display: none;
-    }
-    .is-playing .director-reel_icon .is-pause {
-      display: inline;
-    }
-    /* what a click does, at the pointer (fine pointers); it follows it from the script's two values */
-    .director-reel_cursor {
-      position: fixed;
-      top: 0;
-      left: 0;
-      margin: var(--space-5) 0 0 var(--space-6);
-      color: var(--text);
-      pointer-events: none;
-      translate: var(--_x, 0) var(--_y, 0);
-      opacity: 0;
-      transition: opacity var(--hover-duration) var(--hover-ease);
-      &.is-on {
-        opacity: 1;
-      }
-      @media not ((hover: hover) and (pointer: fine)) {
-        display: none;
-      }
-    }
-    /* while the film loads: a ring as tall as the label's text, turning (with reduced motion, the word « Loading ») */
-    .director-reel_ring {
-      display: none;
-      width: 1.2em;
-      height: 1.2em;
-      border: calc(var(--border-width) * 2) solid currentColor;
-      border-top-color: transparent;
-      border-radius: var(--radius-round);
-      animation: director-reel-turn var(--duration-slow) linear infinite;
-    }
-    @media (prefers-reduced-motion: no-preference) {
-      .director-reel_cursor.is-loading {
-        & .director-reel_word {
-          display: none;
-        }
-        & .director-reel_ring {
-          display: block;
-        }
-      }
-    }
-    @keyframes director-reel-turn {
-      to {
-        rotate: 1turn;
-      }
-    }
-    /* Close as a button: for the keyboard (shown when focused) and for a touch screen, which has no pointer label */
-    .director-reel_close {
-      position: fixed;
-      top: var(--site-margin);
-      right: var(--site-margin);
-      color: var(--text);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity var(--hover-duration) var(--hover-ease);
-      .is-watching &:focus-visible {
-        opacity: 1;
-      }
-      @media (hover: none) {
-        .is-watching & {
-          opacity: 1;
-          pointer-events: auto;
-        }
       }
     }
     @media (prefers-reduced-motion: reduce) {

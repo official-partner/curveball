@@ -827,26 +827,47 @@ const filters = [
       flex-wrap: wrap;
       /* half the label's space between the two (Sam, Nov 27) */
       gap: var(--space-4) var(--space-5);
+      /* a band round the two that takes the click (comment 55), its place in the row unchanged: a click in it that
+         misses both buttons does nothing, never the film under it */
+      padding: var(--space-switch);
+      margin: calc(var(--space-switch) * -1);
       @media (width >= 48rem) {
         grid-column: margin / half;
       }
     }
-    /* the chosen one's dot is full, the other's an outline of the page's line; a hover fills it a little */
+    /* the chosen one's dot is full, the other's an outline of the page's line. The dot answers the pointer by
+       shrinking, a little on the hover, more while pressed (Sam, Nov 27, comment 52: « un léger scale down ... un
+       scale down plus présent pour le clic »): the hover on the hover's time, the press quicker, its way back on the
+       hover's. Reduced motion: no shrinking, the dot simply turns. */
     .directors-home_mode {
       color: inherit;
       &::before {
         transition:
           background-color var(--hover-duration) var(--hover-ease),
-          box-shadow var(--hover-duration) var(--hover-ease);
+          box-shadow var(--hover-duration) var(--hover-ease),
+          scale var(--hover-duration) var(--hover-ease);
       }
       &[aria-pressed="false"]::before {
         background-color: transparent;
         box-shadow: inset 0 0 0 var(--border-width) var(--dot-color);
       }
-      @media (hover: hover) {
-        &[aria-pressed="false"]:hover::before {
-          background-color: color-mix(in srgb, var(--dot-color) var(--tone-faint), transparent);
+      @media (prefers-reduced-motion: no-preference) {
+        @media (hover: hover) {
+          &:hover::before {
+            scale: var(--dot-hover-scale);
+          }
         }
+        &:active::before {
+          scale: var(--dot-press-scale);
+          transition-duration: var(--duration-faster);
+        }
+      }
+      /* the area a click takes: the button and half the space around it, the switch's own band round both (Sam, Nov
+         27, comment 55: a click a little beside the button played the film under it) */
+      &::after {
+        content: "";
+        position: absolute;
+        inset: calc(var(--space-switch) * -1) calc(var(--space-5) * -0.5);
       }
     }
     /* With the featured work the row stays at the top of the screen over the reel (Sam, Nov 27), a margin down as the
@@ -900,7 +921,8 @@ const filters = [
     :root[data-painting] .directors-home_mode::before {
       transition:
         background-color var(--paint-duration, 0s) var(--ease-travel),
-        box-shadow var(--paint-duration, 0s) var(--ease-travel);
+        box-shadow var(--paint-duration, 0s) var(--ease-travel),
+        scale var(--hover-duration) var(--hover-ease);
     }
     .directors-home_filter {
       display: flex;

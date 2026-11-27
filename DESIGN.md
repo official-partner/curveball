@@ -22,7 +22,9 @@ it (system/gen.py).
 - A dot beside a text sits on the middle of its capitals (every one is trimmed to them), --space-dot from it: 12 at
   1728 since Sam's Nov 27 (it was 20).
 - The menu (logo and links) is taupe on the black, as the page's own text, and the text's colour on the other grounds:
-  the themes' role `--nav-text` (Sam, Nov 27, comment 47); its current page and its hover at --tone-muted of it.
+  the themes' role `--nav-text` (Sam, Nov 27, comment 47); its current page and its hover at --tone-muted of it. Over a
+  picture or a film it is light whatever the ground (`--on-visual`, the stone: Home's opening, `navOver="visual"` on
+  its layout; Sam, Nov 27, comment 51: the taupe is for text on the black only).
 - Each director has a colour, from the brand's three, in turn down the list: teal, mustard, red (src/content/
   directors, `colour`). Their page wears it; on the directors list (Home, Directors, the foot of a director's page)
   the name in the middle of the screen turns the whole page to it, every ground included (Home's opening and its
@@ -109,6 +111,10 @@ it (system/gen.py).
   time starts after it. None with reduced motion.
 - Home's switch beside « Directors » (Sam, Nov 27, comment 49): « Featured work », its dot outlined until chosen
   (the dots fill and empty on the hover's time, the page's while it turns), half the label's space between the two.
+  A dot answers the pointer by shrinking, to 80 % on the hover (fast) and 60 % while pressed (faster), never a fill
+  (comment 52; --dot-hover-scale, --dot-press-scale); none with reduced motion. Each button takes clicks half the
+  gap and --space-switch around it, and a band of --space-switch round the two takes the rest, so a click a little
+  beside them never reaches the reel under the row (comment 55).
   One thing at a time (Sam, Nov 27: « le plus seamless, le plus smooth »): to the featured work, the balls shrink away
   where they are (fast, leave), the names fade (fast) and the filters leave line by line (faster, 12 ms apart); then,
   with nothing else moving, the colour goes back to the black (medium, travel); then the films marked « Featured work »
@@ -117,6 +123,13 @@ it (system/gen.py).
   gone while a film is watched; only its switch takes the pointer). Back to « Directors » from anywhere in the reel:
   the reel fades (faster), the page goes back under cover to the row's own place with the row kept where it is on
   the screen, the names and the filters rise in, then the middle name gives its colour and its balls.
+- Home's opening plays its films whole (Sam, Nov 27, comment 54): the row names the film on screen with its triangle
+  (PlayTitle, as a reel's line) where « Featured work » stood. Its title plays it the reel's way: the page back to
+  its top (medium, travel) and held, the wordmark, the menu and the counter out (medium), the film over the opening on
+  pure black growing from the full screen into its format (base, travel), the row's rule its time at six times its
+  weight (pressed or dragged), « Close » at the pointer, idle after two seconds; Close, Escape, a click or the end:
+  the film grows back and dissolves (from 60 % of base, medium), the wordmark, the menu and the counter come back with
+  the dissolve, and the featured work turns again from that film.
 - The page's colour: one transition per run of inherited colour (the part named in project.css turns, what it holds
   follows); a part inside it never has a colour transition of its own while the page turns (the footer's links).
 - About's clients (Sam, Nov 27, comment 50): with a mouse, the name under it lights up (stone, the hover's time) and a
@@ -150,6 +163,8 @@ it (system/gen.py).
   one (« Enquire about Jasper »); the footer opens with the curve in the page's colour (or a rule: plain), the
   symbol in that colour, the menu, the line and the small print. On a computer it stays within one screen: the symbol
   is 531 at most, smaller on a short screen, 144 at least.
-- HeroHome, DirectorsHome, CurveBand (sections), ArrowLink (a link with its drawn arrow).
+- HeroHome, DirectorsHome, CurveBand (sections), ArrowLink (a link with its drawn arrow), PlayTitle (a film's title
+  that plays it: the reels' lines, Home's opening); FilmControls (media: the pointer's label and Close, for a film
+  watched whole, shared by the reels and the opening).
 - NewsList, ContactIntro, TeamList, Statement (sections); SectionHead, CardNews, ContactBlock, CardPerson (content).
 - DirectorHero, DirectorReel (a director's page), AboutStory, AboutLists (About); src/utils/parallax.ts.

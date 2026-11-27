@@ -3,6 +3,7 @@ import Layout from "@/layouts/BaseLayout.astro";
 import ComponentList from "@/components/system/ComponentList.astro";
 import ComponentSample from "@/components/system/ComponentSample.astro";
 import ArrowLink from "@/components/content/ArrowLink.astro";
+import PlayTitle from "@/components/content/PlayTitle.astro";
 import HeroHome from "@/components/section/HeroHome.astro";
 import HomeIntro from "@/components/section/HomeIntro.astro";
 import DirectorsHome from "@/components/section/DirectorsHome.astro";
@@ -40,12 +41,17 @@ const reel = (await getItems("projects")).filter((p) => p.data.director?.id === 
         <ArrowLink href="/contact" text="Start a conversation" />
       </div>
     </ComponentSample>
+    <ComponentSample file="content/PlayTitle.astro" note="A film's title that plays it: the triangle, then the name (a reel's lines, Home's opening). While its film plays the triangle is a pause; a project without a film shows the same words, not as a button.">
+      <div class="site-grid text-style-main">
+        <PlayTitle name="Perrier" play={0} />
+      </div>
+    </ComponentSample>
     <ComponentSample file="section/HomeIntro.astro" note="Home's intro, its first frame still: the wordmark's « u » and « r » turned and seen close, the balls where they pass slowest, the footer's sentence. On the home it plays once per visit (?op-intro to see it again), then dives into the logo onto the opening.">
       <div class="container">
         <HomeIntro part="sample" />
       </div>
     </ComponentSample>
-    <ComponentSample file="section/HeroHome.astro" note="Home's opening: the featured films' stills turning under the wordmark, the featured work's row with its counter (the pause).">
+    <ComponentSample file="section/HeroHome.astro" note="Home's opening: the featured films' stills turning under the wordmark, the featured work's row with the film's name (its triangle plays it whole, over the opening) and its counter (the pause).">
       <HeroHome />
     </ComponentSample>
     <ComponentSample file="section/DirectorsHome.astro" note="Every director in the big type, with the filters and, on Home, the switch to the featured work; the name in the middle of the screen takes its colour and its films.">

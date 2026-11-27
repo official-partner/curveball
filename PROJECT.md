@@ -813,3 +813,20 @@ One line per decision: the date, who asked, what was decided and why. The newest
   - Found on the way: a hidden reel read its lines at 0 and picked its last film, which flashed before the first when
     it showed; it now reads nothing while hidden. The intro redrew its canvas on a resize after it had ended (its
     cover has no size then); the directors' balls could stop halfway out when the page was late with its frames.
+- 2026-11-27, Sam, comments 51 to 55 (his own, handled at his ask in his conversation):
+  - 51, the menu over Home's opening: light (stone) whatever the ground, the taupe kept for text on the black. A role,
+    `--on-visual`, which the menu takes when the layout says it lies over a visual (`navOver="visual"`, Home only;
+    every other page opens on a ground).
+  - 52, the switch's dot: no fill on the hover any more; it shrinks to 80 % on the hover and 60 % while pressed
+    (system tokens --dot-hover-scale and --dot-press-scale), none with reduced motion.
+  - 53, the curve's ball stood still with the featured work: its scroll trigger had been measured on the directors'
+    page height, so the ball had already run its course when the curve came in (checked before the fix: at its end
+    the whole way; after: from its start to its end as the curve comes in). CurveBand now reads its triggers again
+    when the page's height changes (the switch, the filters), 60 ms after it settles.
+  - 54, Home's opening: the film's name and its triangle in place of « Featured work », and the film played whole
+    from there, the reels' way (DESIGN.md, Motion). The title and the controls are now shared components (PlayTitle,
+    FilmControls) the reels use too, so the three play alike. A film's client no longer falls back to its name in the
+    row (the name is there now); none of the six has a client or an agency written yet.
+  - 55, the switch's click area: each button takes half the gap and --space-switch (a new role, space-6) around it,
+    and a band of --space-switch round both takes the rest (a click there does nothing), so a click a little beside
+    a button no longer plays the film under the row.

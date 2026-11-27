@@ -207,6 +207,10 @@
       "ref": "space-4",
       "job": "a rule to the cap top of the text under it (Figma 19 to 23 on the rows and the first labels)"
     },
+    "space-switch": {
+      "ref": "space-6",
+      "job": "the band round Home's switch, and round each of its buttons, that takes a click (Sam, Nov 27, comment 55)"
+    },
     "space-dot": {
       "ref": "space-2",
       "job": "the dot to the text it marks (Figma 18 on Home, 15 on Contact; halved, Sam, Nov 27: 12 at 1728)"

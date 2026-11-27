@@ -188,6 +188,20 @@ const track = tracks[variant].points;
       });
       return () => undo.forEach((u) => u());
     });
+    /* The page's height changing above the curve (Home's switch between the directors and the featured reel, its
+       filters: Sam, Nov 27, comment 53, the ball no longer moved with the featured work): its start and end read
+       again, once the page has stopped changing for a frame or two */
+    let last = document.body.offsetHeight;
+    let wait = 0;
+    const grown = new ResizeObserver(() => {
+      const now = document.body.offsetHeight;
+      if (now === last) return;
+      last = now;
+      clearTimeout(wait);
+      wait = window.setTimeout(() => ScrollTrigger.refresh(), 60);
+    });
+    grown.observe(document.body);
+    signal.addEventListener("abort", () => (grown.disconnect(), clearTimeout(wait)), { once: true });
     signal.addEventListener("abort", () => mm.revert(), { once: true });
   });
 </script>

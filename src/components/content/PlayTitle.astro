@@ -1,0 +1,75 @@
+---
+/* A film's title that plays it: the triangle, then the name, as the Figma draws a reel's line (a director's reel,
+   Home's featured reel, Home's opening since Sam's comment 54, Nov 27). While its film plays (the line's
+   `is-playing`, set by the script that plays it), the triangle is a pause. A project with no film file shows the same
+   words, not as a button. */
+interface Props {
+  /** Set to `false` to omit the component. */
+  render?: boolean;
+  /** The film's name. */
+  name: string;
+  /** The film's place in its list, given to the script that plays it (`data-play`). None: no film to play. */
+  play?: number;
+  /** More classes, for where a section places it. */
+  class?: string;
+}
+
+const { render = true, name, play, class: extra } = Astro.props;
+const playable = typeof play === "number";
+const Tag = playable ? "button" : "p";
+---
+
+{
+  render && (
+    <Tag
+      class:list={["play-title", extra]}
+      type={playable ? "button" : undefined}
+      data-play={playable ? play : undefined}
+      aria-label={playable ? `Play ${name}` : undefined}
+    >
+      <svg class="play-title_icon" viewBox="0 0 22 24" aria-hidden="true">
+        <path class="is-play" d="M0 0l22 12L0 24z" />
+        {playable && <path class="is-pause" d="M1 0h7v24H1zM14 0h7v24h-7z" />}
+      </svg>
+      <span data-op-field="name">{name}</span>
+    </Tag>
+  )
+}
+
+<style is:global>
+  @layer components {
+    .play-title {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-3);
+      text-align: start;
+    }
+    /* a button does not take the text's colour by itself: the title in the same colour as the rest of its line */
+    button.play-title {
+      color: inherit;
+      transition: color var(--hover-duration) var(--hover-ease);
+      @media (hover: hover) {
+        &:hover {
+          color: var(--text-2);
+        }
+      }
+    }
+    /* the triangle at the text's size, on its capitals */
+    .play-title_icon {
+      flex: none;
+      width: 1.2em;
+      height: 1.3em;
+      margin-top: -0.12em;
+      fill: currentColor;
+      & .is-pause {
+        display: none;
+      }
+      .is-playing & .is-play {
+        display: none;
+      }
+      .is-playing & .is-pause {
+        display: inline;
+      }
+    }
+  }
+</style>

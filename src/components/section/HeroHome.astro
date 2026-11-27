@@ -11,9 +11,14 @@
    hero fixed, parallax, gradient, transition smooth, beaucoup plus d'espace entre Featured work et Directors »): the
    stills are fixed behind the page, seen only within the opening (its clip-path), the wordmark and the row scroll up
    over them, then a screen-tall eased gradient draws the page's ground up over them while they drift up at their own
-   pace, and the directors follow on that ground. */
+   pace, and the directors follow on that ground.
+   The row names the film on screen, its triangle before it (Sam, Nov 27, comment 54: « mettre le nom du projet et
+   bouton play, et pouvoir play le projet sur le hero aussi »): its title plays the film whole, over the opening, as a
+   reel does (DirectorReel). */
 import Wordmark from "@/assets/logo/logo.svg";
 import Img from "@/components/media/Img.astro";
+import FilmControls from "@/components/media/FilmControls.astro";
+import PlayTitle from "@/components/content/PlayTitle.astro";
 import { img } from "@/utils/content.ts";
 import { listed, ruleMarks } from "@/utils/lists.ts";
 import { SITE_NAME } from "@/consts.ts";
@@ -25,10 +30,11 @@ interface Props {
 
 const { render = true } = Astro.props;
 /* the featured films: the list « featured-work », its rule in src/data/lists.json (picked by hand, in that order),
-   which OP System's List options changes itself; a film's name stands for its client until the client is written */
+   which OP System's List options changes itself; each one's short version behind the opening, its film whole when it
+   is played */
 const featured = (await listed<"projects">("featured-work")).map(({ id, data }) => {
   const { name, client, agency, still, preview, cover, video } = data;
-  return { id, client: client || name, agency, still, film: preview || cover || video };
+  return { id, name, client, agency, still, film: preview || cover || video, whole: video || cover };
 });
 const count = featured.length;
 ---
@@ -50,10 +56,16 @@ const count = featured.length;
                 fetchPriority={i === 0 ? "high" : "low"}
               />
             )}
-            {f.film && <video class="hero-home_film" src={f.film} muted loop playsinline preload={i === 0 ? "auto" : "none"} />}
+            {f.film && (
+              <video class="hero-home_film" src={f.film} data-whole={f.whole} muted loop playsinline preload={i === 0 ? "auto" : "none"} />
+            )}
           </div>
         ))}
         </div>
+      </div>
+      {/* the film itself, whole, over the stills and their shades while it is watched (the script gives it its file) */}
+      <div class="hero-home_movie" aria-hidden="true">
+        <video class="cover-absolute object-fit-contain" playsinline preload="none" />
       </div>
       <div class="hero-home_layout site-grid">
         <h1 class="hero-home_title" data-page-reveal>
@@ -62,20 +74,23 @@ const count = featured.length;
         </h1>
         <div class="hero-home_row rule-top" data-page-reveal>
           <span class="hero-home_time" aria-hidden="true" />
-          <p class="hero-home_label dot-label text-style-main">Featured work</p>
-          <ol class="hero-home_slides" {...ruleMarks("featured-work")}>
+          <span class="hero-home_seek" aria-hidden="true" />
+          <ol class="hero-home_slides" aria-label="Featured work" {...ruleMarks("featured-work")}>
             {featured.map((f, i) => (
-              <li class:list={["hero-home_slide text-style-main", i === 0 && "is-active"]} data-op-item={f.id}>
-                <p class="hero-home_client">
-                  <span class="hero-home_key">Client</span>
-                  <br />
-                  <span>{f.client}</span>
-                </p>
+              <li class:list={["hero-home_slide text-style-main", i === 0 && "is-active"]} data-op-item={f.id} inert={i !== 0}>
+                <PlayTitle class="hero-home_name" name={f.name} play={f.whole ? i : undefined} />
+                {f.client && (
+                  <p class="hero-home_client">
+                    <span class="hero-home_key">Client</span>
+                    <br />
+                    <span data-op-field="client">{f.client}</span>
+                  </p>
+                )}
                 {f.agency && (
                   <p class="hero-home_agency">
                     <span class="hero-home_key">Agency</span>
                     <br />
-                    <span>{f.agency}</span>
+                    <span data-op-field="agency">{f.agency}</span>
                   </p>
                 )}
               </li>
@@ -94,12 +109,14 @@ const count = featured.length;
         </div>
       </div>
       <div class="hero-home_fade" aria-hidden="true" />
+      <FilmControls />
     </section>
   )
 }
 
 <script>
   import { onPage } from "@/utils/page.ts";
+  import { pageLenis } from "@/utils/smooth-scroll.ts";
 
   /* The featured work turning (job: show the studio's range, one film at a time). Each holds six seconds, its time
      the row's rule filling (linear); then the next still fades in over the last (slow, ease-out) as it settles from
@@ -147,12 +164,13 @@ const count = featured.length;
         signal.addEventListener("abort", () => cancelAnimationFrame(frame), { once: true });
       }
 
-      if (n < 2 || !row || !time || !button || !digits) return;
+      if (!row || !time || !button || !digits) return;
 
       let current = 0;
       let stopped = reduce.matches;
       let held = false;
       let away = false;
+      let watching = -1;
       const fill = time.animate([{ scale: "0 1" }, { scale: "1 1" }], { duration: HOLD, easing: "linear", fill: "both" });
       fill.pause();
 
@@ -160,13 +178,16 @@ const count = featured.length;
          tab shown; the counter's pause stops it with the turning, and it never plays with reduced motion. Its still
          shows under it until its first frame is in. The first loads with the page and the next one while the
          current plays (Sam, Nov 17: « starter les vidéos un peu plus tôt »), so a film is already moving as it
-         fades in. */
+         fades in. Once a film is watched whole, its short version rests under it. */
+      const movieBox = wrap.querySelector<HTMLElement>(".hero-home_movie");
+      const movie = movieBox?.querySelector<HTMLVideoElement>("video") ?? null;
       const film = () => {
         const on = !stopped && !away && !document.hidden;
+        const covered = watching >= 0 && Boolean(movieBox?.classList.contains("is-whole"));
         stills.forEach((s, i) => {
           const video = s.querySelector("video");
           if (!video) return;
-          if (on && i === current) {
+          if (on && i === current && !covered) {
             video.preload = "auto";
             video.play().catch(() => {});
           } else {
@@ -187,12 +208,17 @@ const count = featured.length;
         // its film starts under the last one, so it is moving when it fades in
         if (!stopped) still?.querySelector("video")?.play().catch(() => {});
         await picture?.decode().catch(() => {});
+        if (watching >= 0) return;
         const last = stills[current];
         last?.classList.add("is-leaving");
         stills.forEach((s, i) => s.classList.toggle("is-active", i === next));
         // once the next is in, the last one leaves from under it
         window.setTimeout(() => last?.classList.remove("is-leaving"), 1300);
-        slides.forEach((s, i) => s.classList.toggle("is-active", i === next));
+        slides.forEach((s, i) => {
+          s.classList.toggle("is-active", i === next);
+          // only the one shown takes a click or the focus (they sit in one cell)
+          s.inert = i !== next;
+        });
         if (next === 0) {
           // past the last: on to the second « 1 », then back to the top unseen
           roll(n);
@@ -203,8 +229,9 @@ const count = featured.length;
         run();
       };
       const run = () => {
-        // the featured one's time starts once the home's intro has handed over (HomeIntro.astro)
-        const play = !stopped && !held && !away && !document.hidden && !document.documentElement.dataset.intro;
+        // the featured one's time starts once the home's intro has handed over (HomeIntro.astro); a film watched
+        // holds it, its rule then the film's time
+        const play = n > 1 && watching < 0 && !stopped && !held && !away && !document.hidden && !document.documentElement.dataset.intro;
         if (play) fill.play();
         else fill.pause();
         film();
@@ -212,7 +239,7 @@ const count = featured.length;
         button.classList.toggle("is-stopped", stopped);
       };
       // its time run out, the next one (never while stopped: a screenshot that settles every animation, say)
-      fill.onfinish = () => !stopped && show((current + 1) % n);
+      fill.onfinish = () => !stopped && watching < 0 && show((current + 1) % n);
 
       button.addEventListener(
         "click",
@@ -234,7 +261,275 @@ const count = featured.length;
       });
       seen.observe(wrap);
       reduce.addEventListener("change", () => ((stopped = reduce.matches), run()), { signal });
-      signal.addEventListener("abort", () => (seen.disconnect(), fill.cancel()), { once: true });
+
+      /* Watching a featured film whole (job: watch it, with its sound, without leaving the opening; Sam, Nov 27,
+         comment 54), the way a reel does (DirectorReel): its title plays it. The page goes back to its top if it had
+         left it (medium, on the travel's curve) and holds still there; the wordmark, the menu and the counter step
+         aside (medium) while the row stays, its rule now the film's time, six times its weight, pressed or dragged
+         to move through it, its triangle a pause. The film loads over the short version and fades in once it plays,
+         growing from the full screen into its own format (base, the travel's curve). « Close » at the pointer: a
+         click, Escape or the film's end leaves, the film growing back and dissolving into its short version, and the
+         featured work turns again from that film. Two seconds without the pointer moving and the row and the label
+         fade out. Space pauses, the arrows move five seconds. Reduced motion: no growing, the fades shorter. */
+      const IDLE = 2000;
+      const root = document.documentElement;
+      const cursor = wrap.querySelector<HTMLElement>(".film-controls_cursor");
+      const word = cursor?.querySelector<HTMLElement>(".film-controls_word") ?? null;
+      const closer = wrap.querySelector<HTMLButtonElement>(".film-controls_close");
+      const seekBand = wrap.querySelector<HTMLElement>(".hero-home_seek");
+      const ms = (name: string) => {
+        const v = getComputedStyle(root).getPropertyValue(name).trim();
+        return (parseFloat(v) || 0) * (v.endsWith("ms") ? 1 : 1000);
+      };
+      const title$ = (i: number) => slides[i]?.querySelector<HTMLButtonElement>("[data-play]") ?? null;
+      let over: EventTarget | null = null;
+      let idle = 0;
+      let bar = 0;
+      let hold: AbortController | null = null;
+      let loading = false;
+      let dragging = false;
+      const label = () => {
+        if (!cursor || !word) return;
+        const on = watching >= 0 && over instanceof Element && !over.closest("button, a, .hero-home_seek");
+        const wait = on && loading;
+        const text = !on ? "" : wait ? "Loading" : "Close";
+        if (text) word.textContent = text;
+        cursor.classList.toggle("is-loading", wait);
+        cursor.classList.toggle("is-on", Boolean(text));
+      };
+      const wake = () => {
+        wrap.classList.remove("is-idle");
+        clearTimeout(idle);
+        if (watching >= 0 && movie && !movie.paused && !loading && !dragging)
+          idle = window.setTimeout(() => wrap.classList.add("is-idle"), IDLE);
+      };
+      // the film's own format: shown whole (contain); --_cover is how much bigger it is to fill the screen
+      const fit = () => {
+        if (!movie || !movieBox || !movie.videoWidth || !movieBox.clientHeight) return;
+        const screen = movieBox.clientWidth / movieBox.clientHeight;
+        const format = movie.videoWidth / movie.videoHeight;
+        movie.style.setProperty("--_cover", Math.max(screen / format, format / screen).toFixed(4));
+      };
+      // the rule follows the film's time (the turning's own animation, held, set to the film's share of it)
+      const elapsed = (t: number) => {
+        fill.pause();
+        fill.currentTime = Math.min(HOLD - 1, Math.max(0, t) * HOLD);
+      };
+      const tick = () => {
+        cancelAnimationFrame(bar);
+        if (!movie || watching < 0) return;
+        if (movie.duration) elapsed(movie.currentTime / movie.duration);
+        if (!movie.paused) bar = requestAnimationFrame(tick);
+      };
+      const state = () => {
+        if (watching < 0 || !movie) return;
+        const name = title$(watching)?.textContent?.trim() ?? "";
+        slides[watching]?.classList.toggle("is-playing", !movie.paused);
+        title$(watching)?.setAttribute("aria-label", `${movie.paused ? "Play" : "Pause"} ${name}`);
+        tick();
+        wake();
+      };
+      // the travel's curve, as the scroll eases (an ease in-out)
+      const travel = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
+      const leave = (how: "close" | "gone" = "close") => {
+        const i = watching;
+        if (i < 0 || !movie) return;
+        watching = -1;
+        loading = false;
+        dragging = false;
+        clearTimeout(idle);
+        cancelAnimationFrame(bar);
+        const still = how === "gone" || reduce.matches;
+        const back = still ? 0 : ms("--duration-base");
+        const fade = ms("--duration-medium");
+        movie.pause();
+        if (!still) movieBox?.classList.add("is-closing");
+        movieBox?.classList.remove("is-whole");
+        wrap.classList.remove("is-watching", "is-idle");
+        slides[i]?.classList.remove("is-playing");
+        title$(i)?.setAttribute("aria-label", `Play ${title$(i)?.textContent?.trim() ?? ""}`);
+        delete root.dataset.watching;
+        label();
+        // the featured work turns again from this film, its time from the start
+        fill.currentTime = 0;
+        run();
+        const free = () => {
+          hold?.abort();
+          hold = null;
+          pageLenis()?.start();
+        };
+        if (still) free();
+        // the dissolve starts once most of the way back is seen (60 %), and ends a little after it
+        const from = back * 0.6;
+        window.setTimeout(() => watching < 0 && movieBox?.classList.remove("is-active"), from);
+        window.setTimeout(() => {
+          if (watching >= 0) return;
+          if (!still) free();
+          movieBox?.classList.remove("is-closing", "is-active");
+          movie.removeAttribute("src");
+          movie.load();
+        }, from + fade);
+      };
+      const watch = (i: number) => {
+        const source = stills[i]?.querySelector<HTMLVideoElement>("video");
+        if (!source?.dataset.whole || !movie || !movieBox) return;
+        watching = i;
+        loading = true;
+        run();
+        elapsed(0);
+        wrap.classList.add("is-watching");
+        root.dataset.watching = "";
+        movieBox.classList.remove("is-closing", "is-whole");
+        // the page goes back to its top, then holds still (wheel, touch and the scroll keys; Lenis stopped)
+        hold?.abort();
+        hold = new AbortController();
+        const keep = { signal: hold.signal, passive: false } as const;
+        const stay = (event: Event) => event.preventDefault();
+        window.addEventListener("wheel", stay, keep);
+        window.addEventListener("touchmove", stay, keep);
+        window.addEventListener("pointermove", wake, { signal: hold.signal });
+        window.addEventListener(
+          "keydown",
+          (event) => {
+            const onButton = event.target instanceof Element && event.target.closest("button, a");
+            if (event.key === "Escape") leave();
+            else if (event.key === " " && !onButton) {
+              event.preventDefault();
+              if (movie.paused) movie.play().catch(() => {});
+              else movie.pause();
+            } else if ((event.key === "ArrowLeft" || event.key === "ArrowRight") && movie.duration) {
+              movie.currentTime = Math.min(movie.duration, Math.max(0, movie.currentTime + (event.key === "ArrowLeft" ? -5 : 5)));
+              tick();
+            } else if (["ArrowUp", "ArrowDown", "PageUp", "PageDown", "Home", "End"].includes(event.key)) event.preventDefault();
+            wake();
+          },
+          { signal: hold.signal },
+        );
+        const lenis = pageLenis();
+        if (scrollY > 0) {
+          if (lenis && !reduce.matches)
+            lenis.scrollTo(0, { duration: ms("--duration-medium") / 1000, easing: travel, lock: true, force: true, onComplete: () => watching === i && lenis.stop() });
+          else {
+            lenis?.scrollTo(0, { immediate: true, force: true });
+            lenis?.stop();
+            scrollTo({ top: 0, behavior: reduce.matches ? "auto" : "smooth" });
+          }
+        } else lenis?.stop();
+        movie.src = source.dataset.whole;
+        movie.muted = false;
+        movie.play().catch(() => {
+          loading = false;
+          state();
+          label();
+        });
+        label();
+      };
+      movie?.addEventListener("loadedmetadata", fit, { signal });
+      window.addEventListener("resize", fit, { signal });
+      movie?.addEventListener(
+        "playing",
+        () => {
+          if (watching < 0) return;
+          loading = false;
+          label();
+          wake();
+          if (movieBox?.classList.contains("is-active")) return;
+          fit();
+          movieBox?.classList.add("is-active", "is-whole");
+          // its short version rests once the film covers it
+          const k = watching;
+          window.setTimeout(() => watching === k && film(), ms("--duration-medium"));
+        },
+        { signal },
+      );
+      movie?.addEventListener(
+        "waiting",
+        () => {
+          if (watching < 0) return;
+          loading = true;
+          label();
+          wake();
+        },
+        { signal },
+      );
+      movie?.addEventListener("play", state, { signal });
+      movie?.addEventListener("pause", state, { signal });
+      movie?.addEventListener("ended", () => leave(), { signal });
+      // moving through the film: the band on the rule pressed or dragged, the filled part following at once
+      const seek = (event: PointerEvent) => {
+        if (!movie || !movie.duration || !seekBand) return;
+        const box = seekBand.getBoundingClientRect();
+        const t = Math.min(1, Math.max(0, (event.clientX - box.left) / Math.max(1, box.width)));
+        movie.currentTime = t * movie.duration;
+        elapsed(t);
+      };
+      seekBand?.addEventListener(
+        "pointerdown",
+        (event) => {
+          if (watching < 0) return;
+          event.preventDefault();
+          dragging = true;
+          seekBand.setPointerCapture(event.pointerId);
+          seek(event);
+          wake();
+        },
+        { signal },
+      );
+      const drop = () => {
+        dragging = false;
+        wake();
+      };
+      seekBand?.addEventListener("pointerup", drop, { signal });
+      seekBand?.addEventListener("pointercancel", drop, { signal });
+      wrap.addEventListener(
+        "pointermove",
+        (event) => {
+          if (event.pointerType !== "mouse" || !cursor) return;
+          over = event.target;
+          if (dragging) seek(event);
+          cursor.style.setProperty("--_x", `${event.clientX}px`);
+          cursor.style.setProperty("--_y", `${event.clientY}px`);
+          label();
+        },
+        { signal },
+      );
+      wrap.addEventListener(
+        "pointerleave",
+        () => {
+          over = null;
+          label();
+        },
+        { signal },
+      );
+      wrap.addEventListener(
+        "click",
+        (event) => {
+          const target = event.target as Element;
+          if (target.closest("a, .hero-home_seek, .hero-home_count, .film-controls_close")) return;
+          const title = target.closest<HTMLButtonElement>("[data-play]");
+          if (watching >= 0) {
+            // its own title pauses and plays; anything else leaves
+            if (movie && title && Number(title.dataset.play) === watching) {
+              if (movie.paused) movie.play().catch(() => {});
+              else movie.pause();
+            } else leave();
+            return;
+          }
+          if (title) watch(Number(title.dataset.play));
+        },
+        { signal },
+      );
+      closer?.addEventListener("click", () => leave(), { signal });
+      signal.addEventListener(
+        "abort",
+        () => {
+          seen.disconnect();
+          leave("gone");
+          fill.cancel();
+          movie?.pause();
+        },
+        { once: true },
+      );
       run();
     });
   });
@@ -359,10 +654,16 @@ const count = featured.length;
         padding-top: var(--site-margin);
       }
     }
+    /* after a film watched, the wordmark and the counter come back as the film dissolves into its short version (60 %
+       of its way back), never over the film itself */
     .hero-home_title {
       grid-column: margin / end;
       grid-row: 1;
       color: var(--text);
+      transition: opacity var(--duration-medium) var(--ease-out) calc(var(--duration-base) * 0.6);
+      @media (prefers-reduced-motion: reduce) {
+        transition-delay: 0s;
+      }
     }
     .hero-home_row {
       position: relative;
@@ -372,6 +673,7 @@ const count = featured.length;
       grid-template-columns: subgrid;
       row-gap: var(--space-5);
       align-items: start;
+      transition: opacity var(--duration-medium) var(--ease-out);
     }
     /* the featured one's time: the rule filling, in the text's colour */
     .hero-home_time {
@@ -382,12 +684,18 @@ const count = featured.length;
       transform-origin: left;
       scale: 0 1;
     }
-    .hero-home_label {
-      grid-column: margin / span 2;
+    /* where the rule is pressed or dragged to move through a film watched: a band across it, easier to catch */
+    .hero-home_seek {
+      position: absolute;
+      inset: calc(var(--space-5) * -0.5) 0 auto;
+      display: none;
+      height: var(--space-5);
+      cursor: pointer;
+      touch-action: none;
     }
     /* the featured ones in one cell, the active one shown (they cross-fade) */
     .hero-home_slides {
-      grid-column: half / last;
+      grid-column: margin / last;
       display: grid;
       grid-template-columns: subgrid;
     }
@@ -401,6 +709,10 @@ const count = featured.length;
       &.is-active {
         opacity: 1;
       }
+    }
+    /* the film's name, its triangle before it (PlayTitle), where the label stood, as wide as a reel's title */
+    .hero-home_name {
+      grid-column: margin / half;
     }
     .hero-home_client {
       grid-column: half / span 2;
@@ -416,6 +728,12 @@ const count = featured.length;
       white-space: nowrap;
       color: inherit;
       cursor: pointer;
+      transition:
+        opacity var(--duration-medium) var(--ease-out) calc(var(--duration-base) * 0.6),
+        visibility var(--duration-medium);
+      @media (prefers-reduced-motion: reduce) {
+        transition-delay: 0s;
+      }
       &:disabled {
         cursor: default;
       }
@@ -439,22 +757,95 @@ const count = featured.length;
     .hero-home_key {
       color: var(--text-2);
     }
+    /* the phone: the name on the counter's line, the client and the agency under them */
     @media (width < 48rem) {
-      .hero-home_label {
-        grid-column: margin / end;
-        grid-row: 1;
-      }
       .hero-home_count {
         grid-row: 1;
       }
       .hero-home_slides {
         grid-column: margin / end;
+        grid-row: 1 / span 2;
+        grid-template-rows: subgrid;
+      }
+      .hero-home_slide {
+        grid-row: 1 / -1;
+        grid-template-rows: subgrid;
+      }
+      .hero-home_name {
+        grid-column: margin / last;
+        grid-row: 1;
       }
       .hero-home_client {
         grid-column: margin / span 2;
+        grid-row: 2;
       }
       .hero-home_agency {
         grid-column: three / end;
+        grid-row: 2;
+      }
+    }
+    /* Watching a featured film whole (comment 54, the script): the film over the stills and their shades, pure black
+       around it (a reel's « on va tricher », Sam, Nov 17), a shade at its foot for the row; it comes in as big as
+       the short version, filling the screen (--_cover), and settles into its own format as it fades in */
+    .hero-home_movie {
+      position: fixed;
+      inset: 0;
+      background-color: black;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--duration-medium) var(--ease-out);
+      &.is-active {
+        opacity: 1;
+      }
+      &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, color-mix(in srgb, var(--black) 45%, transparent), transparent 30%);
+      }
+      & video {
+        scale: var(--_cover, 1);
+      }
+      &.is-whole video {
+        scale: 1;
+      }
+      &.is-whole video,
+      &.is-closing video {
+        transition: scale var(--duration-base) var(--ease-travel);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        transition-duration: var(--duration-fast);
+        & video,
+        &.is-whole video,
+        &.is-closing video {
+          scale: 1;
+          transition: none;
+        }
+      }
+    }
+    /* the wordmark and the counter step aside, the row stays with the film's time on its rule (the reel's bar, six
+       times the rule's weight), and with the label they fade out once the pointer rests */
+    .hero-home_wrap.is-watching {
+      & .hero-home_title,
+      & .hero-home_count {
+        opacity: 0;
+        transition-delay: 0s;
+      }
+      & .hero-home_count {
+        visibility: hidden;
+      }
+      & .hero-home_time {
+        inset: auto 0 100%;
+        height: calc(var(--border-width) * 6);
+      }
+      & .hero-home_seek {
+        display: block;
+      }
+      &.is-idle {
+        cursor: none;
+        & .hero-home_row {
+          opacity: 0;
+        }
       }
     }
   }

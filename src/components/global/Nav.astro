@@ -13,9 +13,11 @@ interface Props {
   overlap?: boolean;
   /** A link at the right end, from a computer up (a director's page: « Enquire about Jasper »). */
   action?: { text: string; href: string };
+  /** What it lies over: the page's ground (its theme's colour for the menu), or a picture or a film (light). */
+  over?: "ground" | "visual";
 }
 
-const { render = true, action } = Astro.props;
+const { render = true, action, over = "ground" } = Astro.props;
 const path = Astro.url.pathname.replace(/\/$/, "") || "/";
 const links = [
   { href: "/directors", label: "directors" },
@@ -27,7 +29,7 @@ const current = (href: string) => (path === href || path.startsWith(href + "/") 
 
 {
   render && (
-    <header class="nav_wrap" data-op-section="Nav">
+    <header class:list={["nav_wrap", over === "visual" && "is-over-visual"]} data-op-section="Nav">
       <div class="nav_layout site-grid">
         <a class="nav_logo" href="/" aria-label={`${SITE_NAME}, home`}>
           <LogoSymbol class="logo-art" aria-hidden="true" />
@@ -60,6 +62,22 @@ const current = (href: string) => (path === href || path.startsWith(href + "/") 
       z-index: 20;
       padding-top: var(--site-margin);
       view-transition-name: site-nav;
+      /* it steps aside while a film is watched, as the page's other parts do, and comes back as the film dissolves
+         (60 % of its way back) */
+      transition: opacity var(--duration-medium) var(--ease-out) calc(var(--duration-base) * 0.6);
+      @media (prefers-reduced-motion: reduce) {
+        transition-delay: 0s;
+      }
+      :root[data-watching] & {
+        opacity: 0;
+        pointer-events: none;
+        transition-delay: 0s;
+      }
+    }
+    /* over a picture or a film (Home's opening), light whatever the ground: the taupe is for text on the black
+       (Sam, Nov 27, comment 51) */
+    .nav_wrap.is-over-visual {
+      --nav-text: var(--on-visual);
     }
     .nav_layout {
       align-items: start;

@@ -1,0 +1,96 @@
+---
+/* What a film watched whole offers besides its line (a director's reel, Home's featured reel, Home's opening): the
+   label that follows a fine pointer and says what a click does (« Play », « Close », the ring while it loads), and
+   Close as a button, for the keyboard (shown when focused) and for a touch screen, which has no pointer label. The
+   script that plays the film moves the label (`--_x`, `--_y`), shows it (`is-on`) and turns the ring (`is-loading`);
+   the section around it carries `is-watching` while a film plays and `is-idle` once the pointer has rested. */
+interface Props {
+  /** Set to `false` to omit the component. */
+  render?: boolean;
+}
+
+const { render = true } = Astro.props;
+---
+
+{
+  render && (
+    <>
+      <button class="film-controls_close text-style-large" type="button">
+        Close
+      </button>
+      <span class="film-controls_cursor text-style-main" aria-hidden="true">
+        <span class="film-controls_word" />
+        <span class="film-controls_ring" />
+      </span>
+    </>
+  )
+}
+
+<style is:global>
+  @layer components {
+    /* what a click does, at the pointer (fine pointers); it follows it from the script's two values */
+    .film-controls_cursor {
+      position: fixed;
+      top: 0;
+      left: 0;
+      margin: var(--space-5) 0 0 var(--space-6);
+      color: var(--text);
+      pointer-events: none;
+      translate: var(--_x, 0) var(--_y, 0);
+      opacity: 0;
+      transition: opacity var(--hover-duration) var(--hover-ease);
+      &.is-on {
+        opacity: 1;
+      }
+      .is-idle & {
+        opacity: 0;
+      }
+      @media not ((hover: hover) and (pointer: fine)) {
+        display: none;
+      }
+    }
+    /* while the film loads: a ring as tall as the label's text, turning (with reduced motion, the word « Loading ») */
+    .film-controls_ring {
+      display: none;
+      width: 1.2em;
+      height: 1.2em;
+      border: calc(var(--border-width) * 2) solid currentColor;
+      border-top-color: transparent;
+      border-radius: var(--radius-round);
+      animation: film-controls-turn var(--duration-slow) linear infinite;
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .film-controls_cursor.is-loading {
+        & .film-controls_word {
+          display: none;
+        }
+        & .film-controls_ring {
+          display: block;
+        }
+      }
+    }
+    @keyframes film-controls-turn {
+      to {
+        rotate: 1turn;
+      }
+    }
+    .film-controls_close {
+      position: fixed;
+      top: var(--site-margin);
+      right: var(--site-margin);
+      color: var(--text);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--hover-duration) var(--hover-ease);
+      .is-watching &:focus-visible {
+        opacity: 1;
+      }
+      @media (hover: none) {
+        .is-watching & {
+          opacity: 1;
+          pointer-events: auto;
+        }
+      }
+    }
+  }
+</style>
