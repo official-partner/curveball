@@ -777,3 +777,19 @@ One line per decision: the date, who asked, what was decided and why. The newest
     have one (src/data/about-call-sheet-*.json, `film`: CLR, Uber, Tidy Cats, Secret, Babbel, Grammarly, IU Health,
     Adidas with Adidas Optime, Ninja Trader, Garden of Life); Capital One, Geico and United Airlines have only hidden
     films, the eight others none on the site.
+- 2026-11-27, Sam (on the switch: « le cercle de directors est trop haut », « l'espace entre le cercle et le texte 2
+  fois plus petit, même chose entre les deux boutons »; « quand on switch à Featured Work, des sections comme la liste
+  des films full screen dans la page des directors ... mets-en 4 »; on About: « un curseur par défaut et non pas le
+  curseur de texte », « un padding entre l'image et le texte »):
+  - the « Directors » button is trimmed to its capitals like « Featured work », so its dot sits on their middle; every
+    dot of the site checked (the switch, the opening's label, a chosen filter, a director's bio). --space-dot halved
+    (system/curveball.json: space-4 to space-2, 20 to 12 at 1728): every dot of the site follows. The switch's two
+    buttons: space-5 apart (the label's space-8 halved).
+  - « Featured work » now shows the films as a director's reel (DirectorReel, `alone`, on the page's black, its list
+    marked as « home-featured-work »), replacing the names list of the morning's version (which painted the page and
+    raised the balls). Four films: Uber added to Perrier, Takis and Volvo / Jimmy Chin. A link with ?film= on Home is
+    not opened by itself (the reel's own rule for a reel shown alone).
+  - About's names: the arrow pointer; the window a picture's space (--space-media) from the names.
+  - Two faults found on the way: the intro's canvas was drawn again on a resize once the intro had ended (its cover
+    has no size then: an error each time); the directors' balls stopped on the clock and could stay on the screen
+    halfway out when the page was late with its frames (now they stop once they are all out).

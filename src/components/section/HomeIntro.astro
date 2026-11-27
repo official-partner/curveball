@@ -335,7 +335,16 @@ const lines = LINE.split(" ").reduce<string[]>((all, word) => {
 
     layout();
     draw(HOLD);
-    addEventListener("resize", () => (layout(), draw(Math.max(now(), HOLD))), { signal });
+    // once the intro is over its cover has no size: nothing to draw (a 0-wide layer cannot be drawn)
+    addEventListener(
+      "resize",
+      () => {
+        if (!wrap.clientWidth || !wrap.clientHeight) return;
+        layout();
+        draw(Math.max(now(), HOLD));
+      },
+      { signal },
+    );
     frame = requestAnimationFrame(tick);
   });
 </script>

@@ -27,13 +27,16 @@ interface Props {
   render?: boolean;
   /** The director's films, in their order. */
   projects: Item<"projects">[];
-  /** The page's colour, which dissolves into the film (the director's). */
-  colour?: "red" | "mustard" | "teal";
-  /** Shown alone (the components page): no screen under an opening before it or under a section after it. */
+  /** The page's colour, which dissolves into the film (the director's; Home's featured work: the black). */
+  colour?: "red" | "mustard" | "teal" | "black";
+  /** Shown alone (the components page, Home's featured work): no screen under an opening before it or under a
+   *  section after it. */
   alone?: boolean;
+  /** The list's marks for OP System, when the films are a list with a rule (Home's featured work) */
+  marks?: Record<string, string>;
 }
 
-const { render = true, projects, colour = "red", alone = false } = Astro.props;
+const { render = true, projects, colour = "red", alone = false, marks } = Astro.props;
 ---
 
 {
@@ -43,8 +46,7 @@ const { render = true, projects, colour = "red", alone = false } = Astro.props;
       style={`--_colour: var(--${colour})`}
       data-paint="theme-dark"
       data-op-section="DirectorReel"
-      data-op-list="projects"
-      data-op-source="astro:projects"
+      {...(marks ?? { "data-op-list": "projects", "data-op-source": "astro:projects" })}
     >
       <div class="director-reel_stage" aria-hidden="true">
         <div class="director-reel_film">

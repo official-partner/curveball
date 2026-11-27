@@ -10,13 +10,14 @@
    director » links to the active one. Home shows it on the page's dark; a
    director's page shows it as « Other Directors » (without them) on its own dark.
    On Home (`featured`), « Featured work » stands beside « Directors » (Sam, Nov 27, comment 49): a switch, its dot
-   outlined until it is chosen; chosen, the names give way to the featured films' (the films marked « Featured work »,
-   the list « home-featured-work » of src/data/lists.json), each in its director's colour with their films in the
-   balls (its own first) and a link to its director, and the filters, which are the directors', step aside. */
+   outlined until it is chosen; chosen, the names give way to the featured films (the films marked « Featured work »,
+   the list « home-featured-work » of src/data/lists.json) shown as a director's reel (Sam, Nov 27: « comme la liste
+   des films full screen dans la page des directors »), and the filters, which are the directors', step aside. */
 import { getImage } from "astro:assets";
 import ArrowLink from "@/components/content/ArrowLink.astro";
 import { getItems, LIVE } from "@/utils/content.ts";
 import { listed, ruleMarks } from "@/utils/lists.ts";
+import DirectorReel from "@/components/section/DirectorReel.astro";
 
 interface Props {
   /** Set to `false` to omit the component. */
@@ -55,15 +56,8 @@ const stills = Object.fromEntries(
     }),
   ),
 );
-/* Home's featured work: each film with its director, their colour, and the balls' films (its own first, then two of
-   the director's others) */
-const colours = new Map((await getItems("directors")).map((d) => [d.id, d.data.colour ?? "red"]));
-const works = (featured ? await listed<"projects">("home-featured-work") : []).map((w) => {
-  const director = w.data.director?.id;
-  const theirs = director ? (stills[director] ?? []) : [];
-  const own = theirs.find((s) => s.id === w.id);
-  return { id: w.id, name: w.data.name, director, colour: (director && colours.get(director)) || "red", balls: [...(own ? [own] : []), ...theirs.filter((s) => s.id !== w.id)].slice(0, 3) };
-});
+/* Home's featured work: the films marked « Featured work » (the list « home-featured-work »), shown as a director's reel */
+const works = featured ? await listed<"projects">("home-featured-work") : [];
 const industries = ["Docustyle", "Comedy", "Story", "Spectacle", "Fashion"];
 const locations = ["Chicago", "Los Angeles", "New Orleans", "New York"];
 const filters = [
@@ -84,7 +78,7 @@ const filters = [
           {featured ? (
             <div class="directors-home_switch" role="group" aria-label="Show">
               <Heading class="directors-home_label text-style-large">
-                <button class="directors-home_mode dot-label" type="button" data-mode="director" aria-pressed="true">
+                <button class="directors-home_mode dot-label text-style-large" type="button" data-mode="director" aria-pressed="true">
                   {label}
                 </button>
               </Heading>
@@ -123,7 +117,6 @@ const filters = [
           {directors.map((d) => (
             <li
               class="directors-home_item"
-              data-kind="director"
               data-op-item={d.id}
               data-industry={(d.data.industries ?? []).join("|")}
               data-location={d.data.location ?? ""}
@@ -135,17 +128,6 @@ const filters = [
             </li>
           ))}
         </ul>
-          {featured && (
-            <ul class="directors-home_list text-style-h1" {...ruleMarks("home-featured-work")}>
-              {works.map((w) => (
-                <li class="directors-home_item" data-kind="work" data-op-item={w.id} data-colour={w.colour} hidden>
-                  <a class="directors-home_name" href={w.director ? `/directors/${w.director}` : "/directors"}>
-                    <span data-op-field="name">{w.name}</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          )}
           {/* one for the list, a mouse's shortcut to the active row's own link (keyboards and readers use the row) */}
           <a class="directors-home_view" href={directors[0] ? `/directors/${directors[0].id}` : "/directors"} tabindex="-1" aria-hidden="true">
             <ArrowLink text="View director" />
@@ -158,10 +140,15 @@ const filters = [
           </p>
         </div>
       </div>
+      {featured && works.length > 0 && (
+        <div class="directors-home_reel" hidden>
+          <DirectorReel projects={works} colour="black" alone marks={ruleMarks("home-featured-work")} />
+        </div>
+      )}
       <div class="directors-home_balls" aria-hidden="true">
-        {[...directors.map((d) => ({ id: d.id, balls: (stills[d.id] ?? []).slice(0, 3) })), ...works].map(({ id, balls }) =>
-          balls.map(({ src, loop }) => (
-            <span class="directors-home_ball" data-for={id}>
+        {directors.map((d) =>
+          (stills[d.id] ?? []).slice(0, 3).map(({ src, loop }) => (
+            <span class="directors-home_ball" data-for={d.id}>
               <img class="directors-home_film cover-absolute object-fit-cover" alt="" decoding="async" data-src={src} />
               {loop && <video class="directors-home_film cover-absolute object-fit-cover" data-src={loop} muted loop playsinline preload="none" />}
             </span>
@@ -398,7 +385,17 @@ const filters = [
           start();
         } else {
           clearTimeout(idle);
-          idle = window.setTimeout(stop, seconds("--duration-medium") * 1000 + 100);
+          /* the frames stop once every ball is out, drawn out once more: a busy page (a slow phone) can be late with
+             its frames, and a stop on the clock alone left balls on the screen, halfway out */
+          const rest = () => {
+            if (balls.some((b) => b.s > 0.001)) {
+              idle = window.setTimeout(rest, 100);
+              return;
+            }
+            draw();
+            stop();
+          };
+          idle = window.setTimeout(rest, seconds("--duration-medium") * 1000 + 100);
         }
       };
 
@@ -462,13 +459,9 @@ const filters = [
         setActive(find(), instant);
       };
 
-      /* Filters: Industry and Location keep the names that match; « All » shows everyone. On Home, the switch shows
-         the directors or the featured work (the filters are the directors' alone) */
+      /* Filters: Industry and Location keep the names that match; « All » shows everyone */
       const chosen: Record<string, string> = { industry: "", location: "" };
-      let mode = "director";
       const matches = (item: HTMLElement) => {
-        if ((item.dataset.kind ?? "director") !== mode) return false;
-        if (mode !== "director") return true;
         const industries = (item.dataset.industry ?? "").split("|").filter(Boolean);
         return (
           (!chosen.industry || industries.includes(chosen.industry)) &&
@@ -568,21 +561,68 @@ const filters = [
           // with the list's change: the colour and the balls go straight to the new list's active name
           .add(settle);
       };
+      /* Home's switch (job: say which of the two this is, and change it in one movement; Sam, Nov 27): « Featured
+         work » shows the featured films as a director's reel (their films full screen, the lines scrolling over them,
+         a click plays one whole and Close comes back where it was), « Directors » the names. The chosen one's dot
+         fills, the other's empties (the hover's time); the filters, the directors' own, step aside (fast); what goes
+         fades out (faster, the leave curve), what comes fades in (medium, ease-out), the names rising one after the
+         other as after a filter. Reduced motion: at once. */
+      const reel = wrap.querySelector<HTMLElement>(".directors-home_reel");
+      let mode = "director";
+      let switching: gsap.core.Timeline | null = null;
+      const switchTo = (next: string) => {
+        if (next === mode || !reel || !names) return;
+        mode = next;
+        const work = mode === "work";
+        wrap.querySelectorAll<HTMLButtonElement>(".directors-home_mode").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.mode === mode)));
+        filterRow?.classList.toggle("is-work", work);
+        wrap.querySelectorAll<HTMLElement>(".directors-home_filter").forEach((f) => (f.inert = work));
+        const swap = () => {
+          names.hidden = work;
+          reel.hidden = !work;
+          pageLenis()?.resize();
+          // the reel and the names read their places again
+          window.dispatchEvent(new Event("resize"));
+          measure();
+          check();
+        };
+        switching?.kill();
+        if (reduce.matches) {
+          swap();
+          return;
+        }
+        switching = gsap
+          .timeline()
+          .to(work ? names : reel, { opacity: 0, duration: seconds("--duration-faster"), ease: leave })
+          .add(() => {
+            gsap.set([names, reel], { clearProps: "opacity" });
+            swap();
+            if (work) {
+              gsap.fromTo(reel, { opacity: 0 }, { opacity: 1, duration: seconds("--duration-medium"), ease: out, clearProps: "opacity" });
+            } else {
+              const next = items.filter((i) => !i.hidden).map((i) => i.querySelector<HTMLElement>(".directors-home_name") ?? i);
+              gsap.fromTo(
+                next,
+                { yPercent: 35, opacity: 0 },
+                {
+                  yPercent: 0,
+                  opacity: 1,
+                  duration: seconds("--duration-fast") * 1.4,
+                  ease: out,
+                  stagger: Math.min(0.03, 0.16 / Math.max(1, next.length)),
+                  clearProps: "transform,opacity",
+                  overwrite: true,
+                },
+              );
+            }
+          });
+      };
       wrap.addEventListener(
         "click",
         (event) => {
-          /* The switch (job: say which list this is, and change it in the filters' one movement): the chosen one's dot
-             fills, the other's empties (fast); the filters step aside for the featured work (fast) and come back for
-             the directors, as they were left; the names change as for a filter (below) */
           const switcher = (event.target as HTMLElement).closest<HTMLButtonElement>(".directors-home_mode");
           if (switcher) {
-            const next = switcher.dataset.mode ?? "director";
-            if (next === mode) return;
-            mode = next;
-            wrap.querySelectorAll<HTMLButtonElement>(".directors-home_mode").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.mode === mode)));
-            filterRow?.classList.toggle("is-work", mode === "work");
-            wrap.querySelectorAll<HTMLElement>(".directors-home_filter").forEach((f) => (f.inert = mode === "work"));
-            filter();
+            switchTo(switcher.dataset.mode ?? "director");
             return;
           }
           const button = (event.target as HTMLElement).closest<HTMLButtonElement>(".directors-home_option");
@@ -713,7 +753,8 @@ const filters = [
       grid-column: margin / end;
       display: flex;
       flex-wrap: wrap;
-      gap: var(--space-4) var(--space-label);
+      /* half the label's space between the two (Sam, Nov 27) */
+      gap: var(--space-4) var(--space-5);
       @media (width >= 48rem) {
         grid-column: margin / half;
       }
@@ -735,6 +776,10 @@ const filters = [
           background-color: color-mix(in srgb, var(--dot-color) var(--tone-faint), transparent);
         }
       }
+    }
+    /* the featured reel starts where the names would */
+    .directors-home_reel {
+      margin-top: var(--section-space-large);
     }
     .directors-home_filter {
       display: flex;

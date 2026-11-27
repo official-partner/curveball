@@ -87,8 +87,8 @@ const blocks = [
     document.querySelectorAll<HTMLElement>(".about-lists_wrap").forEach((wrap) => parallax(wrap, signal));
 
     /* The client's film beside their name (job: show the work behind a name, playfully, for whoever lingers). One
-       window for the list: it comes in by the name under the mouse (fast, ease-out, from 85 %), sits a gutter to the
-       left of the name's column and follows the mouse up and down the names (medium, ease-out: a little behind it, so
+       window for the list: it comes in by the name under the mouse (fast, ease-out, from 85 %), sits a picture's space
+       (--space-media) to the left of the name's column and follows the mouse up and down the names (medium, ease-out: a little behind it, so
        it glides from one to the next), its still at once and the film's loop over it once it plays; it goes when the
        mouse leaves the names or reaches a client with no film (faster, the leave curve). A mouse only; with reduced
        motion it stands still by the name and shows the still alone. */
@@ -136,8 +136,8 @@ const blocks = [
           if (!item.dataset.video) return hide();
           const box = block.getBoundingClientRect();
           const column = item.parentElement!.getBoundingClientRect();
-          const gutter = parseFloat(getComputedStyle(block).columnGap) || 0;
-          const x = column.left - box.left - gutter - peek.offsetWidth;
+          // its right edge on the column's left; the CSS sets it a picture's space further left
+          const x = column.left - box.left - peek.offsetWidth;
           const y = (reduce.matches ? item.getBoundingClientRect().top + item.offsetHeight / 2 : event.clientY) - box.top - peek.offsetHeight / 2;
           if (!shown || reduce.matches) {
             gsap.set(peek, { x, y });
@@ -196,6 +196,7 @@ const blocks = [
     /* the name under the mouse lights up (the page's light text over its taupe) */
     @media (hover: hover) {
       .about-lists_block.is-names li {
+        cursor: default;
         transition: color var(--hover-duration) var(--hover-ease);
         &:hover {
           color: var(--text);
@@ -204,10 +205,11 @@ const blocks = [
     }
     /* the client's film: a column wide (the Figma's 128 at 1728), 5:4, its corners rounded a tenth of its width; placed
        and shown by the script */
+    /* a picture's space from the names (Sam, Nov 27: « mets un padding, les deux sont collés ») */
     .about-lists_peek {
       position: absolute;
       top: 0;
-      left: 0;
+      left: calc(var(--space-media) * -1);
       z-index: 1;
       width: calc(var(--u) * 128);
       aspect-ratio: 5 / 4;

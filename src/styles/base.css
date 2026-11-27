@@ -199,8 +199,8 @@
   /* Role tokens: one job each, pointing at a step of the scale (change the step, every use follows) */
   /* a rule to the cap top of the text under it (Figma 19 to 23 on the rows and the first labels) */
   --space-rule: var(--space-4);
-  /* the dot to the text it marks (Figma 18 on Home, 15 on Contact: one value) */
-  --space-dot: var(--space-4);
+  /* the dot to the text it marks (Figma 18 on Home, 15 on Contact; halved, Sam, Nov 27: 12 at 1728) */
+  --space-dot: var(--space-2);
   /* a picture to its first text (the news cards: 33; the team: 18 to 42, one value) */
   --space-media: var(--space-6);
   /* a card's source and date to its title (27) */
