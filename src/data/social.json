@@ -4,19 +4,13 @@
       "id": "instagram",
       "label": "IG",
       "name": "Instagram",
-      "href": ""
-    },
-    {
-      "id": "facebook",
-      "label": "FB",
-      "name": "Facebook",
-      "href": ""
+      "href": "https://www.instagram.com/wearecurveball/"
     },
     {
       "id": "linkedin",
       "label": "LN",
       "name": "LinkedIn",
-      "href": ""
+      "href": "https://www.linkedin.com/company/we-are-curveball-films"
     }
   ]
 }

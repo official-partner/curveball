@@ -852,3 +852,6 @@ One line per decision: the date, who asked, what was decided and why. The newest
   proche du texte »): measured against the names' line height in both captures, his window is 0.57 of ours and 7:5,
   his gap about 17 at 1652. Now 73 at 1728 (it was 128), 7:5 (it was 5:4), --space-3 from the names (it was
   --space-media, 31 at 1652): 70 by 50 and 16 from the names at 1652, his 70 by 51 and 16.
+- 2026-11-27, Sam: the footer's social links are Instagram (https://www.instagram.com/wearecurveball/) and LinkedIn
+  (https://www.linkedin.com/company/we-are-curveball-films), written in src/data/social.json; Facebook taken out for
+  now (« enlever FB for now »). They open in a new tab, as the news' outside links do.
