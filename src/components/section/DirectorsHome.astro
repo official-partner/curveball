@@ -239,7 +239,8 @@ const filters = [
         clearTimeout(painting);
         if (duration) {
           root.dataset.painting = "";
-          painting = window.setTimeout(() => delete root.dataset.painting, duration * 1000 + 50);
+          // kept a little past the end, so no part takes its own (hover) timing back for the change's last frames
+          painting = window.setTimeout(() => delete root.dataset.painting, duration * 1000 + 200);
         } else delete root.dataset.painting;
         root.classList.remove(...ALL, ...pageThemes);
         root.classList.add(...(theme ? [theme] : pageThemes));
@@ -344,6 +345,20 @@ const filters = [
         gsap.ticker.remove(draw);
       };
       let idle = 0;
+      /* the frames stop once every ball is out, drawn out once more: a busy page (a slow phone) can be late with its
+         frames, and a stop on the clock alone left balls on the screen, halfway out */
+      const rest = () => {
+        clearTimeout(idle);
+        const wait = () => {
+          if (balls.some((b) => b.s > 0.001)) {
+            idle = window.setTimeout(wait, 100);
+            return;
+          }
+          draw();
+          stop();
+        };
+        idle = window.setTimeout(wait, seconds("--duration-medium") * 1000 + 100);
+      };
       const show = (item: HTMLElement | null) => {
         if (reduce.matches) return;
         let i = 0;
@@ -384,18 +399,7 @@ const filters = [
           clearTimeout(idle);
           start();
         } else {
-          clearTimeout(idle);
-          /* the frames stop once every ball is out, drawn out once more: a busy page (a slow phone) can be late with
-             its frames, and a stop on the clock alone left balls on the screen, halfway out */
-          const rest = () => {
-            if (balls.some((b) => b.s > 0.001)) {
-              idle = window.setTimeout(rest, 100);
-              return;
-            }
-            draw();
-            stop();
-          };
-          idle = window.setTimeout(rest, seconds("--duration-medium") * 1000 + 100);
+          rest();
         }
       };
 
@@ -561,45 +565,98 @@ const filters = [
           // with the list's change: the colour and the balls go straight to the new list's active name
           .add(settle);
       };
-      /* Home's switch (job: say which of the two this is, and change it in one movement; Sam, Nov 27): « Featured
-         work » shows the featured films as a director's reel (their films full screen, the lines scrolling over them,
-         a click plays one whole and Close comes back where it was), « Directors » the names. The chosen one's dot
-         fills, the other's empties (the hover's time); the filters, the directors' own, step aside (fast); what goes
-         fades out (faster, the leave curve), what comes fades in (medium, ease-out), the names rising one after the
-         other as after a filter. Reduced motion: at once. */
+      /* Home's switch (job: say which of the two this is, and change it in one calm movement; Sam, Nov 27: « le plus
+         seamless, le plus smooth »). « Featured work » shows the featured films as a director's reel (full screen,
+         the lines scrolling over them, a click plays one whole, Close comes back where it was), « Directors » the
+         names. One thing after the other, so nothing competes and the browser never does it all at once:
+         - to the featured work: the dots answer at once; the active director's balls shrink away where they are
+           (fast, the leave curve); the names fade (fast) and the filters leave line by line (faster, 12 ms apart,
+           rising a little); then, with nothing else moving, the page's colour goes back to its own (medium, the
+           travel curve); once it is home the reel takes the names' place, under a row that now stays at the top of
+           the screen, and fades in (base, ease-out);
+         - back to the directors, from anywhere in the reel: the reel fades (faster); under cover the page goes back to
+           the row's own place, the row staying exactly where it is on the screen, so nothing is seen to scroll; the
+           names rise one after the other as after a filter, the filters with them line by line, and only then the
+           middle name gives the page its colour and its balls.
+         Reduced motion: at once. */
       const reel = wrap.querySelector<HTMLElement>(".directors-home_reel");
+      const reelWrap = reel?.querySelector<HTMLElement>(".director-reel_wrap") ?? null;
+      const filterLines = () => [...wrap.querySelectorAll<HTMLElement>(".directors-home_filter > p, .directors-home_filter li")];
       let mode = "director";
       let switching: gsap.core.Timeline | null = null;
+      const setMode = (work: boolean) => {
+        wrap.classList.toggle("is-work", work);
+        wrap.querySelectorAll<HTMLElement>(".directors-home_filter").forEach((f) => (f.inert = work));
+      };
+      const lay = (work: boolean) => {
+        names!.hidden = work;
+        reel!.hidden = !work;
+        pageLenis()?.resize();
+        measure();
+        // the reel reads its place again (its films play only while it shows)
+        reelWrap?.dispatchEvent(new Event("reel:refresh"));
+      };
       const switchTo = (next: string) => {
-        if (next === mode || !reel || !names) return;
+        if (next === mode || !reel || !names || !filterRow) return;
         mode = next;
         const work = mode === "work";
         wrap.querySelectorAll<HTMLButtonElement>(".directors-home_mode").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.mode === mode)));
-        filterRow?.classList.toggle("is-work", work);
-        wrap.querySelectorAll<HTMLElement>(".directors-home_filter").forEach((f) => (f.inert = work));
-        const swap = () => {
-          names.hidden = work;
-          reel.hidden = !work;
-          pageLenis()?.resize();
-          // the reel and the names read their places again
-          window.dispatchEvent(new Event("resize"));
-          measure();
-          check();
-        };
         switching?.kill();
+        changing = true;
+        const fast = seconds("--duration-fast");
+        const faster = seconds("--duration-faster");
+        const medium = seconds("--duration-medium");
+        // where the row is on the screen now: it stays there
+        const rowAt = filterRow.getBoundingClientRect().top;
+        const backToRow = () => {
+          const y = filterRow.getBoundingClientRect().top + scrollY - rowAt;
+          if (Math.abs(y - scrollY) < 1) return;
+          const lenis = pageLenis();
+          if (lenis) lenis.scrollTo(y, { immediate: true, force: true });
+          else scrollTo(0, y);
+        };
         if (reduce.matches) {
-          swap();
+          setActive(null, true);
+          setMode(work);
+          lay(work);
+          gsap.set([names, reel, ...filterLines()], { clearProps: "opacity,transform" });
+          if (!work) backToRow();
+          changing = false;
+          check(true);
           return;
         }
-        switching = gsap
-          .timeline()
-          .to(work ? names : reel, { opacity: 0, duration: seconds("--duration-faster"), ease: leave })
-          .add(() => {
-            gsap.set([names, reel], { clearProps: "opacity" });
-            swap();
-            if (work) {
-              gsap.fromTo(reel, { opacity: 0 }, { opacity: 1, duration: seconds("--duration-medium"), ease: out, clearProps: "opacity" });
-            } else {
+        const tl = gsap.timeline({ onComplete: () => void (switching = null) });
+        switching = tl;
+        if (work) {
+          // the balls first, where they are
+          balls.forEach((b) => {
+            if (b.s <= 0.001) return;
+            b.hold = b.leaving = true;
+            b.video?.pause();
+            gsap.to(b, { s: 0, duration: fast, ease: leave, overwrite: true });
+          });
+          rest();
+          // then the names and the filters, then the colour alone, then the reel: one thing at a time, so the
+          // browser has nothing else to draw while the page's ground turns (it was late doing both, Nov 27)
+          const leaveAt = fast * 0.4;
+          const paintAt = leaveAt + fast;
+          tl.to(names, { opacity: 0, duration: fast, ease: leave }, leaveAt)
+            .to(filterLines(), { opacity: 0, yPercent: -35, duration: faster, ease: leave, stagger: 0.012 }, leaveAt)
+            .add(() => setActive(null), paintAt)
+            .add(() => {
+              setMode(true);
+              lay(true);
+            }, paintAt + medium + 0.05)
+            .fromTo(reel, { opacity: 0 }, { opacity: 1, duration: seconds("--duration-base"), ease: out, clearProps: "opacity" })
+            .add(() => void (changing = false), "<");
+        } else {
+          tl.to(reel, { opacity: 0, duration: faster, ease: leave })
+            .add(() => {
+              setMode(false);
+              gsap.set(names, { opacity: 1 });
+              lay(false);
+              backToRow();
+              measure();
               const next = items.filter((i) => !i.hidden).map((i) => i.querySelector<HTMLElement>(".directors-home_name") ?? i);
               gsap.fromTo(
                 next,
@@ -607,15 +664,26 @@ const filters = [
                 {
                   yPercent: 0,
                   opacity: 1,
-                  duration: seconds("--duration-fast") * 1.4,
+                  duration: fast * 1.4,
                   ease: out,
                   stagger: Math.min(0.03, 0.16 / Math.max(1, next.length)),
                   clearProps: "transform,opacity",
                   overwrite: true,
                 },
               );
-            }
-          });
+              gsap.fromTo(
+                filterLines(),
+                { yPercent: 35, opacity: 0 },
+                { yPercent: 0, opacity: 1, duration: fast * 1.4, ease: out, stagger: 0.012, delay: 0.06, clearProps: "transform,opacity", overwrite: true },
+              );
+              gsap.set(reel, { clearProps: "opacity" });
+            })
+            // the names in: the middle one gives its colour and its balls
+            .add(() => {
+              changing = false;
+              check();
+            }, `+=${fast}`);
+        }
       };
       wrap.addEventListener(
         "click",
@@ -708,9 +776,13 @@ const filters = [
        while the ground took 800). Here, in the components' layer: a rule of project.css loses to their own. Their own
        timing comes back for the hovers once the page has turned. The menu's mark and « View director », which set
        their own colour and had no transition, turned at once: they are in the list too. */
-    :root[data-painting]
-      :is(.nav_wrap, .nav_logo, .nav_link, .footer_link, .directors-home_name, .directors-home_view) {
+    :root[data-painting] :is(.nav_wrap, .nav_logo, .nav_link, .directors-home_name, .directors-home_view) {
       transition: color var(--paint-duration, 0s) var(--ease-travel);
+    }
+    /* the footer's links take their menu's colour as it turns (it is the one that turns, project.css): none of their
+       own meanwhile, which would start again at every frame (measured Nov 27: 300 ms late) */
+    :root[data-painting] .footer_link {
+      transition: none;
     }
     /* On Home, above the curve that follows it, with no ground of its own: the page's ground shows through, dark, or
        the active director's colour (the page's theme turns to it, src: the script; the change: project.css) */
@@ -777,21 +849,63 @@ const filters = [
         }
       }
     }
-    /* the featured reel starts where the names would */
+    /* With the featured work the row stays at the top of the screen over the reel (Sam, Nov 27), a margin down as the
+       menu; it steps aside while a film is watched */
+    .directors-home_wrap.is-work .directors-home_layout {
+      position: sticky;
+      top: var(--site-margin);
+      z-index: var(--layer-raised);
+      /* only the switch takes the pointer: a click anywhere else reaches the reel under it (it plays the film) */
+      pointer-events: none;
+      transition: opacity var(--duration-medium) var(--ease-out);
+      & .directors-home_switch {
+        pointer-events: auto;
+      }
+      /* the filters, gone with the names, take no room in the row that stays on screen */
+      & .directors-home_filter {
+        display: none;
+      }
+      :root[data-watching] & {
+        opacity: 0;
+        & .directors-home_switch {
+          pointer-events: none;
+        }
+      }
+    }
+    /* The featured reel: right under the row, the films sooner than on a director's page (a shorter dissolve: no
+       opening above it to come out of) and ending nearer the curve after it (Sam, Nov 27: « trop d'espace entre le
+       dernier film et la phrase »). Its films carry a shade at their top too, under the row, so the row reads over any
+       of them: in the film, never over the page's ground (a shade on the row drew a band across the page while its
+       colour turned). */
     .directors-home_reel {
-      margin-top: var(--section-space-large);
+      & .director-reel_fade.is-in {
+        height: 40svh;
+      }
+      & .director-reel_fade.is-out {
+        height: 30svh;
+        margin-top: 0;
+      }
+      & .director-reel_shade {
+        background:
+          linear-gradient(color-mix(in srgb, var(--black) 40%, transparent), transparent 25%),
+          linear-gradient(to top, color-mix(in srgb, var(--black) 45%, transparent), transparent 35%),
+          color-mix(in srgb, var(--black) 20%, transparent);
+      }
+    }
+    .directors-home_wrap.is-work {
+      padding-bottom: 0;
+    }
+    /* the dots turn with the page while it turns (measured Nov 27: they turned in 250 ms and the ground in 450). A rule
+       of its own: a pseudo-element cannot sit in a nested rule's :is() */
+    :root[data-painting] .directors-home_mode::before {
+      transition:
+        background-color var(--paint-duration, 0s) var(--ease-travel),
+        box-shadow var(--paint-duration, 0s) var(--ease-travel);
     }
     .directors-home_filter {
       display: flex;
       flex-direction: column;
       gap: var(--space-6);
-      transition:
-        color var(--paint-duration, 0s) var(--ease-travel),
-        opacity var(--duration-fast) var(--ease-out);
-      /* the featured work has no filters: they step aside */
-      .is-work > & {
-        opacity: 0;
-      }
       &.is-industry {
         grid-column: margin / span 2;
         @media (width >= 48rem) {

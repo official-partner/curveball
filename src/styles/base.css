@@ -88,6 +88,7 @@
   --intro-hold-upright: 3380ms;
   --intro-dive-duration: 1600ms;
   --intro-layer: 900;
+  --layer-raised: 3;
   /* A card that links answers the pointer (Sam, comment 44, Nov 20): its round photo grows a little, the picture in
      it a little more and a little longer */
   --card-hover-scale: 1.04;

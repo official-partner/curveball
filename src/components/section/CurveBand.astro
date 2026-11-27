@@ -332,6 +332,15 @@ const track = tracks[variant].points;
         margin-top: max(calc(var(--u) * 110), calc(65svh - var(--u) * 67 - var(--space-9)));
       }
     }
+    /* after the featured reel (Home's switch on « Featured work »), whose films dissolve into the black by themselves
+       and paint nothing to give back: the band follows close (Sam, Nov 27: « trop d'espace entre le dernier film et la
+       phrase ») */
+    .directors-home_wrap.is-work ~ .curve-band_wrap.is-home {
+      margin-top: calc(var(--u) * 110);
+      @media (width < 48rem) {
+        margin-top: var(--section-space-small);
+      }
+    }
     /* From a tablet up, the band rises behind the section before it. Home's never rises: it starts 110 lower,
        its ball rising 218 above it as it rolls in along the top stem (after the directors, the rule above) */
     @media (width >= 48rem) {

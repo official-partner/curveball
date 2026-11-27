@@ -185,6 +185,14 @@ const { render = true, projects, colour = "red", alone = false, marks } = Astro.
          over the whole reel, until the other directors cover it. Its top never comes below the stage's, its foot never
          above: no edge shows. Scrubbed by the scroll (Lenis smooths it). Transform only; none with reduced motion. */
       const place = () => {
+        // hidden by the section around it (Home's switch): nothing to read; its films stop, the one it shows stays
+        if (!wrap.getClientRects().length) {
+          if (shown) {
+            shown = false;
+            play();
+          }
+          return;
+        }
         // reads first (the lines', the gradient's and the end's places), then the writes
         let found = 0;
         slots.forEach((slot, i) => {
@@ -218,6 +226,8 @@ const { render = true, projects, colour = "red", alone = false, marks } = Astro.
       window.addEventListener("scroll", tick, { passive: true, signal });
       window.addEventListener("resize", tick, { signal });
       reduce.addEventListener("change", tick, { signal });
+      // shown or hidden by the section around it (Home's switch): its place read again
+      wrap.addEventListener("reel:refresh", tick, { signal });
       /* Watching a film (job: watch it whole, with its sound, without leaving the reel). The film itself loads over
          its short version and fades in once it plays (medium), so nothing jumps; the page is held (wheel, touch and
          the scroll keys; Lenis stopped) so the film's line stays where it was; its rule fills with the film's time.
