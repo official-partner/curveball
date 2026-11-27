@@ -793,3 +793,23 @@ One line per decision: the date, who asked, what was decided and why. The newest
   - Two faults found on the way: the intro's canvas was drawn again on a resize once the intro had ended (its cover
     has no size then: an error each time); the directors' balls stopped on the clock and could stay on the screen
     halfway out when the page was late with its frames (now they stop once they are all out).
+- 2026-11-27, Sam (« le switch entre les deux tabs le plus seamless, le plus smooth ... les boules disparaissent en
+  premier ... les couleurs ne switchent pas en même temps ... la barre sticky en mode Featured Work ... retourner en
+  haut en revenant à Directors, de façon seamless ... les filtres ramenés de façon plus réfléchie ... trop d'espace
+  entre le dernier film et la phrase »):
+  - Measured first, frame by frame, during a director's colour coming in: « Featured work » turned at once (no
+    transition, inheriting the page's colour), the switch's dots in 250 ms (their rule for the page's time had been
+    nested into an :is() with a pseudo-element, which never matches), the footer's links 300 ms late (their own hover
+    transition starting again at every frame under their menu's). Now one transition per run of inherited colour: the
+    list's row (label, switch, filters; with its rule's border-color) instead of the label and the filters apart; the
+    footer's links none while the page turns; the dots' rule at the top level; data-painting kept 200 ms past the end.
+    Measured after: every probe (menu, row, switch and dots, filters, names, View director, the curve's words and
+    fill, the opening's label and dot, the footer's ground, words and links) within the sampling of the ground.
+  - The switch's sequence (DESIGN.md, Motion): balls out first where they are, names and filters out, the colour
+    alone, the reel in; back from the reel under cover to the row's place, the row kept on screen. The row is sticky
+    over the reel (z-index from a new system token, --layer-raised), its filters out of it. The reel's top shade is
+    inside its films (a shade on the row drew a band across the page while its colour turned); its dissolve in is
+    40svh on Home, out 30svh, and the curve follows it at 110 (the 65svh after the names is for their colour to go).
+  - Found on the way: a hidden reel read its lines at 0 and picked its last film, which flashed before the first when
+    it showed; it now reads nothing while hidden. The intro redrew its canvas on a resize after it had ended (its
+    cover has no size then); the directors' balls could stop halfway out when the page was late with its frames.

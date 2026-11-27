@@ -108,10 +108,17 @@ it (system/gen.py).
   About 5.3 s in all; nothing hurries it. Without the script it fades into the page at the dive. The featured work's
   time starts after it. None with reduced motion.
 - Home's switch beside « Directors » (Sam, Nov 27, comment 49): « Featured work », its dot outlined until chosen
-  (the dots fill and empty on the hover's time), half the label's space between the two. Chosen, the names fade out
-  (faster, leave) and the films marked « Featured work » come in as a director's reel (medium, ease-out), on the
-  page's black: full screen, the lines scrolling over them, a click plays one whole, Close comes back where it was;
-  the filters fade out (fast) and are out of reach. Back to « Directors », the names rise as after a filter.
+  (the dots fill and empty on the hover's time, the page's while it turns), half the label's space between the two.
+  One thing at a time (Sam, Nov 27: « le plus seamless, le plus smooth »): to the featured work, the balls shrink away
+  where they are (fast, leave), the names fade (fast) and the filters leave line by line (faster, 12 ms apart); then,
+  with nothing else moving, the colour goes back to the black (medium, travel); then the films marked « Featured work »
+  come in as a director's reel (base, ease-out): full screen, the lines scrolling over them, a click plays one whole,
+  Close comes back where it was. The row stays at the top of the screen over the reel (a margin down, as the menu;
+  gone while a film is watched; only its switch takes the pointer). Back to « Directors » from anywhere in the reel:
+  the reel fades (faster), the page goes back under cover to the row's own place with the row kept where it is on
+  the screen, the names and the filters rise in, then the middle name gives its colour and its balls.
+- The page's colour: one transition per run of inherited colour (the part named in project.css turns, what it holds
+  follows); a part inside it never has a colour transition of its own while the page turns (the footer's links).
 - About's clients (Sam, Nov 27, comment 50): with a mouse, the name under it lights up (stone, the hover's time) and a
   client with a film of theirs on the site shows it in a small window beside the names: a column wide, 5:4, corners a
   tenth of its width, a picture's space (--space-media) left of the name's column, the pointer the arrow; in from 85 % on fast (ease-out), following the mouse up and
