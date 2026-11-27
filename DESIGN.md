@@ -135,8 +135,8 @@ it (system/gen.py).
 - The page's colour: one transition per run of inherited colour (the part named in project.css turns, what it holds
   follows); a part inside it never has a colour transition of its own while the page turns (the footer's links).
 - About's clients (Sam, Nov 27, comment 50): with a mouse, the name under it lights up (stone, the hover's time) and a
-  client with a film of theirs on the site shows it in a small window beside the names: a column wide, 5:4, corners a
-  tenth of its width, a picture's space (--space-media) left of the name's column, the pointer the arrow; in from 85 % on fast (ease-out), following the mouse up and
+  client with a film of theirs on the site shows it in a small window beside the names: 73 wide at 1728, 7:5, corners
+  a tenth of its width, --space-3 left of the name's column (Sam's drawing, Nov 27), the pointer the arrow; in from 85 % on fast (ease-out), following the mouse up and
   down the names on medium (ease-out, a little behind), out on faster (leave); its still at once, the film's short loop
   fading in over it (fast) once it plays. Reduced motion: still, by the name, the still alone.
 - The footer's easter egg (Sam, Nov 25, the « Onde » of the study « Curveball, le easter egg du footer »): the symbol is

@@ -203,18 +203,19 @@ const blocks = [
         }
       }
     }
-    /* the client's film: a column wide (the Figma's 128 at 1728), 5:4, its corners rounded a tenth of its width; placed
-       and shown by the script */
-    /* a picture's space from the names (Sam, Nov 27: « mets un padding, les deux sont collés ») */
+    /* the client's film, small and near the names, as Sam drew it (Nov 27: « plus petit écran, plus proche du texte »,
+       his capture measured against the names' line height): 73 wide at 1728 (it was a column, 128), 7:5, its corners
+       rounded a tenth of its width, --space-3 from the names (it was a picture's space); placed and shown by the
+       script */
     .about-lists_peek {
       position: absolute;
       top: 0;
-      left: calc(var(--space-media) * -1);
+      left: calc(var(--space-3) * -1);
       z-index: 1;
-      width: calc(var(--u) * 128);
-      aspect-ratio: 5 / 4;
+      width: calc(var(--u) * 73);
+      aspect-ratio: 7 / 5;
       overflow: hidden;
-      border-radius: 10% / 12.5%;
+      border-radius: 10% / 14%;
       background-color: var(--background-2);
       pointer-events: none;
       visibility: hidden;

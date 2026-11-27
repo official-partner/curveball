@@ -848,3 +848,7 @@ One line per decision: the date, who asked, what was decided and why. The newest
     and it closed at its end. Each of the six plays its own file. Perrier's and PUMA's whole files on Dropbox are
     15 s spots (their loops are 12 s), so they look close to the loop; the others run 30 to 89 s. A longer cut of
     either, if there is one, goes in the project's `video` field.
+- 2026-11-27, Sam (About's client window, his capture beside ours: « rapproche de ma version: plus petit écran, plus
+  proche du texte »): measured against the names' line height in both captures, his window is 0.57 of ours and 7:5,
+  his gap about 17 at 1652. Now 73 at 1728 (it was 128), 7:5 (it was 5:4), --space-3 from the names (it was
+  --space-media, 31 at 1652): 70 by 50 and 16 from the names at 1652, his 70 by 51 and 16.
