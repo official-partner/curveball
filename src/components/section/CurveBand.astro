@@ -347,12 +347,14 @@ const track = tracks[variant].points;
       }
     }
     /* after the featured reel (Home's switch on « Featured work »), whose films dissolve into the black by themselves
-       and paint nothing to give back: the band follows close (Sam, Nov 27: « trop d'espace entre le dernier film et la
-       phrase ») */
+       and paint nothing to give back: the band follows nearer than after the names (Sam, Nov 27: « trop d'espace entre
+       le dernier film et la phrase »), but its ball clears the reel's end with a section's space as it rises the 218
+       above the band (then: « tellement serré que la boule est coupée ») */
     .directors-home_wrap.is-work ~ .curve-band_wrap.is-home {
-      margin-top: calc(var(--u) * 110);
+      margin-top: calc(var(--u) * 218 + var(--section-space-large));
+      /* on a phone the enlarged drawing's ball rises about 330 of its units above the band */
       @media (width < 48rem) {
-        margin-top: var(--section-space-small);
+        margin-top: calc(var(--_au) * 330 + var(--section-space-small));
       }
     }
     /* From a tablet up, the band rises behind the section before it. Home's never rises: it starts 110 lower,

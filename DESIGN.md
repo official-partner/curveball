@@ -118,13 +118,15 @@ it (system/gen.py).
   One thing at a time (Sam, Nov 27: « le plus seamless, le plus smooth »): to the featured work, the balls shrink away
   where they are (fast, leave), the names fade (fast) and the filters leave line by line (faster, 12 ms apart); then,
   with nothing else moving, the colour goes back to the black (medium, travel); then the films marked « Featured work »
-  come in as a director's reel (base, ease-out): full screen, the lines scrolling over them, a click plays one whole,
+  come in as a director's reel (base, ease-out), a section's space (large) under the row and its dissolve over half a
+  screen: full screen, the lines scrolling over them, a click plays one whole,
   Close comes back where it was. The row stays at the top of the screen over the reel (a margin down, as the menu;
   gone while a film is watched; only its switch takes the pointer). Back to « Directors » from anywhere in the reel:
   the reel fades (faster), the page goes back under cover to the row's own place with the row kept where it is on
   the screen, the names and the filters rise in, then the middle name gives its colour and its balls.
 - Home's opening plays its films whole (Sam, Nov 27, comment 54): the row names the film on screen with its triangle
-  (PlayTitle, as a reel's line) where « Featured work » stood. Its title plays it the reel's way: the page back to
+  (PlayTitle, as a reel's line) where « Featured work » stood. « Play » follows a mouse over the opening (not over the
+  menu, a button or the rule) and a click there plays the film on screen, as its title does, the reel's way: the page back to
   its top (medium, travel) and held, the wordmark, the menu and the counter out (medium), the film over the opening on
   pure black growing from the full screen into its format (base, travel), the row's rule its time at six times its
   weight (pressed or dragged), « Close » at the pointer, idle after two seconds; Close, Escape, a click or the end:

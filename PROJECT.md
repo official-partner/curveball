@@ -830,3 +830,21 @@ One line per decision: the date, who asked, what was decided and why. The newest
   - 55, the switch's click area: each button takes half the gap and --space-switch (a new role, space-6) around it,
     and a band of --space-switch round both takes the rest (a click there does nothing), so a click a little beside
     a button no longer plays the film under the row.
+- 2026-11-27, Sam (« change le favicon pour le rond rouge »; the featured reel « commencer le premier featured film plus
+  bas », « plus de marge entre dernier film et prochaine section ... la boule est coupée »; the opening « avoir le
+  play en hover qui suit le curseur. jouer le bon film (complet) ... à vérifier »):
+  - The favicon is the symbol in red, its rings' gaps in black, a round with no square around it
+    (public/favicon.svg, made by hand: scripts/favicon.mjs keeps it and drew favicon.ico and apple-touch-icon.png from
+    it; the iPhone's icon is that round on the black, which iOS rounds). mark.svg and og-image.jpg are unchanged.
+  - The featured reel starts a section's space (large) under the row and dissolves in over half a screen (it was
+    right under the row, over 40 % of a screen).
+  - After the featured reel the curve stands the ball's rise (218) and a large section's space lower (it was 110):
+    the ball rose into the reel's end, which painted over it (the directors list sits above the curve so the names
+    pass over the ball). With the reel the list now sits under the curve, so the ball is never cut. On a phone, the
+    enlarged drawing's 330 and a small section's space.
+  - The opening: « Play » follows the mouse over it and a click there plays the film on screen; the loading ring
+    shows at the pointer over its title too; a click on the title while the film loads no longer pauses it.
+    Checked in Sam's Chrome on the staging (sites.officialpartner.work): the title played Uber's whole film (30 s)
+    and it closed at its end. Each of the six plays its own file. Perrier's and PUMA's whole files on Dropbox are
+    15 s spots (their loops are 12 s), so they look close to the loop; the others run 30 to 89 s. A longer cut of
+    either, if there is one, goes in the project's `video` field.

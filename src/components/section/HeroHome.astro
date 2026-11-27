@@ -227,6 +227,7 @@ const count = featured.length;
         current = next;
         fill.currentTime = 0;
         run();
+        label();
       };
       const run = () => {
         // the featured one's time starts once the home's intro has handed over (HomeIntro.astro); a film watched
@@ -288,11 +289,15 @@ const count = featured.length;
       let hold: AbortController | null = null;
       let loading = false;
       let dragging = false;
+      /* « Play » follows the pointer over the opening (Sam, Nov 27: « avoir le play en hover qui suit le curseur »),
+         « Close » while a film plays, the ring while it loads (over its title too, where nothing else shows that it
+         is coming); never over the menu, a button or the rule */
       const label = () => {
         if (!cursor || !word) return;
-        const on = watching >= 0 && over instanceof Element && !over.closest("button, a, .hero-home_seek");
-        const wait = on && loading;
-        const text = !on ? "" : wait ? "Loading" : "Close";
+        const at = over instanceof Element && over.closest(".hero-home_layout") ? over : null;
+        const free = Boolean(at) && !at!.closest("button, a, .hero-home_seek");
+        const wait = Boolean(at) && watching >= 0 && loading;
+        const text = wait ? "Loading" : !free ? "" : watching >= 0 ? "Close" : title$(current) ? "Play" : "";
         if (text) word.textContent = text;
         cursor.classList.toggle("is-loading", wait);
         cursor.classList.toggle("is-on", Boolean(text));
@@ -508,14 +513,17 @@ const count = featured.length;
           if (target.closest("a, .hero-home_seek, .hero-home_count, .film-controls_close")) return;
           const title = target.closest<HTMLButtonElement>("[data-play]");
           if (watching >= 0) {
-            // its own title pauses and plays; anything else leaves
+            // its own title pauses and plays (nothing while the film loads); anything else leaves
             if (movie && title && Number(title.dataset.play) === watching) {
+              if (loading) return;
               if (movie.paused) movie.play().catch(() => {});
               else movie.pause();
             } else leave();
             return;
           }
+          // its title, or anywhere on the opening's first screen: the film on screen
           if (title) watch(Number(title.dataset.play));
+          else if (target.closest(".hero-home_layout") && !target.closest("button") && title$(current)) watch(current);
         },
         { signal },
       );

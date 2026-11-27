@@ -899,8 +899,12 @@ const filters = [
        of them: in the film, never over the page's ground (a shade on the row drew a band across the page while its
        colour turned). */
     .directors-home_reel {
+      /* the first film a section's space under the row, then its dissolve over half a screen (Sam, Nov 27: « commencer
+         le premier featured film plus bas, plus d'espace entre la barre du haut et le premier film »; it was 40svh
+         right under the row) */
+      margin-top: var(--section-space-large);
       & .director-reel_fade.is-in {
-        height: 40svh;
+        height: 50svh;
       }
       & .director-reel_fade.is-out {
         height: 30svh;
@@ -913,8 +917,11 @@ const filters = [
           color-mix(in srgb, var(--black) 20%, transparent);
       }
     }
+    /* with the featured reel the list paints a film, not the page's ground: it no longer passes over the curve's ball
+       (which rises into it as it rolls in), the ball passes over its end */
     .directors-home_wrap.is-work {
       padding-bottom: 0;
+      z-index: 0;
     }
     /* the dots turn with the page while it turns (measured Nov 27: they turned in 250 ms and the ground in 450). A rule
        of its own: a pseudo-element cannot sit in a nested rule's :is() */
